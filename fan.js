@@ -40,9 +40,16 @@ class Fan extends IOBase {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
     console.log(`Fan process count: ${this.processCount}`);
 
-    // console.log("Fan process");
+    if (this.hasNewState()) {
+      if (this.readAndClearNewState() == true) {
+        console.log("Fan turning on");
+      } else {
+        console.log("Fan turning off");
+      }
+
+      // console.log("Fan process");
+    }
   }
 }
-// export { Fan };
 
 export default Fan;

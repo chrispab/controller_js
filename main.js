@@ -5,6 +5,8 @@ import Fan from "./fan.js";
 // import TemperatureSensor from "./temperatureSensor.js";
 import Heater from "./heater.js";
 
+
+
 //create objects
 const fan = new Fan();
 // const temperatureSensor = new TemperatureSensor();
