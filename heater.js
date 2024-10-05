@@ -17,7 +17,7 @@ class Heater extends IOBase {
   
     process() {
       this.processCount = this.processCount ? this.processCount + 1 : 1;
-      console.log(`Heater process count: ${this.processCount}`);
+      // console.log(`Heater process count: ${this.processCount}`);
     //   console.log("Heater process");
     }
   }
