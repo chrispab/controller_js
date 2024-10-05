@@ -6,6 +6,11 @@ import Fan from "./fan.js";
 import Heater from "./heater.js";
 
 import TemperatureSensor from "./temperatureSensor.js";
+// const os = require('os');
+import os from 'os';
+
+import logger from "./logger.js";
+
 
 //create objects
 const fan = new Fan();
@@ -25,7 +30,7 @@ setInterval(() => {
     heater.process();
 
     temperatureSensor.process();
-
+    logger.info(temperatureSensor.getSensorStr());
 }, 1000);
 
 let processCount = 0;
@@ -39,8 +44,10 @@ function logHMS() {
 }
 
 
+
 function process() {
     processCount = processCount ? processCount + 1 : 1;
-    console.log(`loop count: ${processCount}, ` + logHMS());
-    
-  }
+    console.log(`loop count: ${processCount}, ` + logHMS() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
+    // console.log(os.cpus())
+
+}

@@ -1,0 +1,43 @@
+7.1. Restart the application automatically
+The node command has to be re-executed in bash whenever there is a
+change in the application, to restart the application automatically, nodemon
+module is used.
+Install the nodemon module globally to system path
+npm i -g nodemon
+You can also install nodemon as a development-dependency
+npm i -D nodemon
+This local installation of nodemon can be run by calling it from within npm
+script such as npm start or using npx nodemon.
+Run the application using nodemon followed by application file name.
+nodemon app.js
+
+
+
+15.4. Running Tasks
+The package.json file supports a format for specifying command line tasks
+that can be run by using
+npm run <task-name>
+For example:
+{
+"scripts": {
+"start-dev": "node lib/server-development",
+"start": "node lib/server-production"
+}
+}
+
+18.2.13. scripts
+Defines a set of node scripts you can run
+Example:
+"scripts": {
+"dev": "webpack-dev-server --inline --progress --config build/webpack.de
+"start": "npm run dev",
+"unit": "jest --config test/unit/jest.conf.js --coverage",
+"test": "npm run unit",
+"lint": "eslint --ext .js,.vue src test/unit",
+"build": "node build/build.js"
+}
+These scripts are command line applications. You can run them by calling
+npm run XXXX or yarn XXXX , where XXXX is the command name. Example:
+npm run dev .
+You can use any name you want for a command, and scripts can do literally
+anything you want.
