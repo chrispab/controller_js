@@ -4,6 +4,7 @@
   "main": "main.js",
   "scripts": {
     "go": "nodemon main.js",
+    "live": "systemctl stop zone_controller.service && nodemon main.js",
     "test": "npm run unit",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev",
     "start": "npm run dev",

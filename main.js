@@ -12,10 +12,10 @@ import os from 'os';
 
 import logger from "./lib/logger.js";
 
-import configJson from './config.json' assert { type: 'json' }; // NodeJS version.
+import config from './config.json' assert { type: 'json' }; // NodeJS version.
 
 import mqtt from 'mqtt';
-const client = mqtt.connect(configJson.mqtt.brokerUrl);
+const client = mqtt.connect(config.mqtt.brokerUrl);
 
 client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
@@ -59,7 +59,7 @@ function getHMSStr() {
 
 function process() {
     processCount = processCount ? processCount + 1 : 1;
-    console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
+    // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     // console.log(os.cpus())
 
 }

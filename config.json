@@ -1,4 +1,27 @@
 {
-    "mqtt": {"brokerUrl": "mqtt://192.168.0.100"},
-    "log_level": "info"
+    "mqtt": {
+        "brokerUrl": "mqtt://192.168.0.100"
+    },
+    "log_level": "info",
+    "hardware": {
+        "dhtSensor": {
+            "pin": 3,
+            "type": "dht22"
+        },
+        "fan": {
+            "pin": 11,
+            "physicalPin": 23
+        },
+        "heater": {
+            "pin": 5,
+            "physicalPin": 29
+        },
+        "vent": {
+            "pin": 26,
+            "physicalPin": 37
+        },
+        "RC": {
+            "pin": 27,
+            "physicalPin": 13}
+    }
 }
