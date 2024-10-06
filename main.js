@@ -21,7 +21,7 @@ client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
 client.on('message', (topic, message) => {
     console.log(`Received message on topic ${topic}: ${message}`);
-  });
+});
 
 
 //create objects
@@ -36,13 +36,14 @@ heater.setState(false); //turn off by default
 setInterval(() => {
     // console.log( Date.now());
 
-    process();
+
     fan.process();
 
     heater.process();
 
     temperatureSensor.process();
-    logger.info(temperatureSensor.getSensorStr());
+
+    process();
 }, 3000);
 
 let processCount = 0;
@@ -60,6 +61,6 @@ function getHMSStr() {
 function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
-    console.log(os.hostname())
+    // console.log(os.hostname())
 
 }
