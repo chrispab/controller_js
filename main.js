@@ -1,15 +1,16 @@
 //import classes
-import Fan from "./fan.js";
+import Fan from "./lib/fan.js";
+
 
 
 // import TemperatureSensor from "./temperatureSensor.js";
-import Heater from "./heater.js";
+import Heater from "./lib/heater.js";
 
-import TemperatureSensor from "./temperatureSensor.js";
+import TemperatureSensor from "./lib/temperatureSensor.js";
 // const os = require('os');
 import os from 'os';
 
-import logger from "./logger.js";
+import logger from "./lib/logger.js";
 
 import mqtt from 'mqtt';
 const client = mqtt.connect('mqtt://192.168.0.100');
