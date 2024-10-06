@@ -6,7 +6,7 @@
     "hardware": {
         "dhtSensor": {
             "pin": 3,
-            "type": "dht22"
+            "type": "22"
         },
         "fan": {
             "pin": 11,

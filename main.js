@@ -43,7 +43,7 @@ setInterval(() => {
 
     temperatureSensor.process();
     logger.info(temperatureSensor.getSensorStr());
-}, 1000);
+}, 3000);
 
 let processCount = 0;
 function getHMSStr() {
@@ -60,6 +60,6 @@ function getHMSStr() {
 function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
-    // console.log(os.cpus())
+    console.log(os.hostname())
 
 }
