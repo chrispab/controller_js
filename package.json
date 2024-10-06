@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "go": "nodemon main.js",
+    "test": "npm run unit",
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev",
+    "start": "npm run dev",
+    "unit": "jest --config test/unit/jest.conf.js --coverage",
+    "lint": "eslint --ext .js,.vue src test/unit",
+    "build": "node build/build.js"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "type": "module",
   "dependencies": {
+    "mqtt": "^5.10.1",
     "node-dht-sensor": "^0.4.3",
     "onoff": "^6.0.3",
     "winston": "^3.15.0"

@@ -11,6 +11,9 @@ import os from 'os';
 
 import logger from "./logger.js";
 
+import mqtt from 'mqtt';
+const client = mqtt.connect('mqtt://192.168.0.100');
+
 
 //create objects
 const fan = new Fan();

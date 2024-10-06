@@ -41,3 +41,5 @@ npm run XXXX or yarn XXXX , where XXXX is the command name. Example:
 npm run dev .
 You can use any name you want for a command, and scripts can do literally
 anything you want.
+
+https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-inside-a-callback
