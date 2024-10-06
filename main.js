@@ -7,6 +7,8 @@ import Fan from "./lib/fan.js";
 import Heater from "./lib/heater.js";
 
 import TemperatureSensor from "./lib/temperatureSensor.js";
+import Vent from "./lib/vent.js";
+import Light from "./lib/light.js";
 // const os = require('os');
 import os from 'os';
 
@@ -28,20 +30,26 @@ client.on('message', (topic, message) => {
 const fan = new Fan();
 const temperatureSensor = new TemperatureSensor();
 const heater = new Heater();
+const vent = new Vent();
+const light = new Light();
 
 //set initial state
 fan.setState(false);
 heater.setState(false); //turn off by default
 
 setInterval(() => {
-    // console.log( Date.now());
-
+    // scan/process inputs
+    temperatureSensor.process();
 
     fan.process();
 
+    vent.process();
+
     heater.process();
 
-    temperatureSensor.process();
+    light.process();
+
+
 
     process();
 }, 3000);
