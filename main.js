@@ -12,10 +12,12 @@ import os from 'os';
 
 import logger from "./lib/logger.js";
 
-import mqtt from 'mqtt';
-const client = mqtt.connect('mqtt://192.168.0.100');
+import configJson from './config.json' assert { type: 'json' }; // NodeJS version.
 
-client.subscribe('#');
+import mqtt from 'mqtt';
+const client = mqtt.connect(configJson.mqtt.brokerUrl);
+
+client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
 client.on('message', (topic, message) => {
     console.log(`Received message on topic ${topic}: ${message}`);
@@ -44,7 +46,7 @@ setInterval(() => {
 }, 1000);
 
 let processCount = 0;
-function logHMS() {
+function getHMSStr() {
     const date = new Date(Date.now());
     const hh = `0${date.getHours()}`.slice(-2);
     const mm = `0${date.getMinutes()}`.slice(-2);
@@ -57,7 +59,7 @@ function logHMS() {
 
 function process() {
     processCount = processCount ? processCount + 1 : 1;
-    console.log(`loop count: ${processCount}, ` + logHMS() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
+    console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     // console.log(os.cpus())
 
 }
