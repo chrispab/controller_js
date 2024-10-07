@@ -28,10 +28,10 @@ client.on('message', (topic, message) => {
 
 //create objects
 const fan = new Fan();
-const temperatureSensor = new TemperatureSensor();
+const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin);
 const heater = new Heater();
 const vent = new Vent();
-const light = new Light();
+const light = new Light(config.hardware.RC.pin);
 
 //set initial state
 fan.setState(false);

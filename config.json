@@ -22,6 +22,8 @@
         },
         "RC": {
             "pin": 27,
-            "physicalPin": 13}
+            "physicalPin": 13
+        }
+
     }
 }
