@@ -1,3 +1,7 @@
+https://nodejs.org/en/download/package-manager
+
+
+
 7.1. Restart the application automatically
 The node command has to be re-executed in bash whenever there is a
 change in the application, to restart the application automatically, nodemon
