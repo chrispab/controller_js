@@ -1,6 +1,7 @@
 https://nodejs.org/en/download/package-manager
 
-
+cd controller_js
+npm run live
 
 7.1. Restart the application automatically
 The node command has to be re-executed in bash whenever there is a
@@ -50,3 +51,13 @@ https://stackoverflow.com/questions/20279484/how-to-access-the-correct-this-insi
 
 
 https://www.hivemq.com/blog/ultimate-guide-on-how-to-use-mqtt-with-node-js/
+
+
+
+
+From Node.js 15 and up you can use the Timers Promises API. You don't have to promisify setTimeout or rely on a 3rd party library anymore.
+
+import { setTimeout } from 'node:timers/promises';
+
+await setTimeout(1000);
+

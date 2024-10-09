@@ -11,6 +11,7 @@ import Vent from "./lib/vent.js";
 import Light from "./lib/light.js";
 // const os = require('os');
 import os from 'os';
+import { setTimeout } from 'node:timers/promises';
 
 import logger from "./lib/logger.js";
 

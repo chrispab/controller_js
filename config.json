@@ -1,7 +1,25 @@
 {
     "mqtt": {
-        "brokerUrl": "mqtt://192.168.0.100"
+        "brokerUrl": "mqtt://192.168.0.100",
+        "username": "pi",
+        "password": "raspberry"
     },
+    "zone": {
+        "name": "zone_1"
+    },
+    "system": {
+        "name": "system_1"
+    },
+    "telemetry": {
+        "name": "telemetry_1",
+        "enabled": true,
+        "interval": 120
+    },
+    "logging": { 
+        "enabled": true,
+        "level": "info"
+    },
+
     "log_level": "info",
     "hardware": {
         "dhtSensor": {
