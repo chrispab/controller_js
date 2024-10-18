@@ -1,5 +1,6 @@
 https://nodejs.org/en/download/package-manager
 
+ssh pi@192.168.0.151
 cd controller_js
 npm run live
 
@@ -54,7 +55,7 @@ https://www.hivemq.com/blog/ultimate-guide-on-how-to-use-mqtt-with-node-js/
 
 
 
-
+https://stackoverflow.com/questions/14249506/how-can-i-wait-in-node-js-javascript-l-need-to-pause-for-a-period-of-time
 From Node.js 15 and up you can use the Timers Promises API. You don't have to promisify setTimeout or rely on a 3rd party library anymore.
 
 import { setTimeout } from 'node:timers/promises';

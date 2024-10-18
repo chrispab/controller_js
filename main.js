@@ -1,6 +1,7 @@
 //import classes
 import Fan from "./lib/fan.js";
 
+// import { setTimeout } from 'node:timers/promises';
 
 
 // import TemperatureSensor from "./temperatureSensor.js";
@@ -50,6 +51,8 @@ setInterval(() => {
 
     light.process();
 
+    // setTimeout(() => { console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'); }, 500);
+    // setTimeout(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'), 500);
 
 
     process();
@@ -71,5 +74,4 @@ function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     // console.log(os.hostname())
-
 }
