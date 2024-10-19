@@ -4,6 +4,7 @@ import Heater from "./lib/heater.js";
 import TemperatureSensor from "./lib/temperatureSensor.js";
 import Vent from "./lib/vent.js";
 import Light from "./lib/light.js";
+import Mqtt from "./lib/mqtt.js";
 // const os = require('os');
 import os from 'os';
 
@@ -27,7 +28,7 @@ const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, 
 const heater = new Heater();
 const vent = new Vent();
 const light = new Light(config.hardware.RC.pin);
-
+const mqttAgent = new Mqtt(config.hardware.RC.pin, config.hardware.RC.oscillation);
 //set initial state
 fan.setState(false);
 heater.setState(false); //turn off by default
@@ -47,7 +48,7 @@ setInterval(() => {
     // setTimeout(() => { console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'); }, 500);
     // setTimeout(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'), 500);
 
-
+    mqttAgent.process();
     process();
 }, 3000);
 
