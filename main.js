@@ -1,18 +1,11 @@
 //import classes
 import Fan from "./lib/fan.js";
-
-// import { setTimeout } from 'node:timers/promises';
-
-
-// import TemperatureSensor from "./temperatureSensor.js";
 import Heater from "./lib/heater.js";
-
 import TemperatureSensor from "./lib/temperatureSensor.js";
 import Vent from "./lib/vent.js";
 import Light from "./lib/light.js";
 // const os = require('os');
 import os from 'os';
-import { setTimeout } from 'node:timers/promises';
 
 import logger from "./lib/logger.js";
 
