@@ -8,9 +8,10 @@ import Mqtt from "./lib/mqtt.js";
 // const os = require('os');
 import os from 'os';
 
-import logger from "./lib/logger.js";
+import Logger from "./lib/Logger.js";
 
 import config from './config.json' assert { type: 'json' }; // NodeJS version.
+
 
 import mqtt from 'mqtt';
 const client = mqtt.connect(config.mqtt.brokerUrl);
@@ -18,7 +19,7 @@ const client = mqtt.connect(config.mqtt.brokerUrl);
 client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
 client.on('message', (topic, message) => {
-    console.log(`Received message on topic ${topic}: ${message}`);
+    // console.log(`Received message on topic ${topic}: ${message}`);
 });
 
 
@@ -26,9 +27,12 @@ client.on('message', (topic, message) => {
 const fan = new Fan();
 const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin);
 const heater = new Heater();
-const vent = new Vent();
+const vent = new Vent(config.hardware.vent.pin);
 const light = new Light(config.hardware.RC.pin);
 const mqttAgent = new Mqtt(config.hardware.RC.pin, config.hardware.RC.oscillation);
+//Logger
+// const log = new Logger(config.logging.level, config.logging.enabled);
+
 //set initial state
 fan.setState(false);
 heater.setState(false); //turn off by default
@@ -47,10 +51,10 @@ setInterval(() => {
 
     // setTimeout(() => { console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'); }, 500);
     // setTimeout(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'), 500);
-
+    // Logger.info(temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     mqttAgent.process();
     process();
-}, 3000);
+}, 5000);
 
 let processCount = 0;
 function getHMSStr() {
