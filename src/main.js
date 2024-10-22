@@ -1,14 +1,14 @@
 //import classes
-import Fan from "./lib/fan.js";
-import Heater from "./lib/heater.js";
+import Fan from "./components/fan.js";
+import Heater from "./components/heater.js";
 import TemperatureSensor from "./lib/temperatureSensor.js";
-import Vent from "./lib/vent.js";
-import Light from "./lib/light.js";
-import Mqtt from "./lib/mqtt.js";
+import Vent from "./components/vent.js";
+import Light from "./components/light.js";
+import Mqtt from "./services/mqtt.js";
 // const os = require('os');
 import os from 'os';
 
-import Logger from "./lib/Logger.js";
+import Logger from "./services/Logger.js";
 
 import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 

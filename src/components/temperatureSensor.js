@@ -1,4 +1,4 @@
-import IOBase from "./IOBase.js";
+import IOBase from "../components/IOBase.js";
 // import config from './../config.json' assert { type: 'json' }; // NodeJS version.
 import os from 'os';
 // const DHT = require('adafruit-dht-sensor-library');

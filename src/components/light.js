@@ -6,7 +6,7 @@ import { Gpio } from 'onoff';
 const logLevel = 'debug';
 
 // 
-import Logger from "./Logger.js";
+import Logger from "../services/Logger.js";
 
 
 

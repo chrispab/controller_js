@@ -1,5 +1,5 @@
 import IOBase from "./IOBase.js";
-import Logger from "./Logger.js";
+import Logger from "../services/Logger.js";
 import { Gpio } from 'onoff';
 
 // const logLevel = 'info';

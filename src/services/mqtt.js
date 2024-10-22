@@ -1,4 +1,4 @@
-import IOBase from "./IOBase.js";
+import IOBase from "../components/IOBase.js";
 import events from 'events';
 
 //Assign the event handler to an event:
