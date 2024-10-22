@@ -1,10 +1,10 @@
 {
   "name": "controller_js",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "go": "nodemon main.js",
-    "live": "systemctl stop zone_controller.service && nodemon main.js",
+    "go": "nodemon src/main.js",
+    "live": "systemctl stop zone_controller.service && nodemon src/main.js",
     "test": "npm run unit",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev",
     "start": "npm run dev",

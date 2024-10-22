@@ -5,7 +5,7 @@ class IOBase {
         this.defaultState = false;
         this.prevStateChangeMillis = Date.now();
         this.onMillis = 60 * 1000;
-        this.offMillis = 30 * 1000;
+        this.offMillis = 10 * 1000;
     }
 
     getState() {

@@ -8,10 +8,13 @@ const logLevel = 'debug';
 import events from 'events';
 var eventEmitter = new events.EventEmitter();
 // var eventEmitter = new events.EventEmitter();
+import config from '../config.json' assert { type: 'json' }; // NodeJS version.
 
-
+import mqtt from 'mqtt';
+const client = mqtt.connect(config.mqtt.brokerUrl);
 var ventStateEvent = function (state) {
-  Logger.log('info', 'event Vent state: ' + state);
+  Logger.log('info', 'event Vent state: ' + `${state}`);
+  client.publish("ventStateEvent", `${state?1:0}`);
 }
 
 eventEmitter.on('ventState', ventStateEvent);
@@ -65,7 +68,7 @@ export default class Vent extends IOBase {
         Logger.log(logLevel, "Vent is off");
       }
       eventEmitter.emit('ventState', this.getState());
-
+      this.prevStateChangeMillis = Date.now();
     }
   }
 
@@ -87,6 +90,7 @@ export default class Vent extends IOBase {
         //Fire the 'scream' event:
         // eventEmitter.emit('newVentState',currentState);
       }
+      
     }
   }
 }
