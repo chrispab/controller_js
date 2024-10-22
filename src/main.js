@@ -1,7 +1,7 @@
 //import classes
 import Fan from "./components/fan.js";
 import Heater from "./components/heater.js";
-import TemperatureSensor from "./lib/temperatureSensor.js";
+import TemperatureSensor from "./components/temperatureSensor.js";
 import Vent from "./components/vent.js";
 import Light from "./components/light.js";
 import Mqtt from "./services/mqtt.js";

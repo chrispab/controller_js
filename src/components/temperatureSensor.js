@@ -5,7 +5,7 @@ import os from 'os';
 const DHT_PIN = 4;
 import sensor from 'node-dht-sensor';
 // var sensor = require("node-dht-sensor");
-import Logger from "./Logger.js";
+import Logger from "./../services/Logger.js";
 
 export default class TemperatureSensor extends IOBase {
   constructor(dhtSensorType, dhtSensorPin) {
