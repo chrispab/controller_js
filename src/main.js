@@ -10,7 +10,7 @@ import os from 'os';
 
 import Logger from "./lib/Logger.js";
 
-import config from './config.json' assert { type: 'json' }; // NodeJS version.
+import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
 
 import mqtt from 'mqtt';
@@ -22,12 +22,22 @@ client.on('message', (topic, message) => {
     // console.log(`Received message on topic ${topic}: ${message}`);
 });
 
+// const TicketManager = require("./services/ticketManager");
+import EmitterManager from "./services/emitterManager.js";
+
+const emitterManager = new EmitterManager(10);
+var ventStateEvent = function (state) {
+    Logger.log('info', 'event Vent state: ' + `${state}`);
+    client.publish("ventStateEvent", `banana`);
+  }
+  emitterManager.on('ventState', ventStateEvent);
+
 
 //create objects
 const fan = new Fan();
 const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin);
 const heater = new Heater();
-const vent = new Vent(config.hardware.vent.pin);
+const vent = new Vent(config.hardware.vent.pin,emitterManager);
 const light = new Light(config.hardware.RC.pin);
 const mqttAgent = new Mqtt(config.hardware.RC.pin, config.hardware.RC.oscillation);
 //Logger

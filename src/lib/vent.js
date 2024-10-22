@@ -8,23 +8,26 @@ const logLevel = 'debug';
 import events from 'events';
 var eventEmitter = new events.EventEmitter();
 // var eventEmitter = new events.EventEmitter();
-import config from '../config.json' assert { type: 'json' }; // NodeJS version.
+import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
 
 import mqtt from 'mqtt';
 const client = mqtt.connect(config.mqtt.brokerUrl);
-var ventStateEvent = function (state) {
-  Logger.log('info', 'event Vent state: ' + `${state}`);
-  client.publish("ventStateEvent", `${state?1:0}`);
-}
 
-eventEmitter.on('ventState', ventStateEvent);
+
+// var ventStateEvent = function (state) {
+//   Logger.log('info', 'event Vent state: ' + `${state}`);
+//   client.publish("ventStateEvent", `${state?1:0}`);
+// }
+
+// eventEmitter.on('ventState', ventStateEvent);
 
 
 
 
 export default class Vent extends IOBase {
-  constructor(ventOpPin) {
+  constructor(ventOpPin,emitterManager) {
     super();
+    this.emitterManager = emitterManager;
     this.ventOpPin = ventOpPin;
     this.ventIO = Gpio.accessible ? new Gpio(this.ventOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
 
@@ -67,7 +70,7 @@ export default class Vent extends IOBase {
       } else {
         Logger.log(logLevel, "Vent is off");
       }
-      eventEmitter.emit('ventState', this.getState());
+      this.emitterManager.emit('ventState', this.getState());
       this.prevStateChangeMillis = Date.now();
     }
   }
