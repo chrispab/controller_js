@@ -528,7 +528,7 @@ class Light(object):
         self.tOff = dt.time()
 
     # return true if testTime between timeOn and TimeOff, else false if in off period
-    def getLightState(self):
+    def readLightState(self):
 
         # new ldr based routine test
         count = RCtime(cfg.getItemValueFromConfig(

@@ -4,7 +4,7 @@ class IOBase {
         this.newStateFlag = false;
         this.defaultState = false;
         this.prevStateChangeMillis = Date.now();
-        this.onMillis = 60 * 1000;
+        this.onMillis = 10 * 1000;
         this.offMillis = 10 * 1000;
     }
 
@@ -26,8 +26,8 @@ class IOBase {
         }
     }
 
-    //must be called before using readAndClearNewState()
-    hasNewState() {
+    //must be called before using getStateAndClearNewStateFlag()
+    hasNewStateAvailable() {
         return this.newStateFlag;
     }
 
@@ -35,7 +35,7 @@ class IOBase {
         this.newStateFlag = newStateFlag;
     }
 
-    readAndClearNewState() {
+    getStateAndClearNewStateFlag() {
         //ensures MQTT pub only sent once per state change since last readState
         this.newStateFlag = false; //indicate data read and used e.g MQTT pub
         return this.state;

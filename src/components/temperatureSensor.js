@@ -50,16 +50,15 @@ export default class TemperatureSensor extends IOBase {
       } else {
         console.log("Failed to read from DHT sensor");
       }
-      // return sensorData;
     });
 
 
-    var sensorData2 = {};
-    // sensorData2.temperature = 4;
-    // sensorData2.humidity = 5;
-    sensorData2.temperature = this.temperature;
-    sensorData2.humidity = this.humidity;
-    return sensorData2;
+    // var sensorData2 = {};
+    // // sensorData2.temperature = 4;
+    // // sensorData2.humidity = 5;
+    // sensorData2.temperature = this.temperature;
+    // sensorData2.humidity = this.humidity;
+    // return sensorData2;
 
   }
 
@@ -83,10 +82,10 @@ export default class TemperatureSensor extends IOBase {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
 
     var data = this.read();
-    if (this.hasNewState()) {
+    if (this.hasNewStateAvailable()) {
       //get value from read()
       // console.log(`${this.processCount}->NEW temperature from DHT sensor: ${this.getSensorStr()}`);
-      Logger.info(`${this.processCount}->NEW temperature from DHT sensor: ${this.getSensorStr()}`);
+      Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
 
       this.setNewStateAvailable(false);
 
@@ -94,8 +93,8 @@ export default class TemperatureSensor extends IOBase {
   }
 
   getSensorStr() {
-    return `temp: ${this.temperature.toFixed(1)}°C, ` +
-      `humidity: ${this.humidity.toFixed(1)}%`
+    return `temp: ${this.getTemperature().toFixed(1)}°C, ` +
+      `humidity: ${this.getHumidity().toFixed(1)}%`
   }
 }
 

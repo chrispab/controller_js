@@ -4,44 +4,44 @@ import Heater from "./components/heater.js";
 import TemperatureSensor from "./components/temperatureSensor.js";
 import Vent from "./components/vent.js";
 import Light from "./components/light.js";
-import Mqtt from "./services/mqtt.js";
+// import Mqtt from "./services/mqttAgent.js";
 // const os = require('os');
-import os from 'os';
+// import os from 'os';
 
-import Logger from "./services/Logger.js";
+// import Logger from "./services/Logger.js";
 
 import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
 
 import mqtt from 'mqtt';
 const client = mqtt.connect(config.mqtt.brokerUrl);
+import MqttAgent from "./services/mqttAgent.js";
 
-client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
-client.on('message', (topic, message) => {
-    // console.log(`Received message on topic ${topic}: ${message}`);
-});
-
-// const TicketManager = require("./services/ticketManager");
 import EmitterManager from "./services/emitterManager.js";
 
-const emitterManager = new EmitterManager(10);
-var ventStateEvent = function (state) {
-    Logger.log('info', 'event Vent state: ' + `${state}`);
-    client.publish("ventStateEvent", `banana`);
-  }
-  emitterManager.on('ventState', ventStateEvent);
+const emitterManager = new EmitterManager();
 
 
 //create objects
+
+const mqttAgent = new MqttAgent(client, config.mqtt.brokerUrl);
 const fan = new Fan();
 const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin);
 const heater = new Heater();
-const vent = new Vent(config.hardware.vent.pin,emitterManager);
-const light = new Light(config.hardware.RC.pin);
-const mqttAgent = new Mqtt(config.hardware.RC.pin, config.hardware.RC.oscillation);
-//Logger
+const vent = new Vent(config.hardware.vent.pin, 10000, 30000, emitterManager,mqttAgent);
+const light = new Light(config.hardware.RC.pin);//Logger
 // const log = new Logger(config.logging.level, config.logging.enabled);
+
+
+mqttAgent.client.connect(config.mqtt.brokerUrl);
+mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
+
+mqttAgent.client.on('message', (topic, message) => {
+    // console.log(`Received message on topic ${topic}: ${message}`);
+});
+
+
 
 //set initial state
 fan.setState(false);

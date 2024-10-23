@@ -1,9 +1,9 @@
 import EventEmitter from "events";
 
 export default class EmitterManager extends EventEmitter {
-    constructor(supply=0) {
+    constructor() {
         super();
-        this.supply = supply;
+        // this.supply = supply;
     }
     trigger(handler,value) {
         // this.supply--;

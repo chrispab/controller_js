@@ -2,7 +2,9 @@
     "mqtt": {
         "brokerUrl": "mqtt://192.168.0.100",
         "username": "pi",
-        "password": "raspberry"
+        "password": "raspberry",
+        "outTopic": "zone_2"
+        
     },
     "zone": {
         "name": "zone_1"
@@ -13,7 +15,7 @@
     "telemetry": {
         "name": "telemetry_1",
         "enabled": true,
-        "interval": 120
+        "interval": 60000
     },
     "logging": { 
         "enabled": true,

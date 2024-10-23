@@ -23,7 +23,7 @@ void IOBase::setState(bool pnewStateFlag)
         newStateFlag = true;
     }
 }
-bool IOBase::hasNewState()
+bool IOBase::hasNewStateAvailable()
 {
     return newStateFlag;
 }

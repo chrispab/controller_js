@@ -34,7 +34,7 @@ export default class Light extends IOBase {
     turnOff() {
         this.setState(false);
     }
-    getLightState() {
+    readLightState() {
         // console.log(`********this.RCLoopCount: ${this.RCLoopCount}`);
         const lightState = (this.getState());
         // new ldr based routine test
@@ -136,15 +136,15 @@ export default class Light extends IOBase {
 
     process() {
         //if
-        this.getLightState();
-        if (this.hasNewState()) {
-            if (this.getState() == true) {
+        this.readLightState();
+        if (this.hasNewStateAvailable()) {
+            if (this.getState()) {
                 console.log("Light is on");
             } else {
                 console.log("Light is off");
             }
 
-            this.readAndClearNewState();
+            this.getStateAndClearNewStateFlag();
         }
     }
 
