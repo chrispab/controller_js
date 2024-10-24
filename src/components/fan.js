@@ -1,56 +1,91 @@
 import IOBase from "./IOBase.js";
+import Logger from "../services/Logger.js";
+
+const logLevel = 'debug';
+import { Gpio } from 'onoff';
+
+import config from '../config/config.json' assert { type: 'json' };
+
+var fanStateEventHandler = function (state, mqttAgent) {
+  Logger.log('warn', 'PUBLISH Fan: ' + `${state}`);
+  mqttAgent.client.publish(config.mqtt.outTopic + "/fan_state", `${state ? 1 : 0}`);
+}
+
 
 class Fan extends IOBase {
-  constructor(speed, oscillation) {
+  constructor(fanOpPin, onMs, offMs, emitterManager, mqttAgent) {
     super();
-    this._speed = speed;
-    this._oscillation = oscillation;
+    this.offMillis = offMs;
+    this.onMillis = onMs;
+    this.prevStateChangeMillis = Date.now()-this.offMillis;
+    this.emitterManager = emitterManager;
+    this.fanOpPin = fanOpPin;
+    this.fanIO = Gpio.accessible ? new Gpio(this.fanOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
+    this.mqttAgent = mqttAgent;
+    if (this.fanOpPin) {
+      this.fanIO.setDirection("out");
+    }
+    this.emitterManager.on('fanStateChange', fanStateEventHandler);
   }
 
   turnOn() {
     this.setState(true);
-    console.log(`Turning on fan to speed ${this.speed} with ${this.oscillation ? "" : "no"} oscillation`);
+
+    if (this.fanOpPin) {
+      // console.log("Turning on vent");
+      this.fanIO.writeSync(1);
+    }
+
+    // console.log("Turning on vent");
+    Logger.log(logLevel, '==fanIO on==')
   }
 
   turnOff() {
     this.setState(false);
-    console.log("Turning off fan");
-  }
 
-
-  get speed() {
-    return this._speed;
-  }
-
-  set speed(speed) {
-    this._speed = speed;
-    console.log(`Setting fan speed to ${speed}`);
-  }
-
-  get oscillation() {
-    return this._oscillation;
-  }
-
-  set oscillation(oscillation) {
-    this._oscillation = oscillation;
-    console.log(`Setting fan oscillation to ${oscillation ? "on" : "off"}`);
+    if (this.fanOpPin) {
+      this.fanIO.writeSync(0);
+    }
+    // console.log("Turning off vent");
+    Logger.log(logLevel, '==fanIO off==')
   }
 
 
   process() {
-    this.processCount = this.processCount ? this.processCount + 1 : 1;
-    // console.log(`Fan process count: ${this.processCount}`);
+
+    this.manageFan();
+
+    // Logger.info(`this.prevStateChangeMillis: ${this.prevStateChangeMillis}`);
 
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() == true) {
-        console.log("Fan turning on");
+        Logger.log(logLevel, "fan is on");
       } else {
-        console.log("Fan turning off");
+        Logger.log(logLevel, "fan is off");
       }
-
-      // console.log("Fan process");
+      this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
     }
   }
+
+  manageFan() {
+    const currentState = this.fanIO.readSync();
+    const currentMs = Date.now();
+
+    if (currentState == 1) {
+      // is it time to turn off?
+      if (currentMs - this.prevStateChangeMillis > this.onMillis) {
+        this.turnOff();
+        // this.prevStateChangeMillis = Date.now();
+      }
+    } else {
+      // is it time to turn on?
+      if (currentMs - this.prevStateChangeMillis > this.offMillis) {
+        this.turnOn();
+        // this.prevStateChangeMillis = Date.now();
+      }
+    }
+  }
+
 }
 
 export default Fan;

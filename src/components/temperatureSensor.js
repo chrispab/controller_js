@@ -6,10 +6,21 @@ const DHT_PIN = 4;
 import sensor from 'node-dht-sensor';
 // var sensor = require("node-dht-sensor");
 import Logger from "./../services/Logger.js";
+import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
+
+
+var temperatureStateChangeHandler = function (state, mqttAgent) {
+  Logger.log('warn', 'PUBLISH temperature: ' + `${state}`);
+  mqttAgent.client.publish(config.mqtt.outTopic + "/temperature_state", `${state}`);
+}
+
+
 
 export default class TemperatureSensor extends IOBase {
-  constructor(dhtSensorType, dhtSensorPin) {
+  constructor(dhtSensorType, dhtSensorPin, emitterManager, mqttAgent) {
     super();
+    this.emitterManager = emitterManager;
+    this.mqttAgent = mqttAgent;
     this.dhtSensorType = dhtSensorType;
     this.dhtSensorPin = dhtSensorPin;
     this.temperature = 0;
@@ -26,6 +37,8 @@ export default class TemperatureSensor extends IOBase {
         }
       });
     }
+    this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
+
   }
 
   read() {
@@ -52,14 +65,6 @@ export default class TemperatureSensor extends IOBase {
       }
     });
 
-
-    // var sensorData2 = {};
-    // // sensorData2.temperature = 4;
-    // // sensorData2.humidity = 5;
-    // sensorData2.temperature = this.temperature;
-    // sensorData2.humidity = this.humidity;
-    // return sensorData2;
-
   }
 
 
@@ -85,8 +90,9 @@ export default class TemperatureSensor extends IOBase {
     if (this.hasNewStateAvailable()) {
       //get value from read()
       // console.log(`${this.processCount}->NEW temperature from DHT sensor: ${this.getSensorStr()}`);
-      Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-
+      // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
+      this.emitterManager.emit('temperatureStateChange', this.getTemperature().toFixed(1), this.mqttAgent);
+      // this.prevStateChangeMillis = Date.now();
       this.setNewStateAvailable(false);
 
     }

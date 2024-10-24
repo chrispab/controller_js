@@ -13,24 +13,27 @@ import Light from "./components/light.js";
 import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
 
-import mqtt from 'mqtt';
-const client = mqtt.connect(config.mqtt.brokerUrl);
-import MqttAgent from "./services/mqttAgent.js";
+
 
 
 import EmitterManager from "./services/emitterManager.js";
-
 const emitterManager = new EmitterManager();
 
 
 //create objects
+//services
+import mqtt from 'mqtt';
+const client = mqtt.connect(config.mqtt.brokerUrl);
+import MqttAgent from "./services/mqttAgent.js";
+const mqttAgent = new MqttAgent(client);
 
-const mqttAgent = new MqttAgent(client, config.mqtt.brokerUrl);
-const fan = new Fan();
-const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin);
+//componenmts
+const vent = new Vent(config.hardware.vent.pin, 20000, 60000, emitterManager, mqttAgent);
+const fan = new Fan(config.hardware.fan.pin, 10000, 60000, emitterManager, mqttAgent);
+const light = new Light(config.hardware.RC.pin);
+
+const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin, emitterManager, mqttAgent);
 const heater = new Heater();
-const vent = new Vent(config.hardware.vent.pin, 10000, 30000, emitterManager,mqttAgent);
-const light = new Light(config.hardware.RC.pin);//Logger
 // const log = new Logger(config.logging.level, config.logging.enabled);
 
 
@@ -42,10 +45,10 @@ mqttAgent.client.on('message', (topic, message) => {
 });
 
 
-
 //set initial state
 fan.setState(false);
 heater.setState(false); //turn off by default
+vent.setState(false);
 
 setInterval(() => {
     // scan/process inputs
@@ -59,14 +62,12 @@ setInterval(() => {
 
     light.process();
 
-    // setTimeout(() => { console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'); }, 500);
-    // setTimeout(console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>-z'), 500);
     // Logger.info(temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     mqttAgent.process();
     process();
-}, 5000);
+}, 1000);
 
-let processCount = 0;
+
 function getHMSStr() {
     const date = new Date(Date.now());
     const hh = `0${date.getHours()}`.slice(-2);
@@ -77,7 +78,7 @@ function getHMSStr() {
 }
 
 
-
+let processCount = 0;
 function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);

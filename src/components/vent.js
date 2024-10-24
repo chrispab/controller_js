@@ -4,35 +4,22 @@ import { Gpio } from 'onoff';
 
 // const logLevel = 'info';
 const logLevel = 'debug';
-// var events = require('events');
-// import events from 'events';
-// var eventEmitter = new events.EventEmitter();
-// var eventEmitter = new events.EventEmitter();
+
 import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
 
-// import mqtt from 'mqtt';
-// const client = mqtt.connect(config.mqtt.brokerUrl);
 
-
-// var ventStateEvent = function (state) {
-//   Logger.log('info', 'event Vent state: ' + `${state}`);
-//   client.publish("ventStateEvent", `${state?1:0}`);
-// }
-
-// eventEmitter.on('ventState', ventStateEvent);
-
-
-var ventStateEvent = function (state, mqttAgent) {
-  Logger.log('warn', 'PUBLISH Vent state: ' + `${state}`);
+var ventStateEventHandler = function (state, mqttAgent) {
+  Logger.log('warn', 'PUBLISH Vent: ' + `${state}`);
   mqttAgent.client.publish(config.mqtt.outTopic + "/vent_state", `${state ? 1 : 0}`);
 }
-// this.emitterManager.on('ventState', ventStateEvent);
+// this.emitterManager.on('ventState', ventStateEventHandler);
 
 export default class Vent extends IOBase {
-  constructor(ventOpPin, offMs, onMs, emitterManager, mqttAgent) {
+  constructor(ventOpPin, onMs, offMs, emitterManager, mqttAgent) {
     super();
     this.offMillis = offMs;
     this.onMillis = onMs;
+    this.prevStateChangeMillis = Date.now()-this.offMillis;
     this.emitterManager = emitterManager;
     this.ventOpPin = ventOpPin;
     this.ventIO = Gpio.accessible ? new Gpio(this.ventOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
@@ -40,14 +27,10 @@ export default class Vent extends IOBase {
     if (this.ventOpPin) {
       this.ventIO.setDirection("out");
     }
-    this.emitterManager.on('ventState', ventStateEvent);
+    this.emitterManager.on('ventStateChange', ventStateEventHandler);
 
   }
 
-  // ventStateEvent = function (state) {
-  //   Logger.log('info', 'PUBLISH event Vent state: ' + `${state}`);
-  //   this.mqttClient.publish(config.mqtt.outTopic + "/vent_state", `${state ? 1 : 0}`);
-  // }
 
   turnOn() {
     this.setState(true);
@@ -56,7 +39,6 @@ export default class Vent extends IOBase {
       // console.log("Turning on vent");
       this.ventIO.writeSync(1);
     }
-
     // console.log("Turning on vent");
     Logger.log(logLevel, '==Vent on==')
   }
@@ -74,7 +56,6 @@ export default class Vent extends IOBase {
   process() {
 
     this.manageVent();
-
     // Logger.info(`this.prevStateChangeMillis: ${this.prevStateChangeMillis}`);
 
     if (this.hasNewStateAvailable()) {
@@ -83,8 +64,7 @@ export default class Vent extends IOBase {
       } else {
         Logger.log(logLevel, "Vent is off");
       }
-      this.emitterManager.emit('ventState', this.getState(), this.mqttAgent);
-      this.prevStateChangeMillis = Date.now();
+      this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
     }
   }
 
@@ -96,17 +76,13 @@ export default class Vent extends IOBase {
       // is it time to turn off?
       if (currentMs - this.prevStateChangeMillis > this.onMillis) {
         this.turnOff();
-        //Fire the 'scream' event:
-        // eventEmitter.emit('newVentState',currentState);
       }
     } else {
       // is it time to turn on?
       if (currentMs - this.prevStateChangeMillis > this.offMillis) {
         this.turnOn();
-        //Fire the 'scream' event:
-        // eventEmitter.emit('newVentState',currentState);
       }
-
     }
   }
+
 }

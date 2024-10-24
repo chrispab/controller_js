@@ -11,9 +11,9 @@ import config from '../config/config.json' assert { type: 'json' }; // NodeJS ve
 
 
 class MqttAgent {
-    constructor(mqttClient, brokerUrl) {
+    constructor(mqttClient) {
         this.client = mqttClient;
-        this.brokerUrl = brokerUrl;
+        // this.brokerUrl = brokerUrl;
         this.processCount = 0;
         // this.mqttClient = mqtt.connect(this.brokerUrl);
         this.telemetryInterval = config.telemetry.interval;
@@ -26,7 +26,7 @@ class MqttAgent {
         if( this.lastTelemetryMs + this.telemetryInterval < Date.now()) {
             this.lastTelemetryMs = Date.now();
             this.client.publish(config.mqtt.outTopic + "/telemetry", `${this.processCount}`);
-            Logger.log(this.logLevel, `-->>( "/telemetry",`);
+            Logger.log(this.logLevel, `PUBLISH telemetry: ${this.processCount}`);
 
         }
     }

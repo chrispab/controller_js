@@ -45,5 +45,8 @@
             "physicalPin": 13
         }
 
-    }
+    },
+    "high_setpoint": 21.5,
+    "low_setpoint": 16.5
+
 }
