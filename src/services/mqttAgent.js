@@ -1,5 +1,4 @@
-// import IOBase from "../components/IOBase.js";
-// import events from 'events';
+
 import Logger from "./Logger.js";
 
 import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
@@ -9,10 +8,12 @@ import config from '../config/config.json' assert { type: 'json' }; // NodeJS ve
 // import { log } from "console";
 // const client = mqtt.connect(config.mqtt.brokerUrl);
 
+import mqtt from 'mqtt';
+// const client = mqtt.connect(config.mqtt.brokerUrl);
 
 class MqttAgent {
-    constructor(mqttClient) {
-        this.client = mqttClient;
+    constructor() {
+        this.client = mqtt.connect(config.mqtt.brokerUrl);
         // this.brokerUrl = brokerUrl;
         this.processCount = 0;
         // this.mqttClient = mqtt.connect(this.brokerUrl);
@@ -45,4 +46,7 @@ class MqttAgent {
     }
 }
 
-export default MqttAgent;
+// export default MqttAgent;
+//export an instance so single instance can be used
+export const mqttAgent = new MqttAgent();
+export default mqttAgent; 

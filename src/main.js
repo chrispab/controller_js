@@ -13,19 +13,11 @@ import Light from "./components/light.js";
 import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
 
-
-
-
-import EmitterManager from "./services/emitterManager.js";
-const emitterManager = new EmitterManager();
-
-
-//create objects
-//services
-import mqtt from 'mqtt';
-const client = mqtt.connect(config.mqtt.brokerUrl);
-import MqttAgent from "./services/mqttAgent.js";
-const mqttAgent = new MqttAgent(client);
+//import services
+//single instance
+import emitterManager from "./services/emitterManager.js";
+import mqttAgent from "./services/mqttAgent.js";
+// const mqttAgent = new MqttAgent(client);
 
 //componenmts
 const vent = new Vent(config.hardware.vent.pin, 20000, 60000, emitterManager, mqttAgent);
@@ -56,7 +48,6 @@ setInterval(() => {
 
     fan.process();
 
-    vent.process();
 
     heater.process();
 
@@ -65,7 +56,13 @@ setInterval(() => {
     // Logger.info(temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     mqttAgent.process();
     process();
-}, 1000);
+
+
+    // vent.process();
+    vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), 21, light.getState(), Date.now());
+
+
+}, 10000);
 
 
 function getHMSStr() {

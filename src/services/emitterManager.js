@@ -1,15 +1,16 @@
 import EventEmitter from "events";
 
-export default class EmitterManager extends EventEmitter {
+
+class EmitterManager extends EventEmitter {
     constructor() {
         super();
-        // this.supply = supply;
     }
     trigger(handler,value) {
-        // this.supply--;
         this.emit(handler, value);
         console.log('emitter triggered');
     }
 }
 
-// module.exports = TicketManager
+//export an instance so single instance can be used
+export const emitterManager = new EmitterManager();
+export default emitterManager; 
