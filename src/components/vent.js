@@ -44,7 +44,7 @@ export default class Vent extends IOBase {
     // this.onDelta = config.vent.onDelta;
     // this.offDelta = config.vent.offDelta;
     this.speedPercent = config.vent.speedPercent;
-    this.vent_lon_sp_offset
+    this.vent_lon_sp_offset = 0.1;
     this.vent_override = false;
     this.ventState = 1;
     this.prev_vent_millis
@@ -125,7 +125,7 @@ export default class Vent extends IOBase {
     // this.ventDarkOnDelta = cfg.getItemValueFromConfig('ventDarkOnDelta');  // vent on time
     // this.ventDarkOffDelta = cfg.getItemValueFromConfig('ventDarkOffDelta');  // vent on time
 
-    Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
+    // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
     // loff vent/cooling
     // const elapsedMs = current_millis - this.lastVisitMs;
     const elapsedMs = current_millis - this.getPrevStateChangeMillis();
@@ -203,15 +203,14 @@ export default class Vent extends IOBase {
       }
       // Logger.warn("---1");
 
-      if ((lightState == true) && (currentTemp > target_temp + this.vent_lon_sp_offset)) {
+      if ((lightState == true) && (currentTemp > (target_temp + this.vent_lon_sp_offset))) {
         this.vent_override = true;
         // this.ventState = true;
         this.turnOn();
         // Logger.warn("---2");
 
         // this.prevStateChangeMillis = current_millis;  // retrigeer time period
-        Logger.info(
-          ".--------------.VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse")
+        // Logger.info("VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse")
       }
       // temp below target, change state to OFF after pulse delay
       else if ((this.vent_override == true) && ((current_millis - this.prevStateChangeMillis) >= this.vent_pulse_on_delta)) {

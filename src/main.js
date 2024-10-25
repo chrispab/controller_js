@@ -59,7 +59,7 @@ setInterval(() => {
     // vent.process();
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), 21, light.getState(), Date.now());
 
-}, 10000);
+}, 2000);
 
 
 function getHMSStr() {
