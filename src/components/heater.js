@@ -1,8 +1,9 @@
 import IOBase from "./IOBase.js";
 
 class Heater extends IOBase {
-    constructor() {
-      super();
+    constructor(heaterIOPin) {
+      super(heaterIOPin);
+      // super();
     }
   
     turnOn() {

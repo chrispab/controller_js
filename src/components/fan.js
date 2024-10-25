@@ -1,7 +1,7 @@
 import IOBase from "./IOBase.js";
 import Logger from "../services/Logger.js";
 
-const logLevel = 'debug';
+
 import { Gpio } from 'onoff';
 
 import config from '../config/config.json' assert { type: 'json' };
@@ -11,32 +11,36 @@ var fanStateEventHandler = function (state, mqttAgent) {
   mqttAgent.client.publish(config.mqtt.outTopic + "/fan_state", `${state ? 1 : 0}`);
 }
 
+const logLevel = 'debug';
+// const logLevel = 'info';
+
 
 class Fan extends IOBase {
   constructor(fanOpPin, onMs, offMs, emitterManager, mqttAgent) {
-    super();
-    this.offMillis = offMs;
-    this.onMillis = onMs;
-    this.prevStateChangeMillis = Date.now() - this.offMillis;
+    const direction = 'out';
+    const initialValue = 0;
+    super(fanOpPin, direction, initialValue);
+    this.setState(false);
+
+    this.setOffMillis(offMs);
+    this.setOnMillis(onMs);
+    this.setPrevStateChangeMillis(Date.now() - this.offMillis);
     this.emitterManager = emitterManager;
-    this.fanOpPin = fanOpPin;
-    this.fanIO = Gpio.accessible ? new Gpio(this.fanOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
     this.mqttAgent = mqttAgent;
-    if (this.fanOpPin) {
-      this.fanIO.setDirection("out");
-    }
+
     this.emitterManager.on('fanStateChange', fanStateEventHandler);
     //set new reading available
     this.setNewStateAvailable(true);
     this.processCount = 0;
+    this.fanIO = this.IO;
   }
 
   turnOn() {
     this.setState(true);
 
-    if (this.fanOpPin) {
+    if (this.fanIO) {
       // console.log("Turning on vent");
-      this.fanIO.writeSync(1);
+      this.writeIO(1);
     }
 
     // console.log("Turning on vent");
@@ -46,8 +50,8 @@ class Fan extends IOBase {
   turnOff() {
     this.setState(false);
 
-    if (this.fanOpPin) {
-      this.fanIO.writeSync(0);
+    if (this.fanIO) {
+      this.writeIO(0);
     }
     // console.log("Turning off vent");
     Logger.log(logLevel, '==fanIO off==')
@@ -73,18 +77,17 @@ class Fan extends IOBase {
   manageFan() {
     const currentState = this.fanIO.readSync();
     const currentMs = Date.now();
+    const elapsedMs = currentMs - this.prevStateChangeMillis;
 
-    if (currentState == 1) {
+    if (currentState == true) {
       // is it time to turn off?
-      if (currentMs - this.prevStateChangeMillis > this.onMillis) {
+      if (elapsedMs >= this.onMillis) {
         this.turnOff();
-        // this.prevStateChangeMillis = Date.now();
       }
-    } else {
+    } else {// 0
       // is it time to turn on?
-      if (currentMs - this.prevStateChangeMillis > this.offMillis) {
+      if (elapsedMs >= this.offMillis) {
         this.turnOn();
-        // this.prevStateChangeMillis = Date.now();
       }
     }
   }

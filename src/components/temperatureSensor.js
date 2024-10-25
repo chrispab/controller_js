@@ -18,7 +18,7 @@ var temperatureStateChangeHandler = function (state, mqttAgent) {
 
 export default class TemperatureSensor extends IOBase {
   constructor(dhtSensorType, dhtSensorPin, emitterManager, mqttAgent) {
-    super();
+    super(dhtSensorPin, 'in', 0);
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
     this.dhtSensorType = dhtSensorType;
@@ -40,7 +40,7 @@ export default class TemperatureSensor extends IOBase {
     this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
 
     //set new reading available
-    this.setNewStateAvailable(true);
+    // this.setNewStateAvailable(true);
     this.processCount = 0;
   }
 

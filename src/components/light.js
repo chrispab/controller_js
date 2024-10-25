@@ -20,21 +20,28 @@ var lightStateEventHandler = function (state, mqttAgent) {
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export default class Light extends IOBase {
     constructor(RCPin, emitterManager, mqttAgent) {
-        super();
-        this.RCPin = RCPin;
+        super(RCPin, 'out', 0);
+        // this.setState(false); // this.state = false;
+        this.setPrevStateChangeMillis(Date.now() - this.offMillis);
+
+        // this.RCPin = RCPin;
         // this.state = false;
         // this.newStateFlag = true;
         this.RCLoopCount = 0;
-        this.rcIO = Gpio.accessible ? new Gpio(this.RCPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
+
+        // this.rcIO = Gpio.accessible ? new Gpio(this.RCPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
+        // this.rcIO.setDirection('out');
+        // this.rcIO.writeSync(0)
+
         this.currentlySampling = false;
-        this.rcIO.setDirection('out');
-        this.rcIO.writeSync(0)
+
         this.mqttAgent = mqttAgent;
         this.emitterManager = emitterManager;
         this.emitterManager.on('lightStateChange', lightStateEventHandler);
         //set new reading available
-        this.setNewStateAvailable(true);
+        // this.setNewStateAvailable(true);
         this.processCount = 0;
+        // this.lightIO = this.IO;
     }
 
     turnOn() {
@@ -46,10 +53,10 @@ export default class Light extends IOBase {
     }
     readLightState() {
         // console.log(`********this.RCLoopCount: ${this.RCLoopCount}`);
-        const lightState = (this.getState());
+
         // new ldr based routine test
         this.RCtime();  // Measure timing using GPIO4
-
+        const lightState = (this.getState());
         // const lightState = (this.RCLoopCount > 1000) ? false : true;
 
 
@@ -118,21 +125,21 @@ export default class Light extends IOBase {
         // if not currently sampling then start counting
         // console.log(`2.....var self = this:${JSON.stringify(self)}`);
         if (self.currentlySampling == false) {
+            self.currentlySampling = true
             // console.log('---3');
             // charge capacitor
-            self.currentlySampling = true
-            self.rcIO.setDirection('in');
+            self.IO.setDirection('in');
 
 
-            while (self.rcIO.readSync() == 0 && self.RCLoopCount < 999999) {
+            while (self.IO.readSync() == 0 && self.RCLoopCount < 999999) {
                 self.RCLoopCount += 1;
                 // console.log(`self.rcIO.readSync(): ${self.RCLoopCount}`);
             }
             self.setState(self.RCLoopCount > 1000 ? false : true);
 
             // discharge capacitor
-            self.rcIO.setDirection('out');
-            self.rcIO.writeSync(0)
+            self.IO.setDirection('out');
+            self.IO.writeSync(0)
             Logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
 
             Logger.log(logLevel, `>>>>>>>>>>>>>LIVE-self.RCLoopCount: ${self.RCLoopCount}`);
@@ -140,7 +147,7 @@ export default class Light extends IOBase {
             // console.log('World!');
             self.currentlySampling = false
         } else {
-            console.log(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!currentlySampling: ${self.currentlySampling}`);
+            console.log(`!!!!!!!currentlySampling: ${self.currentlySampling}`);
         }
     }
 

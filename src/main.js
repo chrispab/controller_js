@@ -25,7 +25,7 @@ const fan = new Fan(config.hardware.fan.pin, 10000, 10000, emitterManager, mqttA
 const light = new Light(config.hardware.RC.pin, emitterManager, mqttAgent);
 
 const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin, emitterManager, mqttAgent);
-const heater = new Heater();
+const heater = new Heater(config.hardware.heater.pin, 10000, 10000, emitterManager, mqttAgent);
 // const log = new Logger(config.logging.level, config.logging.enabled);
 
 
@@ -38,16 +38,15 @@ mqttAgent.client.on('message', (topic, message) => {
 
 
 //set initial state
-fan.setState(false);
-heater.setState(false); //turn off by default
-vent.setState(false);
+// fan.setState(false);
+// heater.setState(false); //turn off by default
+// vent.setState(false);
 
 setInterval(() => {
     // scan/process inputs
     temperatureSensor.process();
 
     fan.process();
-
 
     heater.process();
 
@@ -57,10 +56,8 @@ setInterval(() => {
     mqttAgent.process();
     process();
 
-
     // vent.process();
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), 21, light.getState(), Date.now());
-
 
 }, 10000);
 
