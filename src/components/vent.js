@@ -36,6 +36,7 @@ export default class Vent extends IOBase {
     this.vent_override = false;
     this.ventState = 1;
     this.prev_vent_millis
+    this.ventDark_status = 'active';
   }
 
 
@@ -116,9 +117,10 @@ export default class Vent extends IOBase {
       if (this.ventDark_status == 'inactive') {
         Logger.warn('lets start the vent dark ON period');
         // lets start the vent dark ON period
-        this.ventDark_status = ON;
-        this.ventState = ON;
-        this.speed_state = OFF;
+        this.ventDark_status = true;
+        // this.ventState = ON;
+        this.turnOff();
+        this.speedPercent = 0;
         // set time it was switched ON
         this.ventDark_ON_startTime = current_millis;
         return;
@@ -129,9 +131,9 @@ export default class Vent extends IOBase {
         Logger.warn('# now at end of ON cylce');
         // now at end of ON cylce
         // enable off period
-        this.ventDark_status = OFF;
-        this.ventState = OFF;
-        this.speed_state = OFF;
+        this.ventDark_status = false;
+        this.ventState = false;
+        this.speed_state = false;
         // set time it was switched ON
         this.ventDark_OFF_startTime = current_millis;
         return;
@@ -143,8 +145,9 @@ export default class Vent extends IOBase {
         // now at end of OFF cylce
         // so - enable ON period
         this.ventDark_status = true;
-        this.ventState = true;
-        this.speed_state = false;
+        // this.ventState = true;
+        this.turnOn();
+        this.speedPercent = 0;
         // set time it was switched ON
         this.ventDark_ON_startTime = current_millis;
         return;
