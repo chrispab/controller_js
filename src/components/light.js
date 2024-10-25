@@ -5,17 +5,21 @@ import { Gpio } from 'onoff';
 // const logLevel = 'info';
 const logLevel = 'debug';
 
-// 
+import config from '../config/config.json' assert { type: 'json' };
+
 import Logger from "../services/Logger.js";
 
 
-
+var lightStateEventHandler = function (state, mqttAgent) {
+    Logger.log('warn', 'PUBLISH Light: ' + `${state}`);
+    mqttAgent.client.publish(config.mqtt.outTopic + "/light_state", `${state ? 1 : 0}`);
+}
 // wait(ms) {
 //     return new Promise(resolve => setTimeout(resolve, ms));
 // }
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export default class Light extends IOBase {
-    constructor(RCPin) {
+    constructor(RCPin, emitterManager, mqttAgent) {
         super();
         this.RCPin = RCPin;
         // this.state = false;
@@ -25,6 +29,12 @@ export default class Light extends IOBase {
         this.currentlySampling = false;
         this.rcIO.setDirection('out');
         this.rcIO.writeSync(0)
+        this.mqttAgent = mqttAgent;
+        this.emitterManager = emitterManager;
+        this.emitterManager.on('lightStateChange', lightStateEventHandler);
+        //set new reading available
+        this.setNewStateAvailable(true);
+        this.processCount = 0;
     }
 
     turnOn() {
@@ -42,10 +52,10 @@ export default class Light extends IOBase {
 
         // const lightState = (this.RCLoopCount > 1000) ? false : true;
 
-        
+
 
         // console.log(`*********lightState: ${lightState}`);
-        
+
         // this.state = lightState
         return this.setState(lightState)
     }
@@ -88,8 +98,8 @@ export default class Light extends IOBase {
     // wait(ms) {
     //     return new Promise(resolve => setTimeout(resolve, ms));
     // }
-    
-    
+
+
     /**
      * Sample the LDR (Light Dependent Resistor) by discharging and recharging
      * the capacitor connected to the LDR and counting the number of loops
@@ -101,7 +111,7 @@ export default class Light extends IOBase {
      * The sampling is only performed if the currentlySampling flag is false.
      * This prevents multiple samples from being taken at the same time.
      */
-    sampleLDR (self) {
+    sampleLDR(self) {
         // console.log('---2');
         // Count loops until voltage across capacitor reads high on GPIO
         // console.log(`out self.rcIO.readSync(): ${self.rcIO.readSync()}`);
@@ -112,7 +122,7 @@ export default class Light extends IOBase {
             // charge capacitor
             self.currentlySampling = true
             self.rcIO.setDirection('in');
-            
+
 
             while (self.rcIO.readSync() == 0 && self.RCLoopCount < 999999) {
                 self.RCLoopCount += 1;
@@ -145,6 +155,8 @@ export default class Light extends IOBase {
             }
 
             this.getStateAndClearNewStateFlag();
+            this.emitterManager.emit('lightStateChange', this.getState(), this.mqttAgent);
+
         }
     }
 

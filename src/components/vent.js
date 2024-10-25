@@ -37,6 +37,9 @@ export default class Vent extends IOBase {
     this.ventState = 1;
     this.prev_vent_millis
     this.ventDark_status = 'active';
+    //set new reading available
+    this.setNewStateAvailable(true);
+    this.processCount = 0;
   }
 
 

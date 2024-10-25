@@ -17,7 +17,7 @@ class Fan extends IOBase {
     super();
     this.offMillis = offMs;
     this.onMillis = onMs;
-    this.prevStateChangeMillis = Date.now()-this.offMillis;
+    this.prevStateChangeMillis = Date.now() - this.offMillis;
     this.emitterManager = emitterManager;
     this.fanOpPin = fanOpPin;
     this.fanIO = Gpio.accessible ? new Gpio(this.fanOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
@@ -26,6 +26,9 @@ class Fan extends IOBase {
       this.fanIO.setDirection("out");
     }
     this.emitterManager.on('fanStateChange', fanStateEventHandler);
+    //set new reading available
+    this.setNewStateAvailable(true);
+    this.processCount = 0;
   }
 
   turnOn() {

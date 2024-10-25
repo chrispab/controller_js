@@ -20,9 +20,9 @@ import mqttAgent from "./services/mqttAgent.js";
 // const mqttAgent = new MqttAgent(client);
 
 //componenmts
-const vent = new Vent(config.hardware.vent.pin, 20000, 60000, emitterManager, mqttAgent);
-const fan = new Fan(config.hardware.fan.pin, 10000, 60000, emitterManager, mqttAgent);
-const light = new Light(config.hardware.RC.pin);
+const vent = new Vent(config.hardware.vent.pin, 50000, 19000, emitterManager, mqttAgent);
+const fan = new Fan(config.hardware.fan.pin, 10000, 10000, emitterManager, mqttAgent);
+const light = new Light(config.hardware.RC.pin, emitterManager, mqttAgent);
 
 const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin, emitterManager, mqttAgent);
 const heater = new Heater();

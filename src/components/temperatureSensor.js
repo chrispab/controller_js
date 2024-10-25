@@ -39,6 +39,9 @@ export default class TemperatureSensor extends IOBase {
     }
     this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
 
+    //set new reading available
+    this.setNewStateAvailable(true);
+    this.processCount = 0;
   }
 
   read() {
