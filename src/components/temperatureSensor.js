@@ -7,11 +7,11 @@ import sensor from 'node-dht-sensor';
 // var sensor = require("node-dht-sensor");
 import Logger from "./../services/Logger.js";
 // import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
-import config2 from "config";
+import cfg from "config";
 
 var temperatureStateChangeHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${state}`);
-  mqttAgent.client.publish(config2.get("mqtt.outTopic") + "/temperature_state", `${state}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/temperature_state", `${state}`);
 }
 
 

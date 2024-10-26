@@ -6,14 +6,14 @@ import { Gpio } from 'onoff';
 const logLevel = 'debug';
 
 // import config from '../config/config.json' assert { type: 'json' };
-import config2 from "config";
+import cfg from "config";
 
 import Logger from "../services/Logger.js";
 
 
 var lightStateEventHandler = function (state, mqttAgent) {
     Logger.log('warn', 'MQTT-PUB NEW Light: ' + `${state}`);
-    mqttAgent.client.publish(config2.get("mqtt.outTopic") + "/light_state", `${state ? 1 : 0}`);
+    mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/light_state", `${state ? 1 : 0}`);
 }
 
 

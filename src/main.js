@@ -12,8 +12,8 @@ import Light from "./components/light.js";
 
 // import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
-// var config2 = require('config');
-import config2 from "config";
+// var cfg = require('config');
+import cfg from "config";
 
 //import services
 //single instance
@@ -69,21 +69,21 @@ const logger = winston.createLogger({
 // }
 
 //componenmts
-const vent = new Vent(config2.get("hardware.vent.pin"), 76000, 10000, emitterManager, mqttAgent);
-const fan = new Fan(config2.get("hardware.fan.pin"), 20000, 20000, emitterManager, mqttAgent);
-const light = new Light(config2.get("hardware.RC.pin"), emitterManager, mqttAgent);
+const vent = new Vent(cfg.get("hardware.vent.pin"), 76000, 10000, emitterManager, mqttAgent);
+const fan = new Fan(cfg.get("hardware.fan.pin"), 20000, 20000, emitterManager, mqttAgent);
+const light = new Light(cfg.get("hardware.RC.pin"), emitterManager, mqttAgent);
 
-const temperatureSensor = new TemperatureSensor(config2.get("hardware.dhtSensor.type"), config2.get("hardware.dhtSensor.pin"), emitterManager, mqttAgent);
-const heater = new Heater(config2.get("hardware.heater.pin"), 10000, 10000, emitterManager, mqttAgent);
+const temperatureSensor = new TemperatureSensor(cfg.get("hardware.dhtSensor.type"), cfg.get("hardware.dhtSensor.pin"), emitterManager, mqttAgent);
+const heater = new Heater(cfg.get("hardware.heater.pin"), 10000, 10000, emitterManager, mqttAgent);
 // const log = new Logger(config.logging.level, config.logging.enabled);
 
 
-mqttAgent.client.connect(config2.get("mqtt.brokerUrl"));
-mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
+// mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"));
+// mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
-mqttAgent.client.on('message', (topic, message) => {
-    // console.log(`Received message on topic ${topic}: ${message}`);
-});
+// mqttAgent.client.on('message', (topic, message) => {
+//     // console.log(`Received message on topic ${topic}: ${message}`);
+// });
 
 
 //set initial state

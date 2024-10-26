@@ -3,7 +3,7 @@
         "brokerUrl": "mqtt://192.168.0.100",
         "username": "pi",
         "password": "raspberry",
-        "outTopic": "zone_2"
+        "outTopic": "Zone1"
     },
     "zone": {
         "name": "zone_1"

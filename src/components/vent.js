@@ -6,12 +6,12 @@ import { Gpio } from 'onoff';
 const logLevel = 'debug';
 
 // import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
-import config2 from "config";
+import cfg from "config";
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT-PUB NEW Vent: ' + `${state}`);
-  mqttAgent.client.publish(config2.get("mqtt.outTopic") + "/vent_state", `${state ? 1 : 0}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/vent_state", `${state ? 1 : 0}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
 
@@ -37,7 +37,7 @@ export default class Vent extends IOBase {
     // from config
     // this.onDelta = config.vent.onDelta;
     // this.offDelta = config.vent.offDelta;
-    this.speedPercent = config2.get("vent.speedPercent");
+    this.speedPercent = cfg.get("vent.speedPercent");
     this.vent_lon_sp_offset = 0.1;
     this.vent_override = false;
     this.ventState = 1;

@@ -18,7 +18,7 @@ const Logger = createLogger({
     format.splat(),
     format.json()
   ),
-  defaultMeta: { service: 'controller_js' },
+  // defaultMeta: { service: 'controller_js' },
   transports: [
     //
     // - Write to all logs with level `info` and below to `quick-start-combined.log`.
