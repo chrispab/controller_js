@@ -1,7 +1,8 @@
 
 import Logger from "./Logger.js";
 
-import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
+import config2 from "config";
+
 //Assign the event handler to an event:
 // eventEmitter.on('scream', ventEvent);
 // import mqtt from 'mqtt';
@@ -13,11 +14,11 @@ import mqtt from 'mqtt';
 
 class MqttAgent {
     constructor() {
-        this.client = mqtt.connect(config.mqtt.brokerUrl);
+        this.client = mqtt.connect(config2.get("mqtt.brokerUrl"));
         // this.brokerUrl = brokerUrl;
         this.processCount = 0;
         // this.mqttClient = mqtt.connect(this.brokerUrl);
-        this.telemetryInterval = config.telemetry.interval;
+        this.telemetryInterval = config2.get("telemetry.interval");
         this.lastTelemetryMs = Date.now();
         this.logLevel = 'info';
     }
@@ -26,7 +27,7 @@ class MqttAgent {
     telemetry() {
         if( this.lastTelemetryMs + this.telemetryInterval < Date.now()) {
             this.lastTelemetryMs = Date.now();
-            this.client.publish(config.mqtt.outTopic + "/telemetry", `${this.processCount}`);
+            this.client.publish(config2.get("mqtt.outTopic") + "/telemetry", `${this.processCount}`);
             Logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${this.processCount}`);
 
         }

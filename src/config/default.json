@@ -4,7 +4,6 @@
         "username": "pi",
         "password": "raspberry",
         "outTopic": "zone_2"
-        
     },
     "zone": {
         "name": "zone_1"
@@ -17,11 +16,10 @@
         "enabled": true,
         "interval": 60000
     },
-    "logging": { 
+    "logging": {
         "enabled": true,
         "level": "info"
     },
-
     "log_level": "info",
     "hardware": {
         "dhtSensor": {
@@ -44,12 +42,10 @@
             "pin": 27,
             "physicalPin": 13
         }
-
     },
     "high_setpoint": 21.5,
     "low_setpoint": 16.5,
-    "vent":{
+    "vent": {
         "speedPercent": 50
     }
-
 }

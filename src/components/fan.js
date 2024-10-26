@@ -4,11 +4,12 @@ import Logger from "../services/Logger.js";
 
 import { Gpio } from 'onoff';
 
-import config from '../config/config.json' assert { type: 'json' };
+// import config from '../config/config.json' assert { type: 'json' };
+import config2 from "config";
 
 var fanStateEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT-PUB NEW Fan: ' + `${state}`);
-  mqttAgent.client.publish(config.mqtt.outTopic + "/fan_state", `${state ? 1 : 0}`);
+  mqttAgent.client.publish(config2.get("mqtt.outTopic") + "/fan_state", `${state ? 1 : 0}`);
 }
 
 const logLevel = 'debug';

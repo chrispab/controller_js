@@ -1,0 +1,38 @@
+https://stackoverflow.com/questions/64781386/config-file-in-nodejs-using-npm-config
+
+
+
+First you should install this package
+
+npm install config
+
+After that create config file into your project directory(name "config" is a must). In this file create development.json and production.json files(these names are optional). Content of development.json could be like this
+
+{
+  "SERVER" : {
+     "port" : 5000
+  },
+
+  "PASSWORDHASH" : {
+    "saltRounds" : 10
+  }
+}
+
+In your javascript file for example in app.js file, first you should include the library, and then you can get configuration informations via this module
+
+const config = require('config');
+const port = config.get("SERVER.port");
+app.listen(port);
+
+Last step should be add this development.json file name to NODE_ENV variable
+
+NODE_ENV=development node app.js
+
+So if you want to update your json file based on new data coming from your frontend, you can basically do this
+
+var fs = require('fs');
+var file_content = fs.readFileSync("development.json");
+var content = JSON.parse(file_content);
+content.SERVER.port = 6000;
+fs.writeFileSync("development.json", JSON.stringify(content));
+

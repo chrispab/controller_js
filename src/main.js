@@ -10,8 +10,10 @@ import Light from "./components/light.js";
 
 // import Logger from "./services/Logger.js";
 
-import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
+// import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
+// var config2 = require('config');
+import config2 from "config";
 
 //import services
 //single instance
@@ -19,17 +21,64 @@ import emitterManager from "./services/emitterManager.js";
 import mqttAgent from "./services/mqttAgent.js";
 // const mqttAgent = new MqttAgent(client);
 
-//componenmts
-const vent = new Vent(config.hardware.vent.pin, 20000, 5000, emitterManager, mqttAgent);
-const fan = new Fan(config.hardware.fan.pin, 10000, 10000, emitterManager, mqttAgent);
-const light = new Light(config.hardware.RC.pin, emitterManager, mqttAgent);
 
-const temperatureSensor = new TemperatureSensor(config.hardware.dhtSensor.type, config.hardware.dhtSensor.pin, emitterManager, mqttAgent);
-const heater = new Heater(config.hardware.heater.pin, 10000, 10000, emitterManager, mqttAgent);
+// const winston = require('winston');
+import winston from 'winston';
+import { format } from 'winston';
+import { transports } from 'winston';
+// const logger = winston.createLogger({
+//     level: 'info',
+//     format: winston.format.json(),
+//     transports: [new winston.transports.Console()],
+//   });
+
+//   const logger = winston.createLogger({
+//     level: 'info',
+//     format: winston.format.cli(),
+//     transports: [new winston.transports.Console()],
+//   });
+const logger = winston.createLogger({
+    // level: 'debug',
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'HH:mm:ss'
+        }),
+        format.errors({ stack: true }),
+        format.splat(),
+        format.json()
+    ),
+    defaultMeta: { service: 'controller_js' },
+    transports: [
+        // new winston.transports.Console(),
+        new winston.transports.File({ filename: 'logs/controller_js-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/controller_js-combined.log' })
+    ]
+});
+//
+// If we're not in production then **ALSO** log to the `console`
+// with the colorized simple format.
+//
+// if (process.env.NODE_ENV !== 'production') {
+    logger.add(new transports.Console({
+        format: format.combine(
+            format.colorize(),
+            format.simple()
+        )
+    }));
+// }
+
+//componenmts
+const vent = new Vent(config2.get("hardware.vent.pin"), 76000, 10000, emitterManager, mqttAgent);
+const fan = new Fan(config2.get("hardware.fan.pin"), 20000, 20000, emitterManager, mqttAgent);
+const light = new Light(config2.get("hardware.RC.pin"), emitterManager, mqttAgent);
+
+const temperatureSensor = new TemperatureSensor(config2.get("hardware.dhtSensor.type"), config2.get("hardware.dhtSensor.pin"), emitterManager, mqttAgent);
+const heater = new Heater(config2.get("hardware.heater.pin"), 10000, 10000, emitterManager, mqttAgent);
 // const log = new Logger(config.logging.level, config.logging.enabled);
 
 
-mqttAgent.client.connect(config.mqtt.brokerUrl);
+mqttAgent.client.connect(config2.get("mqtt.brokerUrl"));
 mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
 
 mqttAgent.client.on('message', (topic, message) => {
@@ -44,6 +93,8 @@ mqttAgent.client.on('message', (topic, message) => {
 
 setInterval(() => {
     // scan/process inputs
+    // logger.error(`Sensor:${temperatureSensor.getSensorStr()}. Fan: ${fan.getState()}, Heater: ${heater.getState()}`);
+
     temperatureSensor.process();
 
     fan.process();
@@ -52,12 +103,11 @@ setInterval(() => {
 
     light.process();
 
-    // Logger.info(temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     mqttAgent.process();
     process();
 
     // vent.process();
-    const setPoint=21.5;
+    const setPoint = 21.5;
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), setPoint, light.getState(), Date.now());
 
 }, 2000);
@@ -79,4 +129,12 @@ function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     // console.log(os.hostname())
+}
+
+function saveConfig() {
+    var fs = require('fs');
+    var file_content = fs.readFileSync("default.json");
+    var content = JSON.parse(file_content);
+    content.SERVER.port = 6000;
+    fs.writeFileSync("defalt2.json", JSON.stringify(content));
 }

@@ -1,4 +1,5 @@
 import IOBase from "./IOBase.js";
+import config2 from "config";
 
 class Heater extends IOBase {
     constructor(heaterIOPin) {
