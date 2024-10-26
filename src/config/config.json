@@ -29,8 +29,8 @@
             "type": "22"
         },
         "fan": {
-            "pin": 11,
-            "physicalPin": 23
+            "pin": 13,
+            "physicalPin": 33
         },
         "heater": {
             "pin": 5,

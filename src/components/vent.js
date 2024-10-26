@@ -9,16 +9,16 @@ import config from '../config/config.json' assert { type: 'json' }; // NodeJS ve
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'PUBLISH Vent: ' + `${state}`);
+  Logger.log('warn', 'MQTT-PUB NEW Vent: ' + `${state}`);
   mqttAgent.client.publish(config.mqtt.outTopic + "/vent_state", `${state ? 1 : 0}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
 
 export default class Vent extends IOBase {
   constructor(ventOpPin, onMs, offMs, emitterManager, mqttAgent) {
-    const direction = 'out';
-    const initialValue = 0;
-    super(ventOpPin, direction, initialValue);
+    // const direction = ;
+    // const initialValue = 0;
+    super(ventOpPin, 'out', 0);
     this.setState(false); // this.state = false;
     this.setOffMillis(offMs);
     this.setOnMillis(onMs);
@@ -27,18 +27,11 @@ export default class Vent extends IOBase {
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
 
-    this.ventDarkOnDelta = 45000;  // vent on time
-    this.ventDarkOffDelta = 45000; 
+    this.ventDarkOnDelta = 10000;  // vent on time
+    this.ventDarkOffDelta = 60000;
     this.ventDark_ON_startTime = 0;
     this.ventDark_OFF_startTime = 0;
 
-
-    // this.ventOpPin = ventOpPin;
-    // this.ventIO = Gpio.accessible ? new Gpio(this.ventOpPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
-
-    // if (this.ventOpPin) {
-    //   this.ventIO.direction("out");
-    // }
     this.emitterManager.on('ventStateChange', ventStateEventHandler);
     // from config
     // this.onDelta = config.vent.onDelta;
@@ -60,10 +53,14 @@ export default class Vent extends IOBase {
   turnOn() {
     this.setState(true);
 
-    if (this.IO) {
+    if (Gpio.accessible) {
       // console.log("Turning on vent");
       this.writeIO(1);
+    }else{
+      Logger.log(logLevel, '==Vent IO undefined==')
     }
+    this.emitIfStateChanged();
+
     // console.log("Turning on vent");
     Logger.log(logLevel, '==Vent on==')
   }
@@ -71,11 +68,12 @@ export default class Vent extends IOBase {
   turnOff() {
     this.setState(false);
 
-    if (this.IO) {
+    if (Gpio.accessible) {
       this.writeIO(0);
     }
+    this.emitIfStateChanged();
     // console.log("Turning off vent");
-    Logger.log(logLevel, '==Vent off==')
+    // Logger.log(logLevel, '==Vent off==')
   }
 
   setSpeedPercent(percent) {
@@ -103,32 +101,27 @@ export default class Vent extends IOBase {
   manageVent() {
     const currentState = this.ventIO.readSync();
     const currentMs = Date.now();
-    const elapsedMs = currentMs - this.prevStateChangeMillis;
+    const elapsedMsSinceLastStateChange = currentMs - this.prevStateChangeMillis;
 
     if (currentState == 1) {
       // is it time to turn off?
-      if (elapsedMs >= this.onMillis) {
+      if (elapsedMsSinceLastStateChange >= this.onMillis) {
         this.turnOff();
       }
     } else {// 0
       // is it time to turn on?
-      if (elapsedMs >= this.offMillis) {
+      if (elapsedMsSinceLastStateChange >= this.offMillis) {
         this.turnOn();
       }
     }
   }
 
   control(currentTemp, currentHumi, target_temp, lightState, current_millis) {
-    // refresh in case changed while running
-    // this.vent_on_delta = cfg.getItemValueFromConfig('ventOnDelta');  // vent on time
-    // this.vent_off_delta = cfg.getItemValueFromConfig('ventOffDelta');  // vent off time
-    // this.ventDarkOnDelta = cfg.getItemValueFromConfig('ventDarkOnDelta');  // vent on time
-    // this.ventDarkOffDelta = cfg.getItemValueFromConfig('ventDarkOffDelta');  // vent on time
 
     // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
     // loff vent/cooling
-    // const elapsedMs = current_millis - this.lastVisitMs;
-    const elapsedMs = current_millis - this.getPrevStateChangeMillis();
+    // const elapsedMsSinceLastStateChange = current_millis - this.lastVisitMs;
+    const elapsedMsSinceLastStateChange = current_millis - this.getPrevStateChangeMillis();
     this.lastVisitMs = Date.now();
 
     // if light off - do a minimal vent routine
@@ -136,7 +129,7 @@ export default class Vent extends IOBase {
       // this.ventState = OFF;
       // this.speed_state = OFF;
       if (this.ventDark_status == 'inactive') {
-        Logger.warn('lets start the vent dark ON period');
+        Logger.warn('VENT: lets start the vent dark ON period');
         // lets start the vent dark ON period
         this.ventDark_status = true;
         // this.ventState = ON;
@@ -144,16 +137,18 @@ export default class Vent extends IOBase {
         this.speedPercent = 0;
         // set time it was switched ON
         this.ventDark_ON_startTime = current_millis;
+
         return;
       }
 
       // if at end of ON period
       if ((this.ventDark_status == true) && (current_millis > (this.ventDark_ON_startTime + this.ventDarkOnDelta))) {
-        Logger.warn('# now at end of ON cylce');
+        Logger.warn('VENT now at end of ON cylce');
         // now at end of ON cylce
         // enable off period
         this.ventDark_status = false;
-        this.ventState = false;
+        // this.ventState = false;
+        this.turnOff();
         this.speed_state = false;
         // set time it was switched ON
         this.ventDark_OFF_startTime = current_millis;
@@ -162,7 +157,7 @@ export default class Vent extends IOBase {
 
       // if at end of OFF period
       if ((this.ventDark_status == false) && (current_millis > (this.ventDark_OFF_startTime + this.ventDarkOffDelta))) {
-        Logger.warn('now at end of OFF cylce');
+        // Logger.warn('VENT now at end of OFF cylce');
         // now at end of OFF cylce
         // so - enable ON period
         this.ventDark_status = true;
@@ -203,13 +198,14 @@ export default class Vent extends IOBase {
       }
       // Logger.warn("---1");
 
-      if ((lightState == true) && (currentTemp > (target_temp + this.vent_lon_sp_offset))) {
+    // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
+
+      if ((currentTemp > (target_temp + this.vent_lon_sp_offset))) {
         this.vent_override = true;
         // this.ventState = true;
         this.turnOn();
         // Logger.warn("---2");
 
-        // this.prevStateChangeMillis = current_millis;  // retrigeer time period
         // Logger.info("VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse")
       }
       // temp below target, change state to OFF after pulse delay
@@ -220,11 +216,11 @@ export default class Vent extends IOBase {
         this.turnOff();
         this.vent_override = false;
         // this.prev_vent_millis = current_millis;
-        Logger.info("..VENT OFF - temp ok, OVERRIDE - OFF")
+        // Logger.info("VENT OFF - temp ok, OVERRIDE - OFF")
       } else if (this.vent_override == true) {
         // Logger.warn("---4");
 
-        Logger.info('..Vent on - override in progress')
+        // Logger.info('VENT ON - override in progress')
       }
       // Logger.warn("---5");
 
@@ -234,9 +230,9 @@ export default class Vent extends IOBase {
 
         if (this.getState() == false) {  // if the vent is off, we must wait for the interval to expire before turning it on
           // iftime is up, so change the state to ON
-          if (elapsedMs >= this.offMillis) {
+          if (elapsedMsSinceLastStateChange >= this.offMillis) {
             this.turnOn();  // vent = true;
-            Logger.warn("VENT ON cycle start")
+            // Logger.warn("VENT ON cycle start")
             // Logger.warn("---7");
 
           } else {
@@ -248,11 +244,11 @@ export default class Vent extends IOBase {
           // vent is on, we must wait for the 'on' duration to expire before
           // turning it off
           // time up, change state to OFF
-          if ((elapsedMs) >= this.onMillis) {
+          if ((elapsedMsSinceLastStateChange) >= this.onMillis) {
             // Logger.warn("---9");
 
             this.turnOff();
-            Logger.warn("VENT OFF cycle start")
+            // Logger.warn("VENT OFF cycle start")
           } else {
             // Logger.info('Vent ON - during cycle ON period')
             // Logger.warn("---10");
@@ -262,6 +258,11 @@ export default class Vent extends IOBase {
       }
     }
 
+
+    // this.lastVisitMs = Date.now();
+  }
+
+  emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() == true) {
         Logger.log(logLevel, "Vent is on");
@@ -270,13 +271,6 @@ export default class Vent extends IOBase {
       }
       this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
     }
-
-
-    // this.lastVisitMs = Date.now();
   }
-
-
-
 }
-
 

@@ -7,7 +7,7 @@ import { Gpio } from 'onoff';
 import config from '../config/config.json' assert { type: 'json' };
 
 var fanStateEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'PUBLISH Fan: ' + `${state}`);
+  Logger.log('warn', 'MQTT-PUB NEW Fan: ' + `${state}`);
   mqttAgent.client.publish(config.mqtt.outTopic + "/fan_state", `${state ? 1 : 0}`);
 }
 
@@ -17,14 +17,13 @@ const logLevel = 'debug';
 
 class Fan extends IOBase {
   constructor(fanOpPin, onMs, offMs, emitterManager, mqttAgent) {
-    const direction = 'out';
-    const initialValue = 0;
-    super(fanOpPin, direction, initialValue);
+    super(fanOpPin, 'out', 0);
     this.setState(false);
 
     this.setOffMillis(offMs);
     this.setOnMillis(onMs);
     this.setPrevStateChangeMillis(Date.now() - this.offMillis);
+
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
 
@@ -32,15 +31,17 @@ class Fan extends IOBase {
     //set new reading available
     this.setNewStateAvailable(true);
     this.processCount = 0;
-    this.fanIO = this.IO;
+    // this.fanIO = this.IO;
   }
 
   turnOn() {
     this.setState(true);
 
-    if (this.fanIO) {
+    if (Gpio.accessible) {
       // console.log("Turning on vent");
       this.writeIO(1);
+    } else {
+      Logger.error('==fanIO undefined==')
     }
 
     // console.log("Turning on vent");
@@ -50,8 +51,10 @@ class Fan extends IOBase {
   turnOff() {
     this.setState(false);
 
-    if (this.fanIO) {
+    if (Gpio.accessible) {
       this.writeIO(0);
+    } else {
+      Logger.error('==fanIO undefined==')
     }
     // console.log("Turning off vent");
     Logger.log(logLevel, '==fanIO off==')
@@ -75,9 +78,9 @@ class Fan extends IOBase {
   }
 
   manageFan() {
-    const currentState = this.fanIO.readSync();
+    const currentState = this.readIO();
     const currentMs = Date.now();
-    const elapsedMs = currentMs - this.prevStateChangeMillis;
+    const elapsedMs = currentMs - this.getPrevStateChangeMillis();
 
     if (currentState == true) {
       // is it time to turn off?

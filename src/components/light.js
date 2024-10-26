@@ -11,37 +11,31 @@ import Logger from "../services/Logger.js";
 
 
 var lightStateEventHandler = function (state, mqttAgent) {
-    Logger.log('warn', 'PUBLISH Light: ' + `${state}`);
+    Logger.log('warn', 'MQTT-PUB NEW Light: ' + `${state}`);
     mqttAgent.client.publish(config.mqtt.outTopic + "/light_state", `${state ? 1 : 0}`);
 }
-// wait(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
+
+
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export default class Light extends IOBase {
+
+    #currentlySamplingLightSensor;
+    #processCount;
+    #RCLoopCount;
     constructor(RCPin, emitterManager, mqttAgent) {
         super(RCPin, 'out', 0);
-        // this.setState(false); // this.state = false;
         this.setPrevStateChangeMillis(Date.now() - this.offMillis);
 
-        // this.RCPin = RCPin;
-        // this.state = false;
-        // this.newStateFlag = true;
-        this.RCLoopCount = 0;
+        this.#RCLoopCount = 0;
 
-        // this.rcIO = Gpio.accessible ? new Gpio(this.RCPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
-        // this.rcIO.setDirection('out');
-        // this.rcIO.writeSync(0)
-
-        this.currentlySampling = false;
+        this.#currentlySamplingLightSensor = false;
 
         this.mqttAgent = mqttAgent;
         this.emitterManager = emitterManager;
         this.emitterManager.on('lightStateChange', lightStateEventHandler);
         //set new reading available
         // this.setNewStateAvailable(true);
-        this.processCount = 0;
-        // this.lightIO = this.IO;
+        this.#processCount = 0;
     }
 
     turnOn() {
@@ -51,16 +45,16 @@ export default class Light extends IOBase {
     turnOff() {
         this.setState(false);
     }
+
     readLightState() {
-        // console.log(`********this.RCLoopCount: ${this.RCLoopCount}`);
+        // console.log(`********this.#RCLoopCount: ${this.#RCLoopCount}`);
 
         // new ldr based routine test
-        this.RCtime();  // Measure timing using GPIO4
+        this.initiateGetRCChargeLoopCount();  // Measure timing using GPIO4
+
+        // const lightState = (this.#RCLoopCount > 1000) ? false : true;
+        this.setState(this.#RCLoopCount > 1000 ? false : true);
         const lightState = (this.getState());
-        // const lightState = (this.RCLoopCount > 1000) ? false : true;
-
-
-
         // console.log(`*********lightState: ${lightState}`);
 
         // this.state = lightState
@@ -79,10 +73,10 @@ export default class Light extends IOBase {
      * 
      * @returns {number} The number of loops until the voltage is read as HIGH.
      */
-    RCtime() {
-        // console.log("==rctime");
+    initiateGetRCChargeLoopCount() {
+        // console.log("==initiateGetRCChargeLoopCount");
 
-        this.RCLoopCount = 0
+        this.#RCLoopCount = 0
         if (Gpio.accessible) {
             // Discharge capacitor
             // this.rcIO.setDirection('out');
@@ -92,14 +86,14 @@ export default class Light extends IOBase {
             // console.log(`1.....var self = this:${JSON.stringify(self)}`);
 
             wait(50)
-                .then(() => this.sampleLDR(self))
+                .then(() => this.readLDRChargeLoopCount(self))
                 .catch(console.error);
 
         } else {
-            this.RCLoopCount = 111
-            console.log(`DEMO-Gpio not accessible RCLoopCount: ${this.RCLoopCount}`);
+            this.#RCLoopCount = 111
+            console.log(`DEMO-Gpio not accessible #RCLoopCount: ${this.#RCLoopCount}`);
         }
-        return this.RCLoopCount
+        return this.#RCLoopCount
     }
 
     // wait(ms) {
@@ -107,47 +101,48 @@ export default class Light extends IOBase {
     // }
 
 
+
     /**
-     * Sample the LDR (Light Dependent Resistor) by discharging and recharging
-     * the capacitor connected to the LDR and counting the number of loops
-     * until the voltage across the capacitor reads high on the GPIO.
-     *
-     * If the count is greater than 1000, the state is set to false (dark).
-     * Otherwise the state is set to true (light).
-     *
-     * The sampling is only performed if the currentlySampling flag is false.
-     * This prevents multiple samples from being taken at the same time.
+     * Measures the loop count required for the voltage across the capacitor to be read as high by the GPIO.
+     * The method ensures the light sensor is not currently being sampled before proceeding to:
+     * 1. Set the IO direction to input to charge the capacitor.
+     * 2. Increment the loop count until a high voltage is read or a maximum count is reached.
+     * 3. Discharge the capacitor by setting the IO direction to output and writing a low value.
+     * The loop count is logged for debugging purposes.
+     * 
+     * @param {object} self - The context object containing the state and methods for IO operations.
      */
-    sampleLDR(self) {
+    readLDRChargeLoopCount(self) {
         // console.log('---2');
         // Count loops until voltage across capacitor reads high on GPIO
         // console.log(`out self.rcIO.readSync(): ${self.rcIO.readSync()}`);
         // if not currently sampling then start counting
         // console.log(`2.....var self = this:${JSON.stringify(self)}`);
-        if (self.currentlySampling == false) {
-            self.currentlySampling = true
+        if (self.#currentlySamplingLightSensor == false) {
+            self.#currentlySamplingLightSensor = true
             // console.log('---3');
+
             // charge capacitor
-            self.IO.setDirection('in');
+            self.setIODirection('in');
 
-
-            while (self.IO.readSync() == 0 && self.RCLoopCount < 999999) {
-                self.RCLoopCount += 1;
-                // console.log(`self.rcIO.readSync(): ${self.RCLoopCount}`);
+            while (self.readIO() == 0 && self.#RCLoopCount < 999999) {
+                self.#RCLoopCount += 1;
+                // console.log(`self.rcIO.readSync(): ${self.#RCLoopCount}`);
             }
-            self.setState(self.RCLoopCount > 1000 ? false : true);
+            // self.setState(self.#RCLoopCount > 1000 ? false : true);
 
             // discharge capacitor
-            self.IO.setDirection('out');
-            self.IO.writeSync(0)
+            self.setIODirection('out');
+            self.writeIO(0);
+
             Logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
 
-            Logger.log(logLevel, `>>>>>>>>>>>>>LIVE-self.RCLoopCount: ${self.RCLoopCount}`);
-            // console.log(`>>>>>this.RCLoopCount: ${self.RCLoopCount}`);
+            Logger.log(logLevel, `>>>>>>>>>>>>>LIVE-self.#RCLoopCount: ${self.#RCLoopCount}`);
+            // console.log(`>>>>>this.#RCLoopCount: ${self.#RCLoopCount}`);
             // console.log('World!');
-            self.currentlySampling = false
+            self.#currentlySamplingLightSensor = false
         } else {
-            console.log(`!!!!!!!currentlySampling: ${self.currentlySampling}`);
+            console.log(`!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
         }
     }
 
@@ -160,24 +155,22 @@ export default class Light extends IOBase {
             } else {
                 console.log("Light is off");
             }
-
             this.getStateAndClearNewStateFlag();
             this.emitterManager.emit('lightStateChange', this.getState(), this.mqttAgent);
-
         }
     }
 
-    checkAccessible() {
-        if (Gpio.accessible) {
-            led = new Gpio(17, 'out');
-            // more real code here
-        } else {
-            // led = {
-            //     writeSync: value => {
-            //         console.log('virtual led now uses value: ' + value);
-            //     }
-            // };
-        }
-    }
+    // checkAccessible() {
+    //     if (Gpio.accessible) {
+    //         led = new Gpio(17, 'out');
+    //         // more real code here
+    //     } else {
+    //         // led = {
+    //         //     writeSync: value => {
+    //         //         console.log('virtual led now uses value: ' + value);
+    //         //     }
+    //         // };
+    //     }
+    // }
 
 }

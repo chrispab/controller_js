@@ -10,7 +10,7 @@ import config from '../config/config.json' assert { type: 'json' }; // NodeJS ve
 
 
 var temperatureStateChangeHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'PUBLISH temperature: ' + `${state}`);
+  Logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${state}`);
   mqttAgent.client.publish(config.mqtt.outTopic + "/temperature_state", `${state}`);
 }
 

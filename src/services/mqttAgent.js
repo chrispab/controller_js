@@ -27,7 +27,7 @@ class MqttAgent {
         if( this.lastTelemetryMs + this.telemetryInterval < Date.now()) {
             this.lastTelemetryMs = Date.now();
             this.client.publish(config.mqtt.outTopic + "/telemetry", `${this.processCount}`);
-            Logger.log(this.logLevel, `PUBLISH telemetry: ${this.processCount}`);
+            Logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${this.processCount}`);
 
         }
     }
