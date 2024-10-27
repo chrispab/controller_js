@@ -52,9 +52,17 @@ class MqttAgent {
             logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${data}`);
 
             //publish wifi info
-            const wifiInfo = mod1Function();
+            const wifiInfo = wifi.getCurrentConnections((error, currentConnections) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(currentConnections);
+                    // return currentConnections;
+                    this.client.publish(cfg.get("mqtt.outTopic") + "/rssi", `${currentConnections[0].quality}`);
+                }
+            });
             // logger.error("client connected:" + (mod1Function()));
-            console.log("xx=============:" + getwifiinfo());
+            console.log("xx=============:" + wifiInfo);
 
             // this.client.publish(cfg.get("mqtt.outTopic") + "/rssi", `${myfunc()[0].quality}`);
 
@@ -119,26 +127,7 @@ const myfunc = () => wifi.getCurrentConnections((error, currentConnections) => {
         console.log(error);
     } else {
         // console.log(currentConnections);
-
         return currentConnections;
-        /*
-        // you may have several connections
-        [
-            {
-                iface: '...', // network interface used for the connection, not available on macOS
-                ssid: '...',
-                bssid: '...',
-                mac: '...', // equals to bssid (for retrocompatibility)
-                channel: <number>,
-                frequency: <number>, // in MHz
-                signal_level: <number>, // in dB
-                quality: <number>, // same as signal level but in %
-                security: '...' //
-                security_flags: '...' // encryption protocols (format currently depending of the OS)
-                mode: '...' // network mode like Infra (format currently depending of the OS)
-            }
-        ]
-        */
     }
 });
 
