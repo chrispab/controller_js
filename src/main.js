@@ -136,5 +136,5 @@ function saveConfig() {
     var file_content = fs.readFileSync("default.json");
     var content = JSON.parse(file_content);
     content.SERVER.port = 6000;
-    fs.writeFileSync("defalt2.json", JSON.stringify(content));
+    fs.writeFileSync("default2.json", JSON.stringify(content));
 }

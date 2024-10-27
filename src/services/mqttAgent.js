@@ -16,7 +16,15 @@ import mqtt from 'mqtt';
 
 class MqttAgent {
     constructor() {
-        this.client = mqtt.connect(cfg.get("mqtt.brokerUrl"));
+        const options = {
+            will: {
+                topic: cfg.get("mqtt.outTopic") + "/LWT",
+                retain: true,
+                qos: 2,
+                payload: "Offline"
+            }
+        }
+        this.client = mqtt.connect(cfg.get("mqtt.brokerUrl"), options);
         // this.brokerUrl = brokerUrl;
         this.processCount = 0;
         // this.mqttClient = mqtt.connect(this.brokerUrl);
@@ -64,7 +72,7 @@ const options = {
     }
 }
 
-mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"), options);
+// mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"), options);
 
 mqttAgent.client.on("connect", function () {
     console.log("client connected:" + options);
