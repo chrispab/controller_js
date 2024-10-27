@@ -810,3 +810,12 @@ undefined
 {"level":"error","message":"Sensor:temp: 20.6°C, humidity: 64.2%. Fan: true, Heater: undefined","service":"controller_js","timestamp":"17:55:41"}
 {"level":"error","message":"Sensor:temp: 20.6°C, humidity: 64.2%. Fan: true, Heater: undefined","service":"controller_js","timestamp":"17:55:43"}
 {"level":"error","message":"Sensor:temp: 20.6°C, humidity: 64.2%. Fan: true, Heater: undefined","service":"controller_js","timestamp":"17:55:45"}
+{"level":"error","message":"client connected:[object Object]","timestamp":"2024-10-27 08:19:27"}
+{"level":"error","message":"Failed to read from DHT sensor","timestamp":"2024-10-27 08:47:04"}
+{"level":"error","message":"Failed to read from DHT sensor","timestamp":"2024-10-27 08:52:08"}
+{"level":"error","message":"Failed to read from DHT sensor","timestamp":"2024-10-27 09:00:07"}
+{"level":"error","message":"Invalid direction value.","timestamp":"2024-10-27 10:00:42"}
+{"level":"error","message":"Invalid direction value.","timestamp":"2024-10-27 10:01:44"}
+{"level":"error","message":"Invalid direction value.","timestamp":"2024-10-27 10:05:43"}
+{"level":"error","message":"Invalid direction value.","timestamp":"2024-10-27 10:09:54"}
+{"level":"error","message":"Invalid direction value.","timestamp":"2024-10-27 10:11:37"}

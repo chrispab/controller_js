@@ -1,16 +1,12 @@
 import IOBase from "../components/IOBase.js";
-// import config from './../config.json' assert { type: 'json' }; // NodeJS version.
 import os from 'os';
-// const DHT = require('adafruit-dht-sensor-library');
-const DHT_PIN = 4;
+// const DHT_PIN = 4;
 import sensor from 'node-dht-sensor';
-// var sensor = require("node-dht-sensor");
-import Logger from "./../services/Logger.js";
-// import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
+import logger from "../services/logger.js";
 import cfg from "config";
 
 var temperatureStateChangeHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${state}`);
+  logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/temperature_state", `${state}`);
 }
 
@@ -26,7 +22,13 @@ export default class TemperatureSensor extends IOBase {
     this.temperature = 0;
     this.humidity = 0;
 
-    console.log(os.hostname());
+    this.minimumReadIntervalMs = cfg.get("temperatureSensor.minimumReadIntervalMs");
+    this.lastVisitMs = Date.now();
+    this.lastReadTimeMs = Date.now() - this.minimumReadIntervalMs;
+    this.processCount = 0;
+
+
+    logger.info(`HostName: ${os.hostname()}`);
     if (os.hostname() !== "zone3" && os.hostname() !== "zone1") {
       sensor.initialize({
         test: {
@@ -44,9 +46,9 @@ export default class TemperatureSensor extends IOBase {
     this.processCount = 0;
   }
 
-  read() {
+  readSensor() {
     var self = this;
-
+    logger.debug("Read from DHT sensor...");
     sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
       let sensorData = { 'temperature': 0, 'humidity': 0 };
       if (!err) {
@@ -64,7 +66,7 @@ export default class TemperatureSensor extends IOBase {
         return sensorData;
 
       } else {
-        console.log("Failed to read from DHT sensor");
+        logger.error("Failed to read from DHT sensor");
       }
     });
 
@@ -89,15 +91,17 @@ export default class TemperatureSensor extends IOBase {
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
 
-    var data = this.read();
-    if (this.hasNewStateAvailable()) {
-      //get value from read()
-      // console.log(`${this.processCount}->NEW temperature from DHT sensor: ${this.getSensorStr()}`);
-      // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-      this.emitterManager.emit('temperatureStateChange', this.getTemperature().toFixed(1), this.mqttAgent);
-      // this.prevStateChangeMillis = Date.now();
-      this.setNewStateAvailable(false);
+    this.lastVisitMs = Date.now();
 
+    if (Date.now() >= this.lastReadTimeMs + this.minimumReadIntervalMs) {
+      this.readSensor();
+      this.lastReadTimeMs = Date.now();
+      if (this.hasNewStateAvailable()) {
+        //get value from readSensor()
+        // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
+        this.emitterManager.emit('temperatureStateChange', this.getTemperature().toFixed(1), this.mqttAgent);
+        this.setNewStateAvailable(false);
+      }
     }
   }
 

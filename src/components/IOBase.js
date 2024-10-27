@@ -1,22 +1,26 @@
 import { Gpio } from 'onoff';
+import logger from "../services/logger.js";
 
 
 class IOBase {
     #state = false;
     #newStateFlag = false;
-    #prevStateChangeMillis = 0;
-    #onMillis = 0;
-    #offMillis = 0;
+    #prevStateChangeMs = 0;
+    #onMs = 0;
+    #offMs = 0;
     #IOPin = 0;
     #IO = null;
     constructor(IOPin, direction, initialValue) {
         this.#state = initialValue;
         this.#newStateFlag = false;
-        this.#prevStateChangeMillis = Date.now();
-        this.#onMillis = 10 * 1000;
-        this.#offMillis = 10 * 1000;
+        this.#prevStateChangeMs = Date.now();
+        this.#onMs = 10 * 1000;
+        this.#offMs = 10 * 1000;
 
         this.#IOPin = IOPin;
+
+        //log constructor parameters
+        // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
 
         if (direction === 'out') {
             this.#IO = Gpio.accessible ? new Gpio(this.#IOPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
@@ -29,6 +33,8 @@ class IOBase {
             if (this.#IO && typeof this.#IO.readSync === 'function') {
                 this.#IO.setDirection("in");
             }
+        }else {
+            logger.error("Invalid direction value.");
         }
 
     }
@@ -63,7 +69,6 @@ class IOBase {
     writeIO(value) {
         if (this.#IO && typeof this.#IO.writeSync === 'function') {
             this.#IO.writeSync(value);
-            // this.setPrevStateChangeMillis(Date.now());
         } else {
             console.error("IO write operation is not supported.");
         }
@@ -77,18 +82,18 @@ class IOBase {
      *
      * @return {number} - The previous state change time in milliseconds.
      */
-    getPrevStateChangeMillis() {
-        return this.prevStateChangeMillis;
+    getPrevStateChangeMs() {
+        return this.prevStateChangeMs;
     }
 
     /**
      * Sets the previous state change time in milliseconds.
      *
-     * @param {number} newPrevStateChangeMillis - The new previous state change time in milliseconds.
+     * @param {number} newPrevStateChangeMs - The new previous state change time in milliseconds.
      * @return {undefined}
      */
-    setPrevStateChangeMillis(newPrevStateChangeMillis) {
-        this.prevStateChangeMillis = newPrevStateChangeMillis;
+    setPrevStateChangeMs(newPrevStateChangeMs) {
+        this.prevStateChangeMs = newPrevStateChangeMs;
     }
 
     getState() {
@@ -105,7 +110,7 @@ class IOBase {
         if (newState !== this.state) {
             this.state = newState;
             this.newStateFlag = true;
-            this.setPrevStateChangeMillis(Date.now());
+            this.setPrevStateChangeMs(Date.now());
         }
     }
 
@@ -124,12 +129,20 @@ class IOBase {
         return this.state;
     }
 
-    setOnMillis(onMillis) {
-        this.onMillis = onMillis;
+    setOnMs(onMs) {
+        this.#onMs = onMs;
     }
 
-    setOffMillis(offMillis) {
-        this.offMillis = offMillis;
+    setOffMs(offMs) {
+        this.#offMs = offMs;
+    }
+    
+    getOnMs() {
+        return this.#onMs;
+    }
+
+    getOffMs() {
+        return this.#offMs;
     }
 }
 

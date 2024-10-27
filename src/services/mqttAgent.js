@@ -1,5 +1,5 @@
 
-import Logger from "./Logger.js";
+import logger from "./logger.js";
 
 import cfg from "config";
 
@@ -38,7 +38,7 @@ class MqttAgent {
         if (this.lastTelemetryMs + this.telemetryInterval < Date.now()) {
             this.lastTelemetryMs = Date.now();
             this.client.publish(cfg.get("mqtt.outTopic") + "/telemetry", `${this.processCount}`);
-            Logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${this.processCount}`);
+            logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${this.processCount}`);
 
         }
     }
@@ -75,7 +75,7 @@ const options = {
 // mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"), options);
 
 mqttAgent.client.on("connect", function () {
-    console.log("client connected:" + options);
+    logger.warn("client connected:" + JSON.stringify(options) );
     // client.subscribe("/a", { qos: 0 });
     // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
     // client.end();

@@ -7,7 +7,7 @@ import { transports } from 'winston';
 
 
 
-const Logger = createLogger({
+const logger = createLogger({
   // level: 'debug',
   level: 'info',
   format: format.combine(
@@ -29,14 +29,14 @@ const Logger = createLogger({
   ]
 });
 
-export default Logger
+export default logger
 
 //
 // If we're not in production then **ALSO** log to the `console`
 // with the colorized simple format.
 //
 if (process.env.NODE_ENV !== 'production') {
-  Logger.add(new transports.Console({
+  logger.add(new transports.Console({
     format: format.combine(
       format.colorize(),
       format.simple()

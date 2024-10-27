@@ -3,7 +3,7 @@ import cfg from "config";
 
 class Heater extends IOBase {
     constructor(heaterIOPin) {
-      super(heaterIOPin);
+      super(heaterIOPin, 'out', false);
       // super();
     }
   

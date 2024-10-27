@@ -8,7 +8,8 @@ const logLevel = 'debug';
 // import config from '../config/config.json' assert { type: 'json' };
 import cfg from "config";
 
-import Logger from "../services/Logger.js";
+import Logger from "../services/logger.js";
+import logger from "../services/logger.js";
 
 
 var lightStateEventHandler = function (state, mqttAgent) {
@@ -25,7 +26,7 @@ export default class Light extends IOBase {
     #RCLoopCount;
     constructor(RCPin, emitterManager, mqttAgent) {
         super(RCPin, 'out', 0);
-        this.setPrevStateChangeMillis(Date.now() - this.offMillis);
+        this.setPrevStateChangeMs(Date.now() - this.offMs);
 
         this.#RCLoopCount = 0;
 
@@ -143,7 +144,7 @@ export default class Light extends IOBase {
             // console.log('World!');
             self.#currentlySamplingLightSensor = false
         } else {
-            console.log(`!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
+            Logger.log(`!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
         }
     }
 
@@ -152,9 +153,9 @@ export default class Light extends IOBase {
         this.readLightState();
         if (this.hasNewStateAvailable()) {
             if (this.getState()) {
-                console.log("Light is on");
+                logger.info("Light is on");
             } else {
-                console.log("Light is off");
+                logger.info("Light is off");
             }
             this.getStateAndClearNewStateFlag();
             this.emitterManager.emit('lightStateChange', this.getState(), this.mqttAgent);

@@ -1,5 +1,5 @@
 import IOBase from "./IOBase.js";
-import Logger from "../services/Logger.js";
+import Logger from "../services/logger.js";
 
 
 import { Gpio } from 'onoff';
@@ -21,9 +21,9 @@ class Fan extends IOBase {
     super(fanOpPin, 'out', 0);
     this.setState(false);
 
-    this.setOffMillis(offMs);
-    this.setOnMillis(onMs);
-    this.setPrevStateChangeMillis(Date.now() - this.offMillis);
+    this.setOffMs(offMs);
+    this.setOnMs(onMs);
+    this.setPrevStateChangeMs(Date.now() - this.getOffMs());
 
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
@@ -44,7 +44,7 @@ class Fan extends IOBase {
     } else {
       Logger.error('==fanIO undefined==')
     }
-
+    this.emitIfStateChanged();
     // console.log("Turning on vent");
     Logger.log(logLevel, '==fanIO on==')
   }
@@ -57,6 +57,8 @@ class Fan extends IOBase {
     } else {
       Logger.error('==fanIO undefined==')
     }
+    this.emitIfStateChanged();
+
     // console.log("Turning off vent");
     Logger.log(logLevel, '==fanIO off==')
   }
@@ -66,7 +68,7 @@ class Fan extends IOBase {
 
     this.manageFan();
 
-    // Logger.info(`this.prevStateChangeMillis: ${this.prevStateChangeMillis}`);
+    // Logger.info(`this.getPrevStateChangeMs(): ${this.getPrevStateChangeMs()}`);
 
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() == true) {
@@ -74,28 +76,37 @@ class Fan extends IOBase {
       } else {
         Logger.log(logLevel, "fan is off");
       }
-      this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
+      // this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
     }
   }
 
   manageFan() {
-    const currentState = this.readIO();
+    const currentState = this.getState();
     const currentMs = Date.now();
-    const elapsedMs = currentMs - this.getPrevStateChangeMillis();
+    const elapsedMs = currentMs - this.getPrevStateChangeMs();
 
     if (currentState == true) {
       // is it time to turn off?
-      if (elapsedMs >= this.onMillis) {
+      if (elapsedMs >= this.getOnMs()) {
         this.turnOff();
       }
     } else {// 0
       // is it time to turn on?
-      if (elapsedMs >= this.offMillis) {
+      if (elapsedMs >= this.getOffMs()) {
         this.turnOn();
       }
     }
   }
-
+  emitIfStateChanged() {
+    if (this.hasNewStateAvailable()) {
+      if (this.getStateAndClearNewStateFlag() == true) {
+        Logger.log(logLevel, "Fan is on");
+      } else {
+        Logger.log(logLevel, "Fan is off");
+      }
+      this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
+    }
+  }
 }
 
 export default Fan;
