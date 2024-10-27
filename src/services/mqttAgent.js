@@ -3,6 +3,10 @@ import logger from "./logger.js";
 
 import cfg from "config";
 
+// import utils from "../utils/utils.js";
+// import {wifi} from "../utils/utils.js";
+
+
 //Assign the event handler to an event:
 // eventEmitter.on('scream', ventEvent);
 // import mqtt from 'mqtt';
@@ -12,7 +16,7 @@ import cfg from "config";
 import mqtt from 'mqtt';
 // const client = mqtt.connect(config.mqtt.brokerUrl);
 
-
+import { mod1Function } from "../utils/utils.js";
 
 class MqttAgent {
     constructor() {
@@ -40,24 +44,32 @@ class MqttAgent {
     process(components) {
         this.processCount = this.processCount ? this.processCount + 1 : 1;
         // logger.info(`components: ${(components)}`); //JSON.stringify(components}`);
-        this.telemetry(components);
-        // if (this.hasNewStateAvailable()) {
-        //     if (this.getStateAndClearNewStateFlag() == true) {
-        //         console.log("Fan turning on");
-        //     } else {
-        //         console.log("Fan turning off");
-        //     }
-        // }
-    }
-    telemetry(components) {
+        // this.telemetry(components);
         if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
             this.lastTelemetryMs = Date.now();
             const data = this.getTelemetryData(components);
             this.client.publish(cfg.get("mqtt.outTopic") + "/telemetry", `${data}`);
             logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${data}`);
 
+            //publish wifi info
+            const wifiInfo = mod1Function();
+            // logger.error("client connected:" + (mod1Function()));
+            console.log("xx=============:" + getwifiinfo());
+
+            // this.client.publish(cfg.get("mqtt.outTopic") + "/rssi", `${myfunc()[0].quality}`);
+
         }
     }
+
+    // telemetry(components) {
+    //     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
+    //         this.lastTelemetryMs = Date.now();
+    //         const data = this.getTelemetryData(components);
+    //         this.client.publish(cfg.get("mqtt.outTopic") + "/telemetry", `${data}`);
+    //         logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${data}`);
+
+    //     }
+    // }
     getTelemetryData(components) {
         const data = {
 
@@ -94,8 +106,61 @@ class MqttAgent {
 }
 
 
+// const wifi = require('node-wifi');
+import wifi from 'node-wifi';
+// Initialize wifi module
+// Absolutely necessary even to set interface to null
+wifi.init({
+    iface: null // network interface, choose a random wifi interface if set to null
+});
+// List the current wifi connections
+const myfunc = () => wifi.getCurrentConnections((error, currentConnections) => {
+    if (error) {
+        console.log(error);
+    } else {
+        // console.log(currentConnections);
 
+        return currentConnections;
+        /*
+        // you may have several connections
+        [
+            {
+                iface: '...', // network interface used for the connection, not available on macOS
+                ssid: '...',
+                bssid: '...',
+                mac: '...', // equals to bssid (for retrocompatibility)
+                channel: <number>,
+                frequency: <number>, // in MHz
+                signal_level: <number>, // in dB
+                quality: <number>, // same as signal level but in %
+                security: '...' //
+                security_flags: '...' // encryption protocols (format currently depending of the OS)
+                mode: '...' // network mode like Infra (format currently depending of the OS)
+            }
+        ]
+        */
+    }
+});
 
+function getwifiinfo() {
+
+    let mycurrentConnections = [];
+
+    wifi.getCurrentConnections(
+        (error, currentConnections) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("function getwifiinfo()");
+                // console.log(currentConnections);
+                mycurrentConnections = currentConnections;
+                // return currentConnections;
+
+            }
+        }
+    )
+    return mycurrentConnections;
+}
 
 
 // export default MqttAgent;
