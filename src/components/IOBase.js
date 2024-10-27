@@ -10,14 +10,15 @@ class IOBase {
     #offMs = 0;
     #IOPin = 0;
     #IO = null;
+    #name = "not yet set";
     constructor(IOPin, direction, initialValue) {
         this.#state = initialValue;
         this.#newStateFlag = false;
         this.#prevStateChangeMs = Date.now();
         this.#onMs = 10 * 1000;
         this.#offMs = 10 * 1000;
-
         this.#IOPin = IOPin;
+        this.#name = "not yet set";   
 
         //log constructor parameters
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
@@ -37,6 +38,14 @@ class IOBase {
             logger.error("Invalid direction value.");
         }
 
+    }
+    
+    getName() {
+        return this.#name;
+    }
+
+    setName(name) {
+        this.#name = name;
     }
     getIOPin() {
         return this.#IOPin;
@@ -144,6 +153,16 @@ class IOBase {
     getOffMs() {
         return this.#offMs;
     }
+    getTelemetryData() {
+        const data = {
+            name: this.getName(),
+            state: this.getState(),
+            time: Date.now()
+        }
+        // logger.info(JSON.stringify(data) + '=> ' + this.data);
+
+        return data;
+      }
 }
 
 export default IOBase;

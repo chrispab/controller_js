@@ -21,6 +21,7 @@ export default class TemperatureSensor extends IOBase {
     this.dhtSensorPin = dhtSensorPin;
     this.temperature = 0;
     this.humidity = 0;
+    this.setName('temperatureSensor');
 
     this.minimumReadIntervalMs = cfg.get("temperatureSensor.minimumReadIntervalMs");
     this.lastVisitMs = Date.now();
@@ -76,6 +77,7 @@ export default class TemperatureSensor extends IOBase {
   // create setters
   setTemperature(temperature) {
     this.temperature = temperature;
+    this.state = temperature;
   }
 
   setHumidity(humidity) {

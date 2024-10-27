@@ -21,9 +21,11 @@ export default class Vent extends IOBase {
     // const initialValue = 0;
     super(ventOpPin, 'out', 0);
     this.setState(false); // this.state = false;
+    this.setName('vent');
+
     this.setOffMs(offMs);
     this.setOnMs(onMs);
-    this.setPrevStateChangeMs(Date.now() - this.getOffMs());
+    this.setPrevStateChangeMs(Date.now() - this.getOnMs());
     this.lastVisitMs = Date.now();
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;

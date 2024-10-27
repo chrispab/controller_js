@@ -46,7 +46,7 @@
     "temperatureSensor": {
         "minimumReadIntervalMs": 30000
     },
-    "highSetpoint": 21.5,
+    "highSetpoint": 22.1,
     "lowSetpoint": 16.5,
     "vent": {
         "speedPercent": 50

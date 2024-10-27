@@ -20,7 +20,7 @@ class Fan extends IOBase {
   constructor(fanOpPin, onMs, offMs, emitterManager, mqttAgent) {
     super(fanOpPin, 'out', 0);
     this.setState(false);
-
+    this.setName('fan');
     this.setOffMs(offMs);
     this.setOnMs(onMs);
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
@@ -107,6 +107,8 @@ class Fan extends IOBase {
       this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
     }
   }
+
+
 }
 
 export default Fan;

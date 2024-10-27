@@ -27,6 +27,7 @@ export default class Light extends IOBase {
     constructor(RCPin, emitterManager, mqttAgent) {
         super(RCPin, 'out', 0);
         this.setPrevStateChangeMs(Date.now() - this.offMs);
+        this.setName('light');
 
         this.#RCLoopCount = 0;
 
@@ -161,18 +162,5 @@ export default class Light extends IOBase {
             this.emitterManager.emit('lightStateChange', this.getState(), this.mqttAgent);
         }
     }
-
-    // checkAccessible() {
-    //     if (Gpio.accessible) {
-    //         led = new Gpio(17, 'out');
-    //         // more real code here
-    //     } else {
-    //         // led = {
-    //         //     writeSync: value => {
-    //         //         console.log('virtual led now uses value: ' + value);
-    //         //     }
-    //         // };
-    //     }
-    // }
 
 }

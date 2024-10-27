@@ -22,7 +22,7 @@ import mqttAgent from "./services/mqttAgent.js";
 
 
 //componenmts
-const vent = new Vent(cfg.get("hardware.vent.pin"), 76000, 10000, emitterManager, mqttAgent);
+const vent = new Vent(cfg.get("hardware.vent.pin"), 90000, 5000, emitterManager, mqttAgent);
 const fan = new Fan(cfg.get("hardware.fan.pin"), 20000, 20000, emitterManager, mqttAgent);
 const light = new Light(cfg.get("hardware.RC.pin"), emitterManager, mqttAgent);
 
@@ -35,6 +35,7 @@ const heater = new Heater(cfg.get("hardware.heater.pin"), 10000, 10000, emitterM
 setInterval(() => {
     // scan/process inputs
     // logger.error(`Sensor:${temperatureSensor.getSensorStr()}. Fan: ${fan.getState()}, Heater: ${heater.getState()}`);
+    mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
     temperatureSensor.process();
 
@@ -44,12 +45,9 @@ setInterval(() => {
 
     light.process();
 
-    mqttAgent.process();
-    process();
-
     // vent.process();
     let highSetPoint = 21.5;
-    highSetPoint = cfg.get("highSetpoint");
+    // highSetPoint = cfg.get("highSetpoint");
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), highSetPoint, light.getState(), Date.now());
 
 }, 2000);
@@ -80,3 +78,39 @@ function saveConfig() {
     content.SERVER.port = 6000;
     fs.writeFileSync("default2.json", JSON.stringify(content));
 }
+
+// const wifi = require('node-wifi');
+import wifi from 'node-wifi';
+// Initialize wifi module
+// Absolutely necessary even to set interface to null
+wifi.init({
+    iface: null // network interface, choose a random wifi interface if set to null
+  });
+// List the current wifi connections
+wifi.getCurrentConnections((error, currentConnections) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(currentConnections);
+
+      
+      /*
+      // you may have several connections
+      [
+          {
+              iface: '...', // network interface used for the connection, not available on macOS
+              ssid: '...',
+              bssid: '...',
+              mac: '...', // equals to bssid (for retrocompatibility)
+              channel: <number>,
+              frequency: <number>, // in MHz
+              signal_level: <number>, // in dB
+              quality: <number>, // same as signal level but in %
+              security: '...' //
+              security_flags: '...' // encryption protocols (format currently depending of the OS)
+              mode: '...' // network mode like Infra (format currently depending of the OS)
+          }
+      ]
+      */
+    }
+  });
