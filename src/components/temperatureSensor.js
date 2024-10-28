@@ -49,12 +49,12 @@ export default class TemperatureSensor extends IOBase {
 
   readSensor() {
     var self = this;
-    logger.debug("Read from DHT sensor...");
+    logger.info("Read from DHT sensor...");
     sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
       let sensorData = { 'temperature': 0, 'humidity': 0 };
       if (!err) {
         // if new temp, save it
-        if (temperature !== self.temperature) {
+        if (temperature.toFixed(1) !== self.getTemperature()) {
           self.setNewStateAvailable(true);
           //ensure stored values are to 1 decimal
           self.setTemperature(temperature.toFixed(1));
@@ -64,7 +64,7 @@ export default class TemperatureSensor extends IOBase {
         sensorData.temperature = self.getTemperature();
         sensorData.humidity = self.getHumidity();
 
-        console.log(`READ from DHT sensor: temperature${self.getSensorStr()}`);
+        // console.log(`READ from DHT sensor: temperature${self.getSensorStr()}`);
         return sensorData;
 
       } else {
