@@ -10,7 +10,22 @@ class IOBase {
     #offMs = 0;
     #IOPin = 0;
     #IO = null;
-    #name = "not yet set";
+    #name = "not yet set-IOBase";
+    #newOnMsFlag = false;
+    #newOffMsFlag = false;
+    #prevOnMsChangeMs = 0;
+    #prevOffMsChangeMs = 0;
+    // #setPrevStateChangeMs = 0;
+    
+    readIO() {
+        if (this.#IO && typeof this.#IO.readSync === 'function') {
+            return this.#IO.readSync();
+        } else {
+            console.error("IO read operation is not supported.");
+            return null;
+        }
+    }
+    
     constructor(IOPin, direction, initialValue) {
         this.#state = initialValue;
         this.#newStateFlag = false;
@@ -19,7 +34,10 @@ class IOBase {
         this.#offMs = 10 * 1000;
         this.#IOPin = IOPin;
         this.#name = "not yet set";   
-
+        this.#newOnMsFlag = false;
+        this.#newOffMsFlag = false;
+        this.#prevOnMsChangeMs = Date.now();
+        this.#prevOffMsChangeMs = Date.now();
         //log constructor parameters
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
 
@@ -138,12 +156,20 @@ class IOBase {
         return this.state;
     }
 
-    setOnMs(onMs) {
-        this.#onMs = onMs;
+    setOnMs(newOnMs) {
+        if (newOnMs !== this.getOnMs() ) {
+            this.#onMs = newOnMs;
+            this.newOnMsFlag = true;
+            this.setPrevOnMsChangeMs(Date.now());
+        }
     }
 
-    setOffMs(offMs) {
-        this.#offMs = offMs;
+    setOffMs(newOffMs) {
+        if (newOffMs !== this.getOffMs() ) {
+            this.#offMs = newOffMs;
+            this.newOffMsFlag = true;
+            this.setPrevOffMsChangeMs(Date.now());
+        }
     }
     
     getOnMs() {
@@ -152,6 +178,22 @@ class IOBase {
 
     getOffMs() {
         return this.#offMs;
+    }
+    
+    getPrevOnMsChangeMs() {
+        return this.#prevOnMsChangeMs;
+    }
+
+    setPrevOnMsChangeMs(newPrevOnMsChangeMs) {
+        this.#prevOnMsChangeMs = newPrevOnMsChangeMs;
+    }
+
+    getPrevOffMsChangeMs() {
+        return this.#prevOffMsChangeMs;
+    }
+
+    setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
+        this.#prevOffMsChangeMs = newPrevOffMsChangeMs;
     }
     getTelemetryData() {
         const data = {

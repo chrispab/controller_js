@@ -60,7 +60,7 @@ export default class Vent extends IOBase {
       // console.log("Turning on vent");
       this.writeIO(1);
     }else{
-      Logger.log(logLevel, '==Vent IO undefined==')
+      Logger.log('error', '==Vent IO undefined==')
     }
     this.emitIfStateChanged();
 
@@ -73,6 +73,8 @@ export default class Vent extends IOBase {
 
     if (Gpio.accessible) {
       this.writeIO(0);
+    }else{
+      Logger.log('error', '==Vent IO undefined==')
     }
     this.emitIfStateChanged();
     // console.log("Turning off vent");
