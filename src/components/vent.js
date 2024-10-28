@@ -7,11 +7,21 @@ const logLevel = 'debug';
 
 // import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
 import cfg from "config";
+import logger from "../services/logger.js";
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT-PUB NEW Vent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
+}
+
+var ventOnMsChangeEventHandler = function (state, mqttAgent) {
+  Logger.log('warn', 'MQTT-PUB NEW ventOnMsChangeEvent: ' + `${state}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOnSecsTopic"), `${state / 1000}`);
+}
+var ventOffMsChangeEventHandler = function (state, mqttAgent) {
+  Logger.log('warn', 'MQTT-PUB NEW ventOffMsChangeEvent: ' + `${state}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOffSecsTopic"), `${state / 1000}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
 // Zone3/VentStatus
@@ -52,6 +62,29 @@ export default class Vent extends IOBase {
     this.vent_pulse_on_delta = 10000;
   }
 
+  getTelemetryData() {
+    let data = super.getTelemetryData();
+    logger.error(JSON.stringify(data) + '=> ' + this.data);
+    // data = {
+    //   name: this.getPropertyValue(),
+    //   state: this.getState(),
+    //   time: Date.now()
+    // }
+    // logger.info(JSON.stringify(data) + '=> ' + this.data);
+    // logger.error(JSON.stringify(data) + '=> ' + this.data);
+    return data;
+  }
+
+  getPropertyValue(propertyName) {
+    if (typeof this[propertyName] == "undefined")
+      return this.emptyValue;
+    else
+      return this[propertyName];
+  }
+
+  setPropertyValue(propertyName, value) {
+    this[propertyName] = value;
+  }
 
   turnOn() {
     this.setState(true);
@@ -59,12 +92,10 @@ export default class Vent extends IOBase {
     if (Gpio.accessible) {
       // console.log("Turning on vent");
       this.writeIO(1);
-    }else{
+    } else {
       Logger.log('error', '==Vent IO undefined==')
     }
     this.emitIfStateChanged();
-
-    // console.log("Turning on vent");
     Logger.log(logLevel, '==Vent on==')
   }
 
@@ -73,11 +104,10 @@ export default class Vent extends IOBase {
 
     if (Gpio.accessible) {
       this.writeIO(0);
-    }else{
+    } else {
       Logger.log('error', '==Vent IO undefined==')
     }
     this.emitIfStateChanged();
-    // console.log("Turning off vent");
     // Logger.log(logLevel, '==Vent off==')
   }
 
@@ -96,10 +126,10 @@ export default class Vent extends IOBase {
     // if (this.hasNewStateAvailable()) {
     //   if (this.getStateAndClearNewStateFlag() == true) {
     //     Logger.log(logLevel, "Vent is on");
-      // } else {
+    // } else {
     //     Logger.log(logLevel, "Vent is off");
     //   }
-      // this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
+    // this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
     // }
   }
 
@@ -203,7 +233,7 @@ export default class Vent extends IOBase {
       }
       // Logger.warn("---1");
 
-    // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
+      // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${current_millis}`);
 
       if ((currentTemp > (target_temp + this.vent_lon_sp_offset))) {
         this.vent_override = true;

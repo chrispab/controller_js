@@ -35,7 +35,6 @@ const heater = new Heater(cfg.get("hardware.heater.pin"), 10000, 10000, emitterM
 setInterval(() => {
     // scan/process inputs
     // logger.error(`Sensor:${temperatureSensor.getSensorStr()}. Fan: ${fan.getState()}, Heater: ${heater.getState()}`);
-    mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
     temperatureSensor.process();
 
@@ -49,6 +48,8 @@ setInterval(() => {
     let highSetPoint = 21.5;
     // highSetPoint = cfg.get("highSetpoint");
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), highSetPoint, light.getState(), Date.now());
+    
+    mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
 }, 1000);
 

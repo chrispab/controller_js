@@ -1,5 +1,6 @@
 import { Gpio } from 'onoff';
 import logger from "../services/logger.js";
+// import { on } from 'nodemon';
 
 
 class IOBase {
@@ -195,10 +196,40 @@ class IOBase {
     setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
         this.#prevOffMsChangeMs = newPrevOffMsChangeMs;
     }
+
+    hasNewOnMsAvailable() {
+        return this.newStateFlag;
+    }
+
+    setNewOnMsAvailable(newStateFlag = true) {
+        this.newStateFlag = newStateFlag;
+    }
+
+    getOnMsAndClearNewStateFlag() {
+        //ensures MQTT pub only sent once per state change since last readState
+        this.newStateFlag = false; //indicate data read and used e.g MQTT pub
+        return this.state;
+    }
+
+    getPropertyValue(propertyName) {
+        if(typeof this[propertyName] == "undefined")
+            return this.emptyValue;
+        else
+            return this[propertyName];
+    }
+
+    setPropertyValue(propertyName, value) {
+        this[propertyName] = value;
+    }
+
+
     getTelemetryData() {
+        //get base telemetry data
         const data = {
             name: this.getName(),
             state: this.getState(),
+            onMs: this.getOnMs(),
+            offMs: this.getOffMs(),
             time: Date.now()
         }
         // logger.info(JSON.stringify(data) + '=> ' + this.data);

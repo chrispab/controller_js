@@ -10,7 +10,12 @@
         "humidityStateTopic": "/HumidityStatus",
         "ventStateTopic": "/VentStatus",
         "fanStateTopic": "/FanStatus",
-        "heaterStateTopic": "/HeaterStatus"
+        "heaterStateTopic": "/HeaterStatus",
+        "ventOnSecsTopic": "/vent_on_delta_secs",
+        "ventOffSecsTopic": "/vent_off_delta_secs",
+        "highSetpointTopic": "/high_setpoint",
+        "lowSetpointTopic": "/low_setpoint"
+
 
     },
     "zone": {
