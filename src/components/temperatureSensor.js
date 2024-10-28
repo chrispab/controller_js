@@ -53,17 +53,18 @@ export default class TemperatureSensor extends IOBase {
     sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
       let sensorData = { 'temperature': 0, 'humidity': 0 };
       if (!err) {
-        // check if new value
+        // if new temp, save it
         if (temperature !== self.temperature) {
           self.setNewStateAvailable(true);
-          self.setTemperature(temperature);
-          self.setHumidity(humidity);
+          //ensure stored values are to 1 decimal
+          self.setTemperature(temperature.toFixed(1));
+          self.setHumidity(humidity.toFixed(1));
         }
 
         sensorData.temperature = self.getTemperature();
         sensorData.humidity = self.getHumidity();
 
-        // console.log(`READ from DHT sensor: temperature${self.getSensorStr()}`);
+        console.log(`READ from DHT sensor: temperature${self.getSensorStr()}`);
         return sensorData;
 
       } else {
@@ -101,15 +102,15 @@ export default class TemperatureSensor extends IOBase {
       if (this.hasNewStateAvailable()) {
         //get value from readSensor()
         // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-        this.emitterManager.emit('temperatureStateChange', this.getTemperature().toFixed(1), this.mqttAgent);
+        this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.mqttAgent);
         this.setNewStateAvailable(false);
       }
     }
   }
 
   getSensorStr() {
-    return `temp: ${this.getTemperature().toFixed(1)}°C, ` +
-      `humidity: ${this.getHumidity().toFixed(1)}%`
+    return `temp: ${this.getTemperature()}°C, ` +
+      `humidity: ${this.getHumidity()}%`
   }
 }
 
