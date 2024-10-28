@@ -56,13 +56,13 @@ class MqttAgent {
                 if (error) {
                     console.log(error);
                 } else {
-                    console.log(currentConnections);
+                    // console.log(currentConnections);
                     // return currentConnections;
                     this.client.publish(cfg.get("mqtt.outTopic") + "/rssi", `${currentConnections[0].quality}`);
                 }
             });
             // logger.error("client connected:" + (mod1Function()));
-            console.log("xx=============:" + wifiInfo);
+            // console.log("xx=============:" + wifiInfo);
 
             // this.client.publish(cfg.get("mqtt.outTopic") + "/rssi", `${myfunc()[0].quality}`);
 

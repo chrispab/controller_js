@@ -233,7 +233,7 @@ export default class Vent extends IOBase {
 
         if (this.getState() == false) {  // if the vent is off, we must wait for the interval to expire before turning it on
           // iftime is up, so change the state to ON
-          if (elapsedMsSinceLastStateChange >= this.offMs) {
+          if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
             this.turnOn();  // vent = true;
             // Logger.warn("VENT ON cycle start")
             // Logger.warn("---7");
@@ -247,7 +247,7 @@ export default class Vent extends IOBase {
           // vent is on, we must wait for the 'on' duration to expire before
           // turning it off
           // time up, change state to OFF
-          if ((elapsedMsSinceLastStateChange) >= this.onMs) {
+          if ((elapsedMsSinceLastStateChange) >= this.getOnMs()) {
             // Logger.warn("---9");
 
             this.turnOff();
