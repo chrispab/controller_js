@@ -4,13 +4,15 @@ import os from 'os';
 import sensor from 'node-dht-sensor';
 import logger from "../services/logger.js";
 import cfg from "config";
+import { get } from "http";
 
-var temperatureStateChangeHandler = function (state, mqttAgent) {
-  logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/temperature_state", `${state}`);
+var temperatureStateChangeHandler = function (temperatureState,humidityState, mqttAgent) {
+  logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${temperatureState}, Humidity: ${humidityState}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic"), `${humidityState}`);
 }
 
-
+// Zone3/TemperatureStatus 22.6
 
 export default class TemperatureSensor extends IOBase {
   constructor(dhtSensorType, dhtSensorPin, emitterManager, mqttAgent) {
@@ -106,7 +108,7 @@ export default class TemperatureSensor extends IOBase {
       if (this.hasNewStateAvailable()) {
         //get value from readSensor()
         // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-        this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.mqttAgent);
+        this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
         this.setNewStateAvailable(false);
       }
     }

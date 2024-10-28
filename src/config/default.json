@@ -3,7 +3,15 @@
         "brokerUrl": "mqtt://192.168.0.100",
         "username": "pi",
         "password": "raspberry",
-        "outTopic": "Zone1"
+        
+        "outTopicPrefix": "Zone1",
+        "lightStateTopic": "/LightStatus",
+        "temperatureStateTopic": "/TemperatureStatus",
+        "humidityStateTopic": "/HumidityStatus",
+        "ventStateTopic": "/VentStatus",
+        "fanStateTopic": "/FanStatus",
+        "heaterStateTopic": "/HeaterStatus"
+
     },
     "zone": {
         "name": "zone_1"

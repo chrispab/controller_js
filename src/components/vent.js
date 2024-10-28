@@ -11,10 +11,10 @@ import cfg from "config";
 
 var ventStateEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT-PUB NEW Vent: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/vent_state", `${state ? 1 : 0}`);
+  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
-
+// Zone3/VentStatus
 export default class Vent extends IOBase {
   constructor(ventOpPin, onMs, offMs, emitterManager, mqttAgent) {
     // const direction = ;

@@ -14,7 +14,7 @@ import logger from "../services/logger.js";
 
 var lightStateEventHandler = function (state, mqttAgent) {
     Logger.log('warn', 'MQTT-PUB NEW Light: ' + `${state}`);
-    mqttAgent.client.publish(cfg.get("mqtt.outTopic") + "/light_state", `${state ? 1 : 0}`);
+    mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.lightStateTopic"), `${state ? 1 : 0}`);
 }
 
 
