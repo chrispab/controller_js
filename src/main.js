@@ -22,7 +22,7 @@ import mqttAgent from "./services/mqttAgent.js";
 
 
 //componenmts
-const vent = new Vent(cfg.get("hardware.vent.pin"), 90000, 5000, emitterManager, mqttAgent);
+const vent = new Vent(cfg.get("hardware.vent.pin"), 15000, 45000, emitterManager, mqttAgent);
 const fan = new Fan(cfg.get("hardware.fan.pin"), 20000, 20000, emitterManager, mqttAgent);
 const light = new Light(cfg.get("hardware.RC.pin"), emitterManager, mqttAgent);
 
@@ -50,7 +50,7 @@ setInterval(() => {
     // highSetPoint = cfg.get("highSetpoint");
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), highSetPoint, light.getState(), Date.now());
 
-}, 2000);
+}, 1000);
 
 
 

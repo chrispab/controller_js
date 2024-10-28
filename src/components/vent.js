@@ -25,7 +25,7 @@ export default class Vent extends IOBase {
 
     this.setOffMs(offMs);
     this.setOnMs(onMs);
-    this.setPrevStateChangeMs(Date.now() - this.getOnMs());
+    this.setPrevStateChangeMs(Date.now() - this.getOffMs());
     this.lastVisitMs = Date.now();
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;

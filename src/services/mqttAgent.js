@@ -193,5 +193,7 @@ mqttAgent.client.on("packetsend", function () {
 
 mqttAgent.client.on('message', (topic, message) => {
     // console.log(`Received message on topic ${topic}: ${message}`);
+    // logger.warn(`Received message on topic ${topic}: ${message}`);
+
 });
 

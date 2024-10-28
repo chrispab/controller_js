@@ -10379,3 +10379,380 @@ undefined
 {"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:53:59"}
 {"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:54:09"}
 {"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":17,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 06:54:25"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 17.0","timestamp":"2024-10-28 06:54:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:54:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:54:51"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:55:11"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":17,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 06:55:26"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 06:55:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:55:32"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:55:35"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:55:54"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 06:56:12"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 06:56:12"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 06:56:14"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:56:14"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 06:56:14"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 06:56:14"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:56:14"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:56:34"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 17.0","timestamp":"2024-10-28 06:56:44"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:56:55"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 06:56:59"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 06:57:15"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 06:57:15"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:57:15"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:57:17"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:57:38"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:57:58"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 06:58:01"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 06:58:17"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:58:17"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:58:20"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:58:41"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:59:02"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 06:59:04"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 06:59:19"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 06:59:19"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 06:59:22"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 06:59:43"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:00:03"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:00:05"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:00:21"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:00:21"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:00:21"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:00:25"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:00:45"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:00:53"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:01:06"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:01:08"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:01:24"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:01:24"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:01:24"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:01:26"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:01:47"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:01:56"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:02:08"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:02:10"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:02:26"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:02:26"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:02:26"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:02:29"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:02:50"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:02:58"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:03:11"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:03:13"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:03:29"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:03:29"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:03:31"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:03:52"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:04:00"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:04:12"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:04:15"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:04:31"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:04:31"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:04:34"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:04:55"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:05:16"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:05:18"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:05:31"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:05:33"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:05:38"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:05:59"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:06:19"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:06:19"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:06:35"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:06:35"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:06:41"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:07:02"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:07:22"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:07:22"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:07:36"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:07:38"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:07:43"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:08:03"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:08:24"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:08:24"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:08:39"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:08:39"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:08:45"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:09:06"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:09:27"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:09:27"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:09:40"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:09:43"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:09:47"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:10:08"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:10:28"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:10:28"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:10:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:10:30"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:10:30"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:10:30"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:10:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:10:51"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:11:01"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:11:12"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:11:16"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:11:31"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:11:34"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:11:55"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:12:03"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:12:16"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:12:32"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:12:37"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:12:49"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:13:00"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:13:20"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:13:34"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:13:37"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:13:41"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:14:02"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:14:23"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:14:23"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:14:39"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:14:47"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:15:10"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:15:10"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:15:15"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:15:31"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:15:39"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:15:45"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:15:51"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:15:56"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:16:13"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:16:16"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:16:35"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:16:42"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:16:42"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:16:57"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:17:17"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:17:30"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:17:38"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:17:43"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:18:00"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:18:16"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:18:22"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:18:43"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:18:45"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:18:53"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:19:01"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:19:04"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:19:26"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:19:47"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:19:47"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:19:47"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:20:08"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:20:27"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:20:29"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:20:34"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:20:49"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:20:52"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:20:59"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:21:12"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:21:21"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:21:34"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":true,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:21:49"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:21:55"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:22:01"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:22:07"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:22:15"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:22:35"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:22:50"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:22:52"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:22:57"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:23:18"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:23:38"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:23:38"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:23:50"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:24:03"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:24:03"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:24:05"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:24:05"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:24:05"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:24:05"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:24:05"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:24:26"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:24:38"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:24:38"}
+{"level":"warn","message":"Received message on topic Zone1/LWT: Offline","timestamp":"2024-10-28 07:24:38"}
+{"level":"warn","message":"Received message on topic Zone3/LWT: Online","timestamp":"2024-10-28 07:24:38"}
+{"level":"warn","message":"Received message on topic Zone1/LWT: Online","timestamp":"2024-10-28 07:24:38"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:24:40"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"Received message on topic Zone1/telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"Received message on topic Zone1/fan_state: 1","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"Received message on topic Zone1/light_state: 1","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"Received message on topic Zone1/vent_state: 1","timestamp":"2024-10-28 07:24:40"}
+{"level":"warn","message":"Received message on topic Zone1/rssi: 82","timestamp":"2024-10-28 07:24:42"}
+{"level":"warn","message":"Received message on topic Zone3/vent_on_delta_secs: 255","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/vent_off_delta_secs: 5","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/low_setpoint: 15.1","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/high_setpoint: 21.799999999999997","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/LightStatus: 0","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/version: 3.23 main: light state  tele","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/rssi: 56","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/LWT: Online","timestamp":"2024-10-28 07:24:47"}
+{"level":"warn","message":"Received message on topic Zone3/HeartBeat: SSS","timestamp":"2024-10-28 07:24:51"}
+{"level":"warn","message":"Received message on topic Zone3/FanStatus: 1","timestamp":"2024-10-28 07:24:53"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:25:04"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:25:04"}
+{"level":"warn","message":"Received message on topic Zone1/LWT: Offline","timestamp":"2024-10-28 07:25:04"}
+{"level":"warn","message":"Received message on topic Zone3/LWT: Online","timestamp":"2024-10-28 07:25:04"}
+{"level":"warn","message":"Received message on topic Zone1/LWT: Online","timestamp":"2024-10-28 07:25:04"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:25:06"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"Received message on topic Zone1/telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"Received message on topic Zone1/fan_state: 1","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"Received message on topic Zone1/light_state: 1","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"Received message on topic Zone1/vent_state: 1","timestamp":"2024-10-28 07:25:06"}
+{"level":"warn","message":"Received message on topic Zone1/rssi: 82","timestamp":"2024-10-28 07:25:09"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:25:27"}
+{"level":"warn","message":"Received message on topic Zone1/fan_state: 0","timestamp":"2024-10-28 07:25:27"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:25:37"}
+{"level":"warn","message":"Received message on topic Zone1/temperature_state: 16.8","timestamp":"2024-10-28 07:25:37"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:25:48"}
+{"level":"warn","message":"Received message on topic Zone1/fan_state: 1","timestamp":"2024-10-28 07:25:48"}
+{"level":"warn","message":"Received message on topic Zone3/HeartBeat: SSS","timestamp":"2024-10-28 07:25:52"}
+{"level":"warn","message":"Received message on topic Zone3/FanStatus: 0","timestamp":"2024-10-28 07:25:52"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:25:52"}
+{"level":"warn","message":"Received message on topic Zone1/vent_state: 0","timestamp":"2024-10-28 07:25:52"}
+{"level":"warn","message":"Received message on topic Zone3/TemperatureStatus: 17.4","timestamp":"2024-10-28 07:26:05"}
+{"level":"warn","message":"Received message on topic Zone3/HumidityStatus: 70.0","timestamp":"2024-10-28 07:26:05"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:26:07"}
+{"level":"warn","message":"Received message on topic Zone1/telemetry: {\"vent\":false,\"temperatureSensor\":16.799999237060547,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:26:07"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:26:12"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:26:12"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:26:14"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:26:14"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:26:14"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:26:14"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:26:14"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:26:35"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.8","timestamp":"2024-10-28 07:26:46"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:26:56"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:27:00"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:27:14"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:27:14"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:27:16"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:27:16"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:27:16"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:27:16"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:27:38"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:27:45"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:27:48"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:27:59"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:28:02"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:28:21"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:28:21"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:28:22"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:28:22"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:28:22"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:28:22"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:28:44"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:28:52"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:28:55"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:29:06"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:29:08"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:29:24"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:29:26"}
+{"level":"info","message":"HostName: zone1","timestamp":"2024-10-28 07:29:34"}
+{"level":"warn","message":"client connected:{\"will\":{\"topic\":\"Zone1/LWT\",\"retain\":true,\"qos\":2,\"payload\":\"Offline\"}}","timestamp":"2024-10-28 07:29:34"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"fan\":false}","timestamp":"2024-10-28 07:29:35"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:29:35"}
+{"level":"info","message":"Light is on","timestamp":"2024-10-28 07:29:35"}
+{"level":"warn","message":"MQTT-PUB NEW Light: true","timestamp":"2024-10-28 07:29:35"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:29:35"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:29:50"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:29:55"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:30:07"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:30:16"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:30:35"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:30:35"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:30:38"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:30:51"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:30:59"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:31:21"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:31:37"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:31:37"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:31:43"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:31:54"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:32:04"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:32:25"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:32:39"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:32:39"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:32:46"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:32:56"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:33:08"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 17.0","timestamp":"2024-10-28 07:33:14"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:33:30"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:33:42"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:33:42"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:33:51"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:33:57"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:34:13"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:34:34"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:34:43"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:34:43"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:34:55"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:34:58"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:35:18"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:35:18"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:35:41"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:35:44"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:35:44"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:36:01"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:36:01"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:36:22"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:36:43"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:36:46"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:36:46"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:37:03"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:37:03"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:37:23"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:37:45"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:37:49"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:37:49"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:38:06"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:38:06"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 17.0","timestamp":"2024-10-28 07:38:27"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:38:27"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:38:48"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":16.899999618530273,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:38:51"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:38:51"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:38:58"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:39:08"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:39:08"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:39:28"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:39:50"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:39:54"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:39:54"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 17.0","timestamp":"2024-10-28 07:40:00"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:40:11"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:40:11"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:40:32"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:40:53"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:40:56"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:40:56"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:41:13"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:41:13"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:41:33"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:41:55"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":false,\"light\":true}","timestamp":"2024-10-28 07:41:59"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:41:59"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:42:15"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:42:15"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:42:37"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:42:57"}
+{"level":"info","message":"MQTT-PUB NEW telemetry: {\"vent\":false,\"temperatureSensor\":17,\"fan\":true,\"light\":true}","timestamp":"2024-10-28 07:43:01"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: true","timestamp":"2024-10-28 07:43:01"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: false","timestamp":"2024-10-28 07:43:18"}
+{"level":"warn","message":"MQTT-PUB NEW Vent: false","timestamp":"2024-10-28 07:43:18"}
+{"level":"warn","message":"MQTT-PUB NEW Temperature: 16.9","timestamp":"2024-10-28 07:43:38"}
+{"level":"warn","message":"MQTT-PUB NEW Fan: true","timestamp":"2024-10-28 07:43:38"}
