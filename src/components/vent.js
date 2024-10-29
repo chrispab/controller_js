@@ -73,6 +73,7 @@ export default class Vent extends IOBase {
       state: this.getPropertyValue('state'),
       time: Date.now()
     }
+    logger.error(JSON.stringify(selfTelemetry));
 
     let data = {
       ...superTelemetry,
