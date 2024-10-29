@@ -223,7 +223,7 @@ class IOBase {
     }
 
 
-    getTelemetryData() {
+    getBaseTelemetryData() {
         //get base telemetry data
         const data = {
             name: this.getName(),

@@ -64,7 +64,7 @@ export default class Vent extends IOBase {
 
   getTelemetryData() {
 
-    let superTelemetry = super.getTelemetryData();
+    let superTelemetry = this.getBaseTelemetryData();
 
     logger.error(JSON.stringify(superTelemetry));
 
