@@ -87,26 +87,37 @@ class MqttAgent {
             // data[component.getState()] = component.getTelemetryData().state;
         }
 
-        for (const component of components) {
-            const data2 = {
-                "time": Date.now(),
-                '"'+component.getName()+'"': {
-                    "state": component.getState()
-                },
-                "vent": {
-                    "state": components.fan.getState()
-                },
-                "temperature": {
-                    "state": components.fan.getState()
-                },
-                "highSetpoint": {
-                    "state": components.fan.getState()
-                },
-                "lowSetpoint": {
-                    "state": components.fan.getState()
-                }
-            }
-        }
+        // for (const component of components) {
+
+        //     let name = component.getName();
+        //     let state = component.getState();
+        //     let onMs = component.getOnMs();
+        //     let offMs = component.getOffMs();
+        //     let time = Date.now();
+        //     let 
+
+        //     const data1 = {
+        //         "time": Date.now(),
+        //     }
+        //     const data2 = {
+        //         "time": Date.now(),
+        //         "state": {
+        //             "name": component.getName()
+        //         },
+        //         "vent": {
+        //             "state": components.fan.getState()
+        //         },
+        //         "temperature": {
+        //             "state": components.fan.getState()
+        //         },
+        //         "highSetpoint": {
+        //             "state": components.fan.getState()
+        //         },
+        //         "lowSetpoint": {
+        //             "state": components.fan.getState()
+        //         }
+        //     }
+        // }
 
         // logger.info('======> ' + JSON.stringify(data));
 
