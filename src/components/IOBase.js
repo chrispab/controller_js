@@ -28,13 +28,13 @@ class IOBase {
     }
     
     constructor(IOPin, direction, initialValue) {
-        this.#state = initialValue;
+        this.state = initialValue;
         this.#newStateFlag = false;
         this.#prevStateChangeMs = Date.now();
         this.#onMs = 10 * 1000;
         this.#offMs = 10 * 1000;
         this.#IOPin = IOPin;
-        this.#name = "not yet set";   
+        this.name = "not yet set";   
         this.#newOnMsFlag = false;
         this.#newOffMsFlag = false;
         this.#prevOnMsChangeMs = Date.now();

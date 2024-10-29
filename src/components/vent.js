@@ -68,16 +68,16 @@ export default class Vent extends IOBase {
 
     logger.error(JSON.stringify(superTelemetry));
 
-    let selfTelemetry = {
+    let selfAdditionalTelemetryParams = {
       name: this.getPropertyValue('name'),
       state: this.getPropertyValue('state'),
       time: Date.now()
     }
-    logger.error(JSON.stringify(selfTelemetry));
+    logger.error(JSON.stringify(selfAdditionalTelemetryParams));
 
     let data = {
       ...superTelemetry,
-      ...selfTelemetry
+      ...selfAdditionalTelemetryParams
     } 
     
     logger.error(JSON.stringify(data));
@@ -274,7 +274,7 @@ export default class Vent extends IOBase {
         // Logger.warn("---6");
 
         if (this.getState() == false) {  // if the vent is off, we must wait for the interval to expire before turning it on
-          // iftime is up, so change the state to ON
+          // if time is up, so change the state to ON
           if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
             this.turnOn();  // vent = true;
             // Logger.warn("VENT ON cycle start")
