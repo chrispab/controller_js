@@ -41,6 +41,7 @@ class MqttAgent {
         this.client.publish(topic, payload);
         logger.log(this.logLevel, `MQTT-PUB NEW ${topic}: ${payload}`);
     }
+    
     process(components) {
         this.processCount = this.processCount ? this.processCount + 1 : 1;
         // logger.info(`components: ${(components)}`); //JSON.stringify(components}`);
@@ -69,15 +70,7 @@ class MqttAgent {
         }
     }
 
-    // telemetry(components) {
-    //     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
-    //         this.lastTelemetryMs = Date.now();
-    //         const data = this.getTelemetryData(components);
-    //         this.client.publish(cfg.get("mqtt.outTopicPrefix") + "/telemetry", `${data}`);
-    //         logger.log(this.logLevel, `MQTT-PUB NEW telemetry: ${data}`);
 
-    //     }
-    // }
     getTelemetryData(components) {
         let data = {
 
@@ -86,38 +79,7 @@ class MqttAgent {
             data[component.getName()] = component.getTelemetryData();
             // data[component.getState()] = component.getTelemetryData().state;
         }
-        // data = components;
-        // for (const component of components) {
 
-        //     let name = component.getName();
-        //     let state = component.getState();
-        //     let onMs = component.getOnMs();
-        //     let offMs = component.getOffMs();
-        //     let time = Date.now();
-        //     let 
-
-        //     const data1 = {
-        //         "time": Date.now(),
-        //     }
-        //     const data2 = {
-        //         "time": Date.now(),
-        //         "state": {
-        //             "name": component.getName()
-        //         },
-        //         "vent": {
-        //             "state": components.fan.getState()
-        //         },
-        //         "temperature": {
-        //             "state": components.fan.getState()
-        //         },
-        //         "highSetpoint": {
-        //             "state": components.fan.getState()
-        //         },
-        //         "lowSetpoint": {
-        //             "state": components.fan.getState()
-        //         }
-        //     }
-        // }
 
         // logger.info('======> ' + JSON.stringify(data));
 
