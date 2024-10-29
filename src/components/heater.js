@@ -30,7 +30,28 @@ class Heater extends IOBase {
     this.emitIfStateChanged();
 
   }
+  getTelemetryData() {
 
+    let superTelemetry = this.getBaseTelemetryData();
+
+    logger.error(`tele heater: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+
+    // let selfAdditionalTelemetryParams = {
+    //   name: this.getPropertyValue('name'),
+    //   state: this.getPropertyValue('state'),
+    //   time: Date.now()
+    // }
+    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
+
+    // let data = {
+    //   ...superTelemetry,
+    //   ...selfAdditionalTelemetryParams
+    // } 
+    
+    // logger.error(JSON.stringify(data));
+    // logger.error(JSON.stringify(data) + '=> ' + this.data);
+    return superTelemetry;
+  }
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
     this.turnOff();

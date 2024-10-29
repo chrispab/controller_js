@@ -1,5 +1,6 @@
 import { Gpio } from 'onoff';
 import logger from "../services/logger.js";
+import c from 'config';
 // import { on } from 'nodemon';
 
 
@@ -17,7 +18,7 @@ class IOBase {
     #prevOnMsChangeMs = 0;
     #prevOffMsChangeMs = 0;
     // #setPrevStateChangeMs = 0;
-    
+
     readIO() {
         if (this.#IO && typeof this.#IO.readSync === 'function') {
             return this.#IO.readSync();
@@ -26,7 +27,7 @@ class IOBase {
             return null;
         }
     }
-    
+
     constructor(IOPin, direction, initialValue) {
         this.state = initialValue;
         this.#newStateFlag = false;
@@ -34,7 +35,7 @@ class IOBase {
         this.#onMs = 10 * 1000;
         this.#offMs = 10 * 1000;
         this.#IOPin = IOPin;
-        this.name = "not yet set";   
+        this.name = "not yet set";
         this.#newOnMsFlag = false;
         this.#newOffMsFlag = false;
         this.#prevOnMsChangeMs = Date.now();
@@ -48,17 +49,17 @@ class IOBase {
                 this.#IO.setDirection("out");
                 this.#IO.writeSync(initialValue);
             }
-        } else if (direction === 'in' ) {
+        } else if (direction === 'in') {
             this.#IO = Gpio.accessible ? new Gpio(this.#IOPin, 'in') : { readSync: value => { console.log('virtual input now uses value: ' + value); } };
             if (this.#IO && typeof this.#IO.readSync === 'function' && this.GPIOAccesible) {
                 this.#IO.setDirection("in");
             }
-        }else {
+        } else {
             logger.error("Invalid direction value.");
         }
 
     }
-    
+
     getName() {
         return this.#name;
     }
@@ -158,7 +159,7 @@ class IOBase {
     }
 
     setOnMs(newOnMs) {
-        if (newOnMs !== this.getOnMs() ) {
+        if (newOnMs !== this.getOnMs()) {
             this.#onMs = newOnMs;
             this.newOnMsFlag = true;
             this.setPrevOnMsChangeMs(Date.now());
@@ -166,13 +167,13 @@ class IOBase {
     }
 
     setOffMs(newOffMs) {
-        if (newOffMs !== this.getOffMs() ) {
+        if (newOffMs !== this.getOffMs()) {
             this.#offMs = newOffMs;
             this.newOffMsFlag = true;
             this.setPrevOffMsChangeMs(Date.now());
         }
     }
-    
+
     getOnMs() {
         return this.#onMs;
     }
@@ -180,7 +181,7 @@ class IOBase {
     getOffMs() {
         return this.#offMs;
     }
-    
+
     getPrevOnMsChangeMs() {
         return this.#prevOnMsChangeMs;
     }
@@ -212,7 +213,7 @@ class IOBase {
     }
 
     getPropertyValue(propertyName) {
-        if(typeof this[propertyName] == "undefined")
+        if (typeof this[propertyName] == "undefined")
             return this.emptyValue;
         else
             return this[propertyName];
@@ -225,17 +226,33 @@ class IOBase {
 
     getBaseTelemetryData() {
         //get base telemetry data
+        // person = { name: "John", age: 31, city: "New York" };
         const data = {
-            name: this.getName(),
-            state: this.getState(),
-            onMs: this.getOnMs(),
-            offMs: this.getOffMs(),
-            time: Date.now()
+            "component": {
+                name: this.getName(),
+                state: this.getState(),
+                onMs: this.getOnMs(),
+                offMs: this.getOffMs(),
+                time: Date.now()
+            }
         }
         // logger.info(JSON.stringify(data) + '=> ' + this.data);
+        // Create an Object
+        const component = {};
+        // Add Properties
+        component.name = this.getName();
+        component.state = this.getState();
+        component.onMs = this.getOnMs();
+        component.offMs = this.getOffMs();
+        component.time = Date.now();
 
+
+
+
+
+        // return component;
         return data;
-      }
+    }
 }
 
 export default IOBase;

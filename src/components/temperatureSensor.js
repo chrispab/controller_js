@@ -48,7 +48,28 @@ export default class TemperatureSensor extends IOBase {
     // this.setNewStateAvailable(true);
     this.processCount = 0;
   }
+  getTelemetryData() {
 
+    let superTelemetry = this.getBaseTelemetryData();
+
+    logger.error(`tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+
+    // let selfAdditionalTelemetryParams = {
+    //   name: this.getPropertyValue('name'),
+    //   state: this.getPropertyValue('state'),
+    //   time: Date.now()
+    // }
+    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
+
+    // let data = {
+    //   ...superTelemetry,
+    //   ...selfAdditionalTelemetryParams
+    // } 
+    
+    // logger.error(JSON.stringify(data));
+    // logger.error(JSON.stringify(data) + '=> ' + this.data);
+    return superTelemetry;
+  }
   readSensor() {
     var self = this;
     // logger.info("Trying to Read from DHT sensor...");

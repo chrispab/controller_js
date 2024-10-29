@@ -19,6 +19,8 @@ var lightStateEventHandler = function (state, mqttAgent) {
 
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
 export default class Light extends IOBase {
 
     #currentlySamplingLightSensor;
@@ -48,7 +50,28 @@ export default class Light extends IOBase {
     turnOff() {
         this.setState(false);
     }
+    getTelemetryData() {
 
+        let superTelemetry = this.getBaseTelemetryData();
+    
+        logger.error(`tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    
+        // let selfAdditionalTelemetryParams = {
+        //   name: this.getPropertyValue('name'),
+        //   state: this.getPropertyValue('state'),
+        //   time: Date.now()
+        // }
+        // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
+    
+        // let data = {
+        //   ...superTelemetry,
+        //   ...selfAdditionalTelemetryParams
+        // } 
+        
+        // logger.error(JSON.stringify(data));
+        // logger.error(JSON.stringify(data) + '=> ' + this.data);
+        return superTelemetry;
+      }
     readLightState() {
         // console.log(`********this.#RCLoopCount: ${this.#RCLoopCount}`);
 
