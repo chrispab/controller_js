@@ -79,14 +79,14 @@ class MqttAgent {
     //     }
     // }
     getTelemetryData(components) {
-        const data = {
+        let data = {
 
         }
         for (const component of components) {
-            data[component.getName()] = component.getTelemetryData().state;
+            data[component.getName()] = component.getTelemetryData();
             // data[component.getState()] = component.getTelemetryData().state;
         }
-
+        // data = components;
         // for (const component of components) {
 
         //     let name = component.getName();
