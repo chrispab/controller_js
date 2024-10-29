@@ -94,7 +94,7 @@ export default class Light extends IOBase {
 
         } else {
             this.#RCLoopCount = 111
-            console.log(`DEMO-Gpio not accessible #RCLoopCount: ${this.#RCLoopCount}`);
+            logger.log(logLevel,`DEMO-Gpio not accessible returning default #RCLoopCount: ${this.#RCLoopCount}`);
         }
         return this.#RCLoopCount
     }
@@ -145,7 +145,7 @@ export default class Light extends IOBase {
             // console.log('World!');
             self.#currentlySamplingLightSensor = false
         } else {
-            Logger.log(`!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
+            Logger.log(logLevel,`!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
         }
     }
 
