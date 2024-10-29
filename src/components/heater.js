@@ -11,6 +11,7 @@ var heaterStateEventHandler = function (state, mqttAgent) {
 class Heater extends IOBase {
   constructor(heaterIOPin, onMs, offMs, emitterManager, mqttAgent) {
     super(heaterIOPin, 'out', false);
+    this.setName('heater');
     this.emitterManager = emitterManager;
     this.emitterManager.on('heaterStateChange', heaterStateEventHandler);
     this.mqttAgent = mqttAgent;
