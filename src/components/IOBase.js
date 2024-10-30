@@ -27,7 +27,7 @@ class IOBase {
         }
     }
 
-    constructor(IOPin, direction, initialValue) {
+    constructor(IOPin, direction, initialValue=0) {
         this.state = initialValue;
         this.#newStateFlag = false;
         this.#prevStateChangeMs = Date.now();
@@ -54,7 +54,7 @@ class IOBase {
                 this.#IO.setDirection("in");
             }
         } else {
-            logger.error("Invalid direction value.");
+            logger.error("Invalid IO direction value given.");
         }
 
     }
@@ -89,7 +89,7 @@ class IOBase {
         if (this.#IO && typeof this.#IO.readSync === 'function') {
             return this.#IO.readSync();
         } else {
-            console.error("IO read operation is not supported.");
+            logger.error("IO read operation is not supported.");
             return null;
         }
     }
@@ -98,7 +98,7 @@ class IOBase {
         if (this.#IO && typeof this.#IO.writeSync === 'function') {
             this.#IO.writeSync(value);
         } else {
-            console.error("IO write operation is not supported.");
+            logger.error("IO write operation is not supported.");
         }
     }
 

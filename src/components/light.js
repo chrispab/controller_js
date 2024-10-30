@@ -13,7 +13,9 @@ import logger from "../services/logger.js";
 
 
 var lightStateEventHandler = function (state, mqttAgent) {
-    Logger.log('warn', 'MQTT-PUB NEW Light: ' + `${state}`);
+    // Logger.log('info', 'MQTT->Light: ' + `${state}`);
+    logger.log('info', 'MQTT->Light:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.lightStateTopic") + ": " + (state ? 1 : 0)}`);
+
     mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.lightStateTopic"), `${state ? 1 : 0}`);
 }
 
@@ -54,22 +56,9 @@ export default class Light extends IOBase {
 
         let superTelemetry = this.getBaseTelemetryData();
     
-        logger.error(`tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+        logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     
-        // let selfAdditionalTelemetryParams = {
-        //   name: this.getPropertyValue('name'),
-        //   state: this.getPropertyValue('state'),
-        //   time: Date.now()
-        // }
-        // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
-    
-        // let data = {
-        //   ...superTelemetry,
-        //   ...selfAdditionalTelemetryParams
-        // } 
-        
-        // logger.error(JSON.stringify(data));
-        // logger.error(JSON.stringify(data) + '=> ' + this.data);
+
         return superTelemetry;
       }
     readLightState() {

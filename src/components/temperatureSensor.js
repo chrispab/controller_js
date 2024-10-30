@@ -7,8 +7,11 @@ import cfg from "config";
 import { get } from "http";
 
 var temperatureStateChangeHandler = function (temperatureState,humidityState, mqttAgent) {
-  logger.log('warn', 'MQTT-PUB NEW Temperature: ' + `${temperatureState}, Humidity: ${humidityState}`);
+  // logger.log('warn', 'MQTT->Temperature: ' + `${temperatureState}, Humidity: ${humidityState}`);
+  logger.log('info', 'MQTT->Temp:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + (temperatureState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);
+
+  logger.log('info', 'MQTT->Humidity:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + (humidityState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic"), `${humidityState}`);
 }
 
@@ -52,7 +55,7 @@ export default class TemperatureSensor extends IOBase {
 
     let superTelemetry = this.getBaseTelemetryData();
 
-    logger.error(`tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
     // let selfAdditionalTelemetryParams = {
     //   name: this.getPropertyValue('name'),

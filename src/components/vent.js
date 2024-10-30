@@ -2,8 +2,8 @@ import IOBase from "./IOBase.js";
 import Logger from "../services/logger.js";
 import { Gpio } from 'onoff';
 
-// const logLevel = 'info';
 const logLevel = 'debug';
+// const logLevel = 'info';
 
 // import config from '../config/config.json' assert { type: 'json' }; // NodeJS version.
 import cfg from "config";
@@ -11,16 +11,16 @@ import logger from "../services/logger.js";
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT-PUB NEW Vent: ' + `${state}`);
+  Logger.log('info', 'MQTT->Vent:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
 }
 
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT-PUB NEW ventOnMsChangeEvent: ' + `${state}`);
+  Logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOnSecsTopic"), `${state / 1000}`);
 }
 var ventOffMsChangeEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT-PUB NEW ventOffMsChangeEvent: ' + `${state}`);
+  Logger.log('warn', 'MQTT->ventOffMsChangeEvent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOffSecsTopic"), `${state / 1000}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
@@ -66,7 +66,7 @@ export default class Vent extends IOBase {
 
     let superTelemetry = this.getBaseTelemetryData();
 
-    logger.error(`tele vent: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele vent: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
     return superTelemetry;
   }
@@ -91,8 +91,10 @@ export default class Vent extends IOBase {
     } else {
       Logger.log('error', '==Vent IO undefined==')
     }
-    this.emitIfStateChanged();
-    Logger.log(logLevel, '==Vent on==')
+    if (this.emitIfStateChanged()) {
+      Logger.log('debug', '==Vent on==')
+    }
+
   }
 
   turnOff() {
@@ -103,8 +105,9 @@ export default class Vent extends IOBase {
     } else {
       Logger.log('error', '==Vent IO undefined==')
     }
-    this.emitIfStateChanged();
-    // Logger.log(logLevel, '==Vent off==')
+    if (this.emitIfStateChanged()) {
+      Logger.log('debug', '==Vent off==')
+    }
   }
 
   setSpeedPercent(percent) {
@@ -113,38 +116,11 @@ export default class Vent extends IOBase {
 
   process() {
 
-    // this.manageVent();
 
-    // this.control(this.getTemperature(), this.getHumidity(), this.getTargetTemp(), this.getLightState(), Date.now());
-
-    // Logger.info(`this.prevStateChangeMs: ${this.prevStateChangeMs}`);
-
-    // if (this.hasNewStateAvailable()) {
-    //   if (this.getStateAndClearNewStateFlag() == true) {
-    //     Logger.log(logLevel, "Vent is on");
-    // } else {
-    //     Logger.log(logLevel, "Vent is off");
-    //   }
-    // this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
-    // }
   }
 
   manageVent() {
-    // const currentState = this.IO.readSync();
-    // const currentMs = Date.now();
-    // const elapsedMsSinceLastStateChange = currentMs - this.getPrevStateChangeMs();
 
-    // if (currentState == 1) {
-    //   // is it time to turn off?
-    //   if (elapsedMsSinceLastStateChange >= this.getOnMs()) {
-    //     this.turnOff();
-    //   }
-    // } else {// 0
-    //   // is it time to turn on?
-    //   if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
-    //     this.turnOn();
-    //   }
-    // }
   }
 
   control(currentTemp, currentHumi, target_temp, lightState, current_millis) {
@@ -301,7 +277,9 @@ export default class Vent extends IOBase {
         Logger.log(logLevel, "Vent is off");
       }
       this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
+      return true
     }
+    return false
   }
 }
 

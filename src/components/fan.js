@@ -6,9 +6,12 @@ import { Gpio } from 'onoff';
 
 // import config from '../config/config.json' assert { type: 'json' };
 import cfg from "config";
+// import { debug } from "winston";
 
 var fanStateEventHandler = function (state, mqttAgent) {
-  logger.log('warn', 'MQTT-PUB NEW Fan: ' + `${state}`);
+  // logger.log('warn', 'MQTT->Fan: ' + `${state}`);
+  logger.log('info', 'MQTT->Fan:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
+
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.fanStateTopic"), `${state ? 1 : 0}`);
 }
 
@@ -38,22 +41,9 @@ class Fan extends IOBase {
 
     let superTelemetry = this.getBaseTelemetryData();
 
-    logger.error(`tele fan: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele fan: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-    // let selfAdditionalTelemetryParams = {
-    //   name: this.getPropertyValue('name'),
-    //   state: this.getPropertyValue('state'),
-    //   time: Date.now()
-    // }
-    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
 
-    // let data = {
-    //   ...superTelemetry,
-    //   ...selfAdditionalTelemetryParams
-    // } 
-    
-    // logger.error(JSON.stringify(data));
-    // logger.error(JSON.stringify(data) + '=> ' + this.data);
     return superTelemetry;
   }
   turnOn() {
@@ -65,9 +55,9 @@ class Fan extends IOBase {
     } else {
       logger.error('==fanIO undefined==')
     }
-    this.emitIfStateChanged();
-    // console.log("Turning on vent");
-    logger.log(logLevel, '==fanIO on==')
+    if (this.emitIfStateChanged()){
+      logger.log('debug', '==fanIO on==')
+    } 
   }
 
   turnOff() {
@@ -78,10 +68,9 @@ class Fan extends IOBase {
     } else {
       logger.error('==fanIO undefined==')
     }
-    this.emitIfStateChanged();
-
-    // console.log("Turning off vent");
-    logger.log(logLevel, '==fanIO off==')
+    if (this.emitIfStateChanged()){
+      logger.log('debug', '==fanIO off==')
+    } 
   }
 
 
@@ -91,14 +80,13 @@ class Fan extends IOBase {
 
     // Logger.info(`this.getPrevStateChangeMs(): ${this.getPrevStateChangeMs()}`);
 
-    if (this.hasNewStateAvailable()) {
-      if (this.getStateAndClearNewStateFlag() == true) {
-        logger.log(logLevel, "fan is on");
-      } else {
-        logger.log(logLevel, "fan is off");
-      }
-      // this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
-    }
+    // if (this.hasNewStateAvailable()) {
+    //   if (this.getStateAndClearNewStateFlag() == true) {
+    //     logger.log(logLevel, "fan is on");
+    //   } else {
+    //     logger.log(logLevel, "fan is off");
+    //   }
+    // }
   }
 
   manageFan() {
@@ -126,7 +114,9 @@ class Fan extends IOBase {
         logger.log(logLevel, "Fan is off");
       }
       this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
+      return true
     }
+    return false
   }
 
 

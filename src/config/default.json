@@ -14,7 +14,9 @@
         "ventOnSecsTopic": "/vent_on_delta_secs",
         "ventOffSecsTopic": "/vent_off_delta_secs",
         "highSetpointTopic": "/high_setpoint",
-        "lowSetpointTopic": "/low_setpoint"
+        "lowSetpointTopic": "/low_setpoint",
+        "telemetryTopic": "/telemetry"
+
 
 
     },

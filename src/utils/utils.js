@@ -6,7 +6,7 @@ import Logger from "../services/logger.js";
 import cfg from "config";
 
 var fanStateEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT-PUB NEW Fan: ' + `${state}`);
+  Logger.log('warn', 'MQTT->Fan: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + "/fan_state", `${state ? 1 : 0}`);
 }
 

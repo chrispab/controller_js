@@ -37,7 +37,7 @@ class MqttAgent {
 
   publishAndLog(topic, payload) {
     this.client.publish(topic, payload);
-    logger.log(this.logLevel, `MQTT-PUB NEW ${topic}: ${payload}`);
+    logger.log(this.logLevel, `MQTT->${topic}: ${payload}`);
   }
 
   process(components) {
@@ -48,10 +48,11 @@ class MqttAgent {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
       this.client.publish(
-        cfg.get("mqtt.outTopicPrefix") + "/telemetry",
+        cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic"),
         `${data}`
       );
-      logger.log(this.logLevel, `MQTT-PUB Telemetry: ${data}`);
+    //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
+      logger.log('info', 'MQTT->Telemetry:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
 
       //publish wifi info
       const wifiInfo = wifi.getCurrentConnections(
@@ -90,12 +91,12 @@ class MqttAgent {
       componentData.push(JSON.stringify(obj1));
 
 
-      logger.info("1======> " + JSON.stringify(teledata));
+    //   logger.info("1======> " + JSON.stringify(teledata));
     }
 
     var $stringData = JSON.stringify(componentData);
     var $arrStringData = componentData.toString();
-    logger.info("2======> " + componentData.toString());
+    // logger.info("2======> " + componentData.toString());
 
     return (componentData.toString());
   }
@@ -153,7 +154,7 @@ const options = {
 // mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"), options);
 
 mqttAgent.client.on("connect", function () {
-  logger.warn("client connected:" + JSON.stringify(options));
+  logger.info("MQTT client connected:" + JSON.stringify(options));
   // client.subscribe("/a", { qos: 0 });
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();

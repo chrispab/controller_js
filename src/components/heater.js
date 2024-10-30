@@ -5,7 +5,9 @@ import logger from "../services/logger.js";
 const logLevel = 'debug';
 
 var heaterStateEventHandler = function (state, mqttAgent) {
-  logger.log('warn', 'MQTT-PUB NEW Heater State: ' + `${state}`);
+  // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
+  logger.log('info', 'MQTT->Heater:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
+
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
 }
 class Heater extends IOBase {
@@ -34,22 +36,9 @@ class Heater extends IOBase {
 
     let superTelemetry = this.getBaseTelemetryData();
 
-    logger.error(`tele heater: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele heater: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-    // let selfAdditionalTelemetryParams = {
-    //   name: this.getPropertyValue('name'),
-    //   state: this.getPropertyValue('state'),
-    //   time: Date.now()
-    // }
-    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
 
-    // let data = {
-    //   ...superTelemetry,
-    //   ...selfAdditionalTelemetryParams
-    // } 
-    
-    // logger.error(JSON.stringify(data));
-    // logger.error(JSON.stringify(data) + '=> ' + this.data);
     return superTelemetry;
   }
   process() {
