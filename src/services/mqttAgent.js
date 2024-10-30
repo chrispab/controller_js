@@ -76,7 +76,8 @@ class MqttAgent {
         for (const component of components) {
 
             // data[component.getName()] = component.getTelemetryData();
-            data = component.getTelemetryData();
+            // data = component.getTelemetryData();
+            data.push[component.getTelemetryData()] ;
 
             // data = component.getTelemetryData();
 
