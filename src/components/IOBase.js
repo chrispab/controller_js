@@ -227,15 +227,26 @@ class IOBase {
     getBaseTelemetryData() {
         //get base telemetry data
         // person = { name: "John", age: 31, city: "New York" };
+        // const data = {
+        //     "component": {
+        //         name: this.getName(),
+        //         state: this.getState(),
+        //         onMs: this.getOnMs(),
+        //         offMs: this.getOffMs(),
+        //         time: Date.now()
+        //     }
+        // }
+        // https://www.geeksforgeeks.org/how-to-use-a-variable-for-a-key-in-a-javascript-object-literal/
+        var key = this.getName();
         const data = {
-            "component": {
-                name: this.getName(),
+            thename: {
                 state: this.getState(),
                 onMs: this.getOnMs(),
                 offMs: this.getOffMs(),
                 time: Date.now()
             }
         }
+
         // logger.info(JSON.stringify(data) + '=> ' + this.data);
         // Create an Object
         const component = {};
