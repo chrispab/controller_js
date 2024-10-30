@@ -3,7 +3,6 @@
         "brokerUrl": "mqtt://192.168.0.100",
         "username": "pi",
         "password": "raspberry",
-        
         "topicPrefix": "Zone1",
         "lightStateTopic": "/LightStatus",
         "temperatureStateTopic": "/TemperatureStatus",
@@ -16,9 +15,6 @@
         "highSetpointTopic": "/high_setpoint",
         "lowSetpointTopic": "/low_setpoint",
         "telemetryTopic": "/telemetry"
-
-
-
     },
     "zone": {
         "name": "zone_1",
@@ -64,8 +60,6 @@
         "sensorReadIntervalMs": 30000,
         "publishStateIntervalMs": 60000
     },
-    "highSetpoint": 22.1,
-    "lowSetpoint": 16.5,
     "vent": {
         "speedPercent": 50
     }

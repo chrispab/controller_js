@@ -186,9 +186,15 @@ mqttAgent.client.on("message", (topic, message) => {
     //get the payload
     const payload = message;
     //set the high setpoint in the config object
-    cfg.set("zone.highSetpoint", payload);
+    // cfg.set("zone.highSetpoint", payload);
+    logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
+
   } else if (topic == cfg.get("mqtt.topicPrefix") + "/low_setpoint/set") {
     const payload = message;
-    cfg.set("zone.lowSetpoint", payload);
+    // cfg.set("zone.lowSetpoint", payload);
+    logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
+
   }
 });
