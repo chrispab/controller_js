@@ -14,9 +14,9 @@ import logger from "../services/logger.js";
 
 var lightStateEventHandler = function (state, mqttAgent) {
     // Logger.log('info', 'MQTT->Light: ' + `${state}`);
-    logger.log('info', 'MQTT->Light: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.lightStateTopic") + ": " + (state ? 1 : 0)}`);
+    logger.log('info', 'MQTT->Light: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic") + ": " + (state ? 1 : 0)}`);
 
-    mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.lightStateTopic"), `${state ? 1 : 0}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic"), `${state ? 1 : 0}`);
 }
 
 

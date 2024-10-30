@@ -4,7 +4,7 @@
         "username": "pi",
         "password": "raspberry",
         
-        "outTopicPrefix": "Zone1",
+        "topicPrefix": "Zone1",
         "lightStateTopic": "/LightStatus",
         "temperatureStateTopic": "/TemperatureStatus",
         "humidityStateTopic": "/HumidityStatus",
@@ -21,7 +21,9 @@
 
     },
     "zone": {
-        "name": "zone_1"
+        "name": "zone_1",
+        "highSetpoint": 22.1,
+        "lowSetpoint": 16.5
     },
     "system": {
         "name": "system_1"
@@ -59,7 +61,8 @@
         }
     },
     "temperatureSensor": {
-        "minimumReadIntervalMs": 30000
+        "sensorReadIntervalMs": 30000,
+        "publishStateIntervalMs": 60000
     },
     "highSetpoint": 22.1,
     "lowSetpoint": 16.5,

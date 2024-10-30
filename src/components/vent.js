@@ -11,17 +11,17 @@ import logger from "../services/logger.js";
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
-  Logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
+  Logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
 }
 
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOnSecsTopic"), `${state / 1000}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnSecsTopic"), `${state / 1000}`);
 }
 var ventOffMsChangeEventHandler = function (state, mqttAgent) {
   Logger.log('warn', 'MQTT->ventOffMsChangeEvent: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventOffSecsTopic"), `${state / 1000}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffSecsTopic"), `${state / 1000}`);
 }
 // this.emitterManager.on('ventState', ventStateEventHandler);
 // Zone3/VentStatus

@@ -20,7 +20,7 @@ class MqttAgent {
   constructor() {
     const options = {
       will: {
-        topic: cfg.get("mqtt.outTopicPrefix") + "/LWT",
+        topic: cfg.get("mqtt.topicPrefix") + "/LWT",
         retain: true,
         qos: 2,
         payload: "Offline",
@@ -48,11 +48,11 @@ class MqttAgent {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
       this.client.publish(
-        cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic"),
+        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"),
         `${data}`
       );
     //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
-      logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
+      logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
 
       //publish wifi info
       const wifiInfo = wifi.getCurrentConnections(
@@ -63,7 +63,7 @@ class MqttAgent {
             // console.log(currentConnections);
             // return currentConnections;
             this.client.publish(
-              cfg.get("mqtt.outTopicPrefix") + "/rssi",
+              cfg.get("mqtt.topicPrefix") + "/rssi",
               `${currentConnections[0].quality}`
             );
           }
@@ -72,7 +72,7 @@ class MqttAgent {
       // logger.error("client connected:" + (mod1Function()));
       // console.log("xx=============:" + wifiInfo);
 
-      // this.client.publish(cfg.get("mqtt.outTopicPrefix") + "/rssi", `${myfunc()[0].quality}`);
+      // this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${myfunc()[0].quality}`);
     }
   }
 
@@ -144,7 +144,7 @@ export default mqttAgent;
 // MQTTClient.will_set(zoneName+"/LWT", "Offline", 0, False)
 const options = {
   will: {
-    topic: cfg.get("mqtt.outTopicPrefix") + "/LWT",
+    topic: cfg.get("mqtt.topicPrefix") + "/LWT",
     retain: true,
     qos: 2,
     payload: "Offline",
@@ -158,8 +158,9 @@ mqttAgent.client.on("connect", function () {
   // client.subscribe("/a", { qos: 0 });
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
-  mqttAgent.client.subscribe(["Zone1/#", "Zone2/#", "Zone3/#"]);
-  mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + "/LWT", "Online", {
+  mqttAgent.client.subscribe(["Zone1/high_setpoint/set", "Zone1/low_setpoint/set"]);
+//   Zone1/high_setpoint/set
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", {
     qos: 0,
     retain: true,
   });
@@ -171,12 +172,23 @@ mqttAgent.client.on("packetsend", function () {
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
   // mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
-  // mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
+  // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
 });
 // # publish(topic, payload=None, qos=0, retain=False)
 // MQTTClient.publish(zoneName + "/LWT", "Online", 0, True)
 
 mqttAgent.client.on("message", (topic, message) => {
   // console.log(`Received message on topic ${topic}: ${message}`);
-  // logger.warn(`Received message on topic ${topic}: ${message}`);
+  logger.warn(`Received message on topic ${topic}: ${message}`);
+
+  //   Zone1/high_setpoint/set
+  if (topic == cfg.get("mqtt.topicPrefix") + "/high_setpoint/set") {
+    //get the payload
+    const payload = message;
+    //set the high setpoint in the config object
+    cfg.set("zone.highSetpoint", payload);
+  } else if (topic == cfg.get("mqtt.topicPrefix") + "/low_setpoint/set") {
+    const payload = message;
+    cfg.set("zone.lowSetpoint", payload);
+  }
 });
