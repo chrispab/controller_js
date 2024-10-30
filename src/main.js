@@ -33,8 +33,6 @@ const heater = new Heater(cfg.get("hardware.heater.pin"), 10000, 10000, emitterM
 
 
 setInterval(() => {
-    // scan/process inputs
-    // logger.error(`Sensor:${temperatureSensor.getSensorStr()}. Fan: ${fan.getState()}, Heater: ${heater.getState()}`);
 
     temperatureSensor.process();
 

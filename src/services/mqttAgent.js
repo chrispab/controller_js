@@ -33,6 +33,9 @@ class MqttAgent {
     this.telemetryIntervalMs = cfg.get("telemetry.interval");
     this.lastTelemetryMs = Date.now() - this.telemetryIntervalMs;
     this.logLevel = "info";
+
+    this.highSetpoint = cfg.get("zone.highSetpoint");
+    this.lowSetpoint = cfg.get("zone.lowSetpoint");
   }
 
   publishAndLog(topic, payload) {
@@ -190,11 +193,12 @@ mqttAgent.client.on("message", (topic, message) => {
     logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
 
+    mqttAgent.highSetpoint = payload;
   } else if (topic == cfg.get("mqtt.topicPrefix") + "/low_setpoint/set") {
     const payload = message;
     // cfg.set("zone.lowSetpoint", payload);
     logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
-
+    mqttAgent.lowSetpoint = payload;
   }
 });
