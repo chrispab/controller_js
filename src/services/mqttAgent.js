@@ -72,21 +72,22 @@ class MqttAgent {
 
 
     getTelemetryData(components) {
-        let data = [];
+        const data = [];
         for (const component of components) {
 
             // data[component.getName()] = component.getTelemetryData();
             // data = component.getTelemetryData();
             data.push[component.getTelemetryData()] ;
+            // data.push[JSON.stringify(component.getTelemetryData())] ;
 
             // data = component.getTelemetryData();
 
-
+            logger.info('1======> ' + JSON.stringify(component.getTelemetryData()));
             // data[component.getState()] = component.getTelemetryData().state;
         }
 
 
-        // logger.info('======> ' + JSON.stringify(data));
+        logger.info('2======> ' + data.toString());
 
         return JSON.stringify(data);
     }
