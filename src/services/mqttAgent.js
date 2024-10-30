@@ -85,20 +85,12 @@ class MqttAgent {
       var jsoncomponent = {};
       jsoncomponent = JSON.stringify(teledata);
 
-    //   let tempDesign = JSON.parse(JSON.stringify(design));
-      // componentData[component.getName()] = component.getTelemetryData();
-      // componentData = component.getTelemetryData();
-    //   const obj1 = structuredClone(jsoncomponent);
-    //   const obj1 = JSON.parse(JSON.stringify(teledata));
       const obj1 = JSON.parse(JSON.stringify(teledata));
 
-    //   componentData.push[jsoncomponent];
       componentData.push(JSON.stringify(obj1));
 
-      // componentData = component.getTelemetryData();
 
       logger.info("1======> " + JSON.stringify(teledata));
-      // componentData[component.getState()] = component.getTelemetryData().state;
     }
 
     var $stringData = JSON.stringify(componentData);

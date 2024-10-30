@@ -1,7 +1,6 @@
 import { Gpio } from 'onoff';
 import logger from "../services/logger.js";
 import c from 'config';
-// import { on } from 'nodemon';
 
 
 class IOBase {
@@ -102,9 +101,6 @@ class IOBase {
             console.error("IO write operation is not supported.");
         }
     }
-
-
-
 
     /**
      * Gets the previous state change time in milliseconds.
@@ -226,40 +222,28 @@ class IOBase {
 
     getBaseTelemetryData() {
         //get base telemetry data
-        // person = { name: "John", age: 31, city: "New York" };
-        // const data = {
-        //     "component": {
-        //         name: this.getName(),
-        //         state: this.getState(),
-        //         onMs: this.getOnMs(),
-        //         offMs: this.getOffMs(),
-        //         time: Date.now()
-        //     }
-        // }
         // https://www.geeksforgeeks.org/how-to-use-a-variable-for-a-key-in-a-javascript-object-literal/
+
+        let data = {};
         var key = this.getName();
-        const data = {
-            thename: {
-                state: this.getState(),
-                onMs: this.getOnMs(),
-                offMs: this.getOffMs(),
-                time: Date.now()
-            }
+        // data[key] = "something";
+        data[key] =
+        {
+            state: this.getState(),
+            onMs: this.getOnMs(),
+            offMs: this.getOffMs(),
+            time: Date.now()
         }
 
         // logger.info(JSON.stringify(data) + '=> ' + this.data);
         // Create an Object
-        const component = {};
-        // Add Properties
-        component.name = this.getName();
-        component.state = this.getState();
-        component.onMs = this.getOnMs();
-        component.offMs = this.getOffMs();
-        component.time = Date.now();
-
-
-
-
+        // const component = {};
+        // // Add Properties
+        // component.name = this.getName();
+        // component.state = this.getState();
+        // component.onMs = this.getOnMs();
+        // component.offMs = this.getOffMs();
+        // component.time = Date.now();
 
         // return component;
         return data;

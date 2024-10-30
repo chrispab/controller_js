@@ -68,21 +68,6 @@ export default class Vent extends IOBase {
 
     logger.error(`tele vent: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-    // let selfAdditionalTelemetryParams = {
-    //   name: this.getPropertyValue('name'),
-    //   state: this.getPropertyValue('state'),
-    //   time: Date.now()
-    // }
-    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
-
-    // let data = {
-    //   ...superTelemetry,
-    //   ...selfAdditionalTelemetryParams
-    // } 
-    // let data = superTelemetry;
-
-    // logger.error(JSON.stringify(data));
-    // logger.error(JSON.stringify(data) + '=> ' + this.data);
     return superTelemetry;
   }
 
