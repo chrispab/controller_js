@@ -52,7 +52,7 @@ class MqttAgent {
         `${data}`
       );
     //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
-      logger.log('info', 'MQTT->Telemetry:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
+      logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
 
       //publish wifi info
       const wifiInfo = wifi.getCurrentConnections(

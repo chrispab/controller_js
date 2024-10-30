@@ -11,7 +11,7 @@ import logger from "../services/logger.js";
 
 
 var ventStateEventHandler = function (state, mqttAgent) {
-  Logger.log('info', 'MQTT->Vent:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
+  Logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
 }
 

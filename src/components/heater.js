@@ -6,7 +6,7 @@ const logLevel = 'debug';
 
 var heaterStateEventHandler = function (state, mqttAgent) {
   // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
-  logger.log('info', 'MQTT->Heater:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
+  logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
 
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
 }

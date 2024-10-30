@@ -1,6 +1,5 @@
 import { Gpio } from 'onoff';
 import logger from "../services/logger.js";
-import c from 'config';
 
 
 class IOBase {
@@ -22,7 +21,7 @@ class IOBase {
         if (this.#IO && typeof this.#IO.readSync === 'function') {
             return this.#IO.readSync();
         } else {
-            console.error("IO read operation is not supported.");
+            logger.error("IO read operation is not supported.");
             return null;
         }
     }
@@ -74,7 +73,7 @@ class IOBase {
         if (this.#IO && typeof this.#IO.setDirection === 'function') {
             this.#IO.setDirection(direction);
         } else {
-            console.error("IO direction operation is not supported.");
+            logger.error("IO direction operation is not supported.");
         }
     }
 
@@ -82,7 +81,7 @@ class IOBase {
         if (typeof IOPin === 'number' && IOPin >= 0) {
             this.#IOPin = IOPin;
         } else {
-            console.error("Invalid IOPin value.");
+            logger.error("Invalid IOPin value.");
         }
     }
     readIO() {

@@ -4,14 +4,13 @@ import os from 'os';
 import sensor from 'node-dht-sensor';
 import logger from "../services/logger.js";
 import cfg from "config";
-import { get } from "http";
 
 var temperatureStateChangeHandler = function (temperatureState,humidityState, mqttAgent) {
   // logger.log('warn', 'MQTT->Temperature: ' + `${temperatureState}, Humidity: ${humidityState}`);
-  logger.log('info', 'MQTT->Temp:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + (temperatureState)}`);
+  logger.log('info', 'MQTT->Temp: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + (temperatureState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);
 
-  logger.log('info', 'MQTT->Humidity:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + (humidityState)}`);
+  logger.log('info', 'MQTT->Humidity: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + (humidityState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.humidityStateTopic"), `${humidityState}`);
 }
 

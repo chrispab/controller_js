@@ -10,7 +10,7 @@ import cfg from "config";
 
 var fanStateEventHandler = function (state, mqttAgent) {
   // logger.log('warn', 'MQTT->Fan: ' + `${state}`);
-  logger.log('info', 'MQTT->Fan:  ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
+  logger.log('info', 'MQTT->Fan: ' + `${cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
 
   mqttAgent.client.publish(cfg.get("mqtt.outTopicPrefix") + cfg.get("mqtt.fanStateTopic"), `${state ? 1 : 0}`);
 }
