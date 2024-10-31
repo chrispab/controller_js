@@ -1,6 +1,7 @@
 import logger from "./logger.js";
 
-import cfg from "config";
+// import cfg from "config";
+import cfg from "./config.js";
 
 // import utils from "../utils/utils.js";
 // import {wifi} from "../utils/utils.js";
