@@ -4,6 +4,7 @@ import { Gpio } from 'onoff';
 
 // const logLevel = 'info';
 const logLevel = 'debug';
+// const logLevel = 'warn';
 
 // import config from '../config/config.json' assert { type: 'json' };
 import cfg from "config";
@@ -13,9 +14,7 @@ import logger from "../services/logger.js";
 
 
 var lightStateEventHandler = function (state, mqttAgent) {
-    // Logger.log('info', 'MQTT->Light: ' + `${state}`);
     logger.log('info', 'MQTT->Light: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic") + ": " + (state ? 1 : 0)}`);
-
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic"), `${state ? 1 : 0}`);
 }
 
@@ -43,6 +42,7 @@ export default class Light extends IOBase {
         //set new reading available
         // this.setNewStateAvailable(true);
         this.#processCount = 0;
+        this.readLightState();
     }
 
     turnOn() {
@@ -61,17 +61,20 @@ export default class Light extends IOBase {
 
         return superTelemetry;
       }
-    readLightState() {
-        // console.log(`********this.#RCLoopCount: ${this.#RCLoopCount}`);
 
-        // new ldr based routine test
-        this.initiateGetRCChargeLoopCount();  // Measure timing using GPIO4
+    readLightState() {
+        logger.log(logLevel,`>>>readLightState this.#RCLoopCount: ${this.#RCLoopCount}`);
+
+
 
         // const lightState = (this.#RCLoopCount > 1000) ? false : true;
         this.setState(this.#RCLoopCount > 1000 ? false : true);
-        const lightState = (this.getState());
-        // console.log(`*********lightState: ${lightState}`);
+        Logger.log(logLevel, `>>>.#RCLoopCount: ${this.#RCLoopCount}`);
 
+        const lightState = (this.getState());
+        logger.log( logLevel,`>>>lightState: ${lightState}`);
+        // new ldr based routine test
+        this.initiateGetRCChargeLoopCount();  // Measure timing using GPIO4
         // this.state = lightState
         return this.setState(lightState)
     }
@@ -89,7 +92,7 @@ export default class Light extends IOBase {
      * @returns {number} The number of loops until the voltage is read as HIGH.
      */
     initiateGetRCChargeLoopCount() {
-        // console.log("==initiateGetRCChargeLoopCount");
+        logger.log( logLevel,"==initiateGetRCChargeLoopCount");
 
         this.#RCLoopCount = 0
         if (Gpio.accessible) {
@@ -98,7 +101,7 @@ export default class Light extends IOBase {
             // this.rcIO.writeSync(0)
             // console.log('--Hello1');
             var self = this;
-            // console.log(`1.....var self = this:${JSON.stringify(self)}`);
+            logger.log( logLevel,`1.....var self = this:`);
 
             wait(50)
                 .then(() => this.readLDRChargeLoopCount(self))
@@ -106,7 +109,7 @@ export default class Light extends IOBase {
 
         } else {
             this.#RCLoopCount = 111
-            logger.log(logLevel,`DEMO-Gpio not accessible returning default #RCLoopCount: ${this.#RCLoopCount}`);
+            logger.log('error',`DEMO-Gpio not accessible returning default #RCLoopCount: ${this.#RCLoopCount}`);
         }
         return this.#RCLoopCount
     }
@@ -128,14 +131,14 @@ export default class Light extends IOBase {
      * @param {object} self - The context object containing the state and methods for IO operations.
      */
     readLDRChargeLoopCount(self) {
-        // console.log('---2');
+        logger.log(logLevel,'---2');
         // Count loops until voltage across capacitor reads high on GPIO
         // console.log(`out self.rcIO.readSync(): ${self.rcIO.readSync()}`);
         // if not currently sampling then start counting
         // console.log(`2.....var self = this:${JSON.stringify(self)}`);
         if (self.#currentlySamplingLightSensor == false) {
             self.#currentlySamplingLightSensor = true
-            // console.log('---3');
+            logger.log( logLevel,'---3');
 
             // charge capacitor
             self.setIODirection('in');
@@ -152,7 +155,7 @@ export default class Light extends IOBase {
 
             Logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
 
-            Logger.log(logLevel, `>>>>>>>>>>>>>LIVE-self.#RCLoopCount: ${self.#RCLoopCount}`);
+            Logger.log(logLevel, `>>>>>>>>>>>>>self.#RCLoopCount: ${self.#RCLoopCount}`);
             // console.log(`>>>>>this.#RCLoopCount: ${self.#RCLoopCount}`);
             // console.log('World!');
             self.#currentlySamplingLightSensor = false
