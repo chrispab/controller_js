@@ -13,7 +13,8 @@ import Light from "./components/light.js";
 // import config from './config/config.json' assert { type: 'json' }; // NodeJS version.
 
 // var cfg = require('config');
-import cfg from "config";
+// import cfg from "config";
+import cfg from "./services/config.js";
 
 //import services
 //single instance
@@ -59,13 +60,5 @@ function process() {
     processCount = processCount ? processCount + 1 : 1;
     // console.log(`loop count: ${processCount}, ` + getHMSStr() + temperatureSensor.getSensorStr() + ` fan ${fan.getState()} heater ${heater.getState()}`);
     // console.log(os.hostname())
-}
-
-function saveConfig() {
-    var fs = require('fs');
-    var file_content = fs.readFileSync("default.json");
-    var content = JSON.parse(file_content);
-    content.SERVER.port = 6000;
-    fs.writeFileSync("default2.json", JSON.stringify(content));
 }
 
