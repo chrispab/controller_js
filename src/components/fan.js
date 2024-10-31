@@ -5,7 +5,9 @@ import logger from "../services/logger.js";
 import { Gpio } from 'onoff';
 
 // import config from '../config/config.json' assert { type: 'json' };
-import cfg from "config";
+// import cfg from "config";
+import cfg from "../services/config.js";
+
 // import { debug } from "winston";
 
 var fanStateEventHandler = function (state, mqttAgent) {

@@ -1,5 +1,6 @@
 import IOBase from "./IOBase.js";
-import cfg from "config";
+// import cfg from "config";
+import cfg from "../services/config.js";
 
 import logger from "../services/logger.js";
 const logLevel = 'debug';

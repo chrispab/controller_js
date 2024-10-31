@@ -7,7 +7,8 @@ const logLevel = "debug";
 // const logLevel = 'warn';
 
 // import config from '../config/config.json' assert { type: 'json' };
-import cfg from "config";
+// import cfg from "config";
+import cfg from "../services/config.js";
 
 import Logger from "../services/logger.js";
 import logger from "../services/logger.js";

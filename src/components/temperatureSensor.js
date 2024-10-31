@@ -1,38 +1,36 @@
 import IOBase from "../components/IOBase.js";
 import os from 'os';
-// const DHT_PIN = 4;
 import sensor from 'node-dht-sensor';
 import logger from "../services/logger.js";
-import cfg from "config";
+// import cfg from "config";
+import cfg from "../services/config.js";
 
-var temperatureStateChangeHandler = function (temperatureState,humidityState, mqttAgent) {
-  // logger.log('warn', 'MQTT->Temperature: ' + `${temperatureState}, Humidity: ${humidityState}`);
+var temperatureStateChangeHandler = function (temperatureState, humidityState, mqttAgent) {
   logger.log('info', 'MQTT->Temp: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + (temperatureState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);
 
-  logger.log('info', 'MQTT->Humidity: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + (humidityState)}`);
+  logger.log('info', 'MQTT->Humi: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + (humidityState)}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), `${humidityState}`);
 }
 
-// Zone3/TemperatureStatus 22.6
 
 export default class TemperatureSensor extends IOBase {
   constructor(dhtSensorType, dhtSensorPin, emitterManager, mqttAgent) {
     super(dhtSensorPin, 'in', 0);
+    this.setName('temperatureSensor');
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
     this.dhtSensorType = dhtSensorType;
     this.dhtSensorPin = dhtSensorPin;
     this.temperature = 0;
     this.humidity = 0;
-    this.setName('temperatureSensor');
 
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
-    this.lastVisitMs = Date.now();
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
     this.lastStatePublishedMs = Date.now();
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
+    this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
 
     logger.info(`HostName: ${os.hostname()}`);
     if (os.hostname() !== "zone3" && os.hostname() !== "zone1") {
@@ -45,23 +43,16 @@ export default class TemperatureSensor extends IOBase {
         }
       });
     }
-    this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
-
-    //set new reading available
-    // this.setNewStateAvailable(true);
-    this.processCount = 0;
   }
 
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
 
-    this.lastVisitMs = Date.now();
-
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       this.lastStatePublishedMs = Date.now();
       this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
-    } 
+    }
 
     // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {

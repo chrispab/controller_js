@@ -37,86 +37,80 @@ export default class Vent extends IOBase {
     this.setOffMs(offMs);
     this.setOnMs(onMs);
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-    this.lastVisitMs = Date.now();
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
 
     this.ventDarkOnDelta = 10000;  // vent on time
     this.ventDarkOffDelta = 60000;
-    this.ventDark_ON_startTime = 0;
-    this.ventDark_OFF_startTime = 0;
+    this.ventDarkOnStartMs = 0;
+    this.ventDarkOffStartMs = 0;
 
     this.emitterManager.on('ventStateChange', ventStateEventHandler);
     // from config
     // this.onDelta = config.vent.onDelta;
     // this.offDelta = config.vent.offDelta;
     this.speedPercent = cfg.get("vent.speedPercent");
-    this.vent_lon_sp_offset = 0.1;
-    this.vent_override = false;
-    this.ventState = 1;
-    this.prev_vent_millis
-    this.ventDark_status = 'inactive';
+    this.lightOnSetpointOffset = 0.1;
+    this.ventOverride = false;
+    this.ventDarkStatus = 'inactive';
     //set new reading available
     this.setNewStateAvailable(true);
     this.processCount = 0;
     this.ventIO = this.IO;
-    this.vent_pulse_on_delta = 10000;
+    this.ventPulseOnDelta = 10000;
   }
 
-  control(currentTemp, currentHumi, target_temp, lightState) {
+  control(currentTemp, currentHumi, setPointTemperature, lightState) {
 
-    // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${currentMs}`);
+    // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
     // loff vent/cooling
-    // const elapsedMsSinceLastStateChange = currentMs - this.lastVisitMs;
     const currentMs = Date.now();
 
     const elapsedMsSinceLastStateChange = currentMs - this.getPrevStateChangeMs();
-    this.lastVisitMs = Date.now();
 
 
     // if light off - do a minimal vent routine
     if (lightState == false) {
 
       this.speedPercent = 50;
-      if (this.ventDark_status == 'inactive') {
+      if (this.ventDarkStatus == 'inactive') {
         Logger.log(logLevel, 'VENT: lets start the vent dark ON period');
         // lets start the vent dark ON period
-        this.ventDark_status = true;
+        this.ventDarkStatus = true;
         this.turnOn();
         // set time it was switched ON
-        this.ventDark_ON_startTime = currentMs;
+        this.ventDarkOnStartMs = currentMs;
         return;
       }
 
       // if at end of ON period
-      if ((this.ventDark_status == true) && (currentMs > (this.ventDark_ON_startTime + this.ventDarkOnDelta))) {
+      if ((this.ventDarkStatus == true) && (currentMs > (this.ventDarkOnStartMs + this.ventDarkOnDelta))) {
         Logger.warn('VENT now at end of ON cylce');
         // now at end of ON cylce
         // enable off period
-        this.ventDark_status = false;
+        this.ventDarkStatus = false;
         this.turnOff();
         // set time it was switched ON
-        this.ventDark_OFF_startTime = currentMs;
+        this.ventDarkOffStartMs = currentMs;
         return;
       }
 
       // if at end of OFF period
-      if ((this.ventDark_status == false) && (currentMs > (this.ventDark_OFF_startTime + this.ventDarkOffDelta))) {
+      if ((this.ventDarkStatus == false) && (currentMs > (this.ventDarkOffStartMs + this.ventDarkOffDelta))) {
         // Logger.warn('VENT now at end of OFF cylce');
         // now at end of OFF cylce
         // so - enable ON period
-        this.ventDark_status = true;
-        // this.ventState = true;
+        this.ventDarkStatus = true;
         this.turnOn();
         // set time it was switched ON
-        this.ventDark_ON_startTime = currentMs;
+        this.ventDarkOnStartMs = currentMs;
         return;
       }
       return;
     } else {
       // mark light off period as inactive
       // Logger.info('mark light off period as inactive');
-      this.ventDark_status = 'inactive';
+      this.ventDarkStatus = 'inactive';
     }
 
 
@@ -124,8 +118,8 @@ export default class Vent extends IOBase {
     //!add some hysteresys here
     // only for upperlon control
     if (lightState == true) {
-      const lowerHys = target_temp - 0.1;
-      const upperHys = target_temp + 0.2;
+      const lowerHys = setPointTemperature - 0.1;
+      const upperHys = setPointTemperature + 0.2;
       // maybe use a dead band?
 
       if (this.speedPercent == "100") {
@@ -142,26 +136,26 @@ export default class Vent extends IOBase {
         }
       }
 
-      // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${target_temp}, light: ${lightState}, millis: ${currentMs}`);
+      // Logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
       // temp above target, change state to ON, full speed
-      if ((currentTemp > (target_temp + this.vent_lon_sp_offset))) {
-        this.vent_override = true;
+      if ((currentTemp > (setPointTemperature + this.lightOnSetpointOffset))) {
+        this.ventOverride = true;
         this.speedPercent = 100;
         this.turnOn();
         Logger.log( logLevel,"VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse")
       }
       // temp below target, change state to OFF after pulse delay
-      else if ((this.vent_override == true) && ((currentMs - this.prevStateChangeMs) >= this.vent_pulse_on_delta)) {
+      else if ((this.ventOverride == true) && ((currentMs - this.prevStateChangeMs) >= this.ventPulseOnDelta)) {
         this.speedPercent = 50;
         this.turnOff();
-        this.vent_override = false;
+        this.ventOverride = false;
         Logger.log( logLevel,"VENT OFF - temp ok, OVERRIDE - OFF")
-      } else if (this.vent_override == true) {
+      } else if (this.ventOverride == true) {
         Logger.log(logLevel,'VENT ON - override in progress')
       }
 
       // periodic vent control - only execute if vent override not active
-      if (this.vent_override == false) {  // process periodic vent activity
+      if (this.ventOverride == false) {  // process periodic vent activity
         // Logger.warn("---6");
 
         if (this.getState() == false) {  
@@ -186,7 +180,6 @@ export default class Vent extends IOBase {
         }
       }
     }
-    // this.lastVisitMs = Date.now();
   }
 
 
@@ -261,8 +254,10 @@ export default class Vent extends IOBase {
         Logger.log(logLevel, "Vent is off");
       }
       this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
+      //indicate data read and used e.g MQTT pub
       return true
     }
+    //indicate data NOT NEW and not published e.g MQTT pub
     return false
   }
 }
