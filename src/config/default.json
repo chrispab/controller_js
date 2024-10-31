@@ -60,6 +60,10 @@
         "sensorReadIntervalMs": 30000,
         "publishStateIntervalMs": 60000
     },
+    "light": {
+        "sensorReadIntervalMs": 10000,
+        "publishStateIntervalMs": 15000
+    },
     "vent": {
         "speedPercent": 50
     }

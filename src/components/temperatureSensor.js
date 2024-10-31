@@ -29,7 +29,7 @@ export default class TemperatureSensor extends IOBase {
 
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
     this.lastVisitMs = Date.now();
-    this.lastReadTimeMs = Date.now() - this.sensorReadIntervalMs;
+    this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
     this.lastStatePublishedMs = Date.now();
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
@@ -51,28 +51,42 @@ export default class TemperatureSensor extends IOBase {
     // this.setNewStateAvailable(true);
     this.processCount = 0;
   }
+
+  process() {
+    this.processCount = this.processCount ? this.processCount + 1 : 1;
+
+    this.lastVisitMs = Date.now();
+
+    // ensure regular state publishing, at least every publishStateIntervalMs
+    if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
+      this.lastStatePublishedMs = Date.now();
+      this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
+    } 
+
+    // do an actual read of the sensor every sensorReadIntervalMs
+    if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
+      this.readSensor();
+      this.lastSensorReadTimeMs = Date.now();
+      if (this.hasNewStateAvailable()) {
+        //get value from readSensor()
+        // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
+        this.lastStatePublishedMs = Date.now();
+        this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
+        this.setNewStateAvailable(false);
+
+      }
+    }
+  }
+
   getTelemetryData() {
 
     let superTelemetry = this.getBaseTelemetryData();
 
     logger.log('debug', `tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-    // let selfAdditionalTelemetryParams = {
-    //   name: this.getPropertyValue('name'),
-    //   state: this.getPropertyValue('state'),
-    //   time: Date.now()
-    // }
-    // logger.error(JSON.stringify(selfAdditionalTelemetryParams));
-
-    // let data = {
-    //   ...superTelemetry,
-    //   ...selfAdditionalTelemetryParams
-    // } 
-    
-    // logger.error(JSON.stringify(data));
-    // logger.error(JSON.stringify(data) + '=> ' + this.data);
     return superTelemetry;
   }
+
   readSensor() {
     var self = this;
     // logger.info("Trying to Read from DHT sensor...");
@@ -121,31 +135,7 @@ export default class TemperatureSensor extends IOBase {
   getHumidity() {
     return this.humidity;
   }
-  process() {
-    this.processCount = this.processCount ? this.processCount + 1 : 1;
 
-    this.lastVisitMs = Date.now();
-
-    if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
-      //publish state
-      this.lastStatePublishedMs = Date.now();
-      this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
-      //simulate new state read from sensor just to get mqqtt to publish
-    } 
-
-
-    if (Date.now() >= this.lastReadTimeMs + this.sensorReadIntervalMs) {
-      this.readSensor();
-      this.lastReadTimeMs = Date.now();
-      if (this.hasNewStateAvailable()) {
-        //get value from readSensor()
-        // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-        this.lastStatePublishedMs = Date.now();
-        this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
-        this.setNewStateAvailable(false);
-      }
-    }
-  }
 
   getSensorStr() {
     return `temp: ${this.getTemperature()}°C, ` +
