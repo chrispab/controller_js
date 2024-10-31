@@ -38,7 +38,49 @@ class Fan extends IOBase {
     this.setNewStateAvailable(true);
     this.processCount = 0;
     // this.fanIO = this.IO;
+    this.lastPeriodicPublishedMs = Date.now();
+    this.periodicPublishIntervalMs = cfg.get("fan.periodicPublishIntervalMs");
   }
+
+
+  process() {
+    this.manageFan();
+
+    this.processPeriodicPublication();
+  }
+  
+  processPeriodicPublication() {
+    // ensure regular publishing of additional propperties
+    // such as fanOnMs and fanOffMs
+    if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
+      this.lastPeriodicPublishedMs = Date.now();
+      // Zonen/fan_on_delta_secs
+      logger.log('warn', 'MQTT->fanOnDeltaSecsTopic: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
+
+      // Zonen/fan_off_delta_secs
+      logger.log('warn', 'MQTT->fanOffDeltaSecsTopic: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+    }
+  }
+  manageFan() {
+    const currentState = this.getState();
+    const currentMs = Date.now();
+    const elapsedMs = currentMs - this.getPrevStateChangeMs();
+
+    if (currentState == true) {
+      // is it time to turn off?
+      if (elapsedMs >= this.getOnMs()) {
+        this.turnOff();
+      }
+    } else {// 0
+      // is it time to turn on?
+      if (elapsedMs >= this.getOffMs()) {
+        this.turnOn();
+      }
+    }
+  }
+
   getTelemetryData() {
 
     let superTelemetry = this.getBaseTelemetryData();
@@ -76,38 +118,7 @@ class Fan extends IOBase {
   }
 
 
-  process() {
 
-    this.manageFan();
-
-    // Logger.info(`this.getPrevStateChangeMs(): ${this.getPrevStateChangeMs()}`);
-
-    // if (this.hasNewStateAvailable()) {
-    //   if (this.getStateAndClearNewStateFlag() == true) {
-    //     logger.log(logLevel, "fan is on");
-    //   } else {
-    //     logger.log(logLevel, "fan is off");
-    //   }
-    // }
-  }
-
-  manageFan() {
-    const currentState = this.getState();
-    const currentMs = Date.now();
-    const elapsedMs = currentMs - this.getPrevStateChangeMs();
-
-    if (currentState == true) {
-      // is it time to turn off?
-      if (elapsedMs >= this.getOnMs()) {
-        this.turnOff();
-      }
-    } else {// 0
-      // is it time to turn on?
-      if (elapsedMs >= this.getOffMs()) {
-        this.turnOn();
-      }
-    }
-  }
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() == true) {

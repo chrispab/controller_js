@@ -47,7 +47,8 @@ setInterval(() => {
     let highSetPoint = 21.0;
     highSetPoint = cfg.get("zone.highSetpoint");
     vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), highSetPoint, light.getState());
-    
+    vent.process();
+
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
 }, 1000);

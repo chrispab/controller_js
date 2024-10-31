@@ -84,22 +84,6 @@ export default class Light extends IOBase {
             );
         }
 
-
-
-        // this.readLightSensorState();
-        // if (this.hasNewStateAvailable()) {
-        //   if (this.getState()) {
-        //     logger.info("Light is on");
-        //   } else {
-        //     logger.info("Light is off");
-        //   }
-        //   this.getStateAndClearNewStateFlag();
-        //   this.emitterManager.emit(
-        //     "lightStateChange",
-        //     this.getState(),
-        //     this.mqttAgent
-        //   );
-        // }
     }
 
     turnOn() {

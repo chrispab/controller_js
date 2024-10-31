@@ -14,7 +14,11 @@
         "ventOffSecsTopic": "/vent_off_delta_secs",
         "highSetpointTopic": "/high_setpoint",
         "lowSetpointTopic": "/low_setpoint",
-        "telemetryTopic": "/telemetry"
+        "telemetryTopic": "/telemetry",
+        "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
+        "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
+        "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
+        "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
     },
     "zone": {
         "name": "zone_1",
@@ -65,11 +69,17 @@
         "publishStateIntervalMs": 60000
     },
     "vent": {
-        "speedPercent": 50
-        // "publishStateIntervalMs": 60000
+        "speedPercent": 50,
+        "onMs": 10000,
+        "offMs": 60000,
+        "periodicPublishIntervalMs": 29000,
+        "publishStateIntervalMs": 60000
     },
     "fan": {
-        "speedPercent": 50
-        // "publishStateIntervalMs": 60000
+        "speedPercent": 50,
+        "onMs": 10000,
+        "offMs": 60000,
+        "periodicPublishIntervalMs": 30000,
+        "publishStateIntervalMs": 60000
     }
 }
