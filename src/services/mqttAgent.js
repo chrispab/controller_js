@@ -183,8 +183,25 @@ mqttAgent.client.on("message", (topic, message) => {
   // console.log(`Received message on topic ${topic}: ${message}`);
   logger.warn(`Received message on topic ${topic}: ${message}`);
 
+  // const expr = 'Papayas';
+  switch (topic) {
+    case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
+      logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
+      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
+      console.log('Oranges are $0.59 a pound.');
+      break;
+    case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
+      logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
+      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
+      console.log('Mangoes and papayas are $2.79 a pound.');
+      //     // Expected output: "Mangoes and papayas are $2.79 a pound."
+      break;
+    default:
+      console.log(`Sorry, we are out of ${topic}.`);
+  }
+
   //   Zone1/high_setpoint/set
-  if (topic == cfg.get("mqtt.topicPrefix") + "/high_setpoint/set") {
+  if (topic == (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set")) {
     //get the payload
     const payload = message;
     //set the high setpoint in the config object
@@ -194,7 +211,7 @@ mqttAgent.client.on("message", (topic, message) => {
 
     mqttAgent.highSetpoint = payload;
 
-  } else if (topic == cfg.get("mqtt.topicPrefix") + "/low_setpoint/set") {
+  } else if (topic == (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set")) {
     const payload = message;
     // cfg.set("zone.lowSetpoint", payload);
     logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
