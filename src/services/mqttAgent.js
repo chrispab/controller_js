@@ -55,7 +55,7 @@ class MqttAgent {
         cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"),
         `${data}`
       );
-    //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
+      //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
       logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
 
       //publish wifi info
@@ -94,8 +94,6 @@ class MqttAgent {
 
       componentData.push(JSON.stringify(obj1));
 
-
-    //   logger.info("1======> " + JSON.stringify(teledata));
     }
 
     var $stringData = JSON.stringify(componentData);
@@ -163,7 +161,7 @@ mqttAgent.client.on("connect", function () {
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
   mqttAgent.client.subscribe(["Zone1/high_setpoint/set", "Zone1/low_setpoint/set"]);
-//   Zone1/high_setpoint/set
+  //   Zone1/high_setpoint/set
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", {
     qos: 0,
     retain: true,
@@ -195,6 +193,7 @@ mqttAgent.client.on("message", (topic, message) => {
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
 
     mqttAgent.highSetpoint = payload;
+
   } else if (topic == cfg.get("mqtt.topicPrefix") + "/low_setpoint/set") {
     const payload = message;
     // cfg.set("zone.lowSetpoint", payload);

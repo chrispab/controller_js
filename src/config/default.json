@@ -31,7 +31,7 @@
     "telemetry": {
         "name": "telemetry_1",
         "enabled": true,
-        "interval": 60000
+        "interval": 300000
     },
     "logging": {
         "enabled": true,
@@ -72,14 +72,14 @@
         "speedPercent": 50,
         "onMs": 10000,
         "offMs": 60000,
-        "periodicPublishIntervalMs": 29000,
+        "periodicPublishIntervalMs": 60000,
         "publishStateIntervalMs": 60000
     },
     "fan": {
         "speedPercent": 50,
         "onMs": 10000,
         "offMs": 60000,
-        "periodicPublishIntervalMs": 30000,
+        "periodicPublishIntervalMs": 60000,
         "publishStateIntervalMs": 60000
     }
 }
