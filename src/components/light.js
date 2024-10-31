@@ -58,14 +58,11 @@ export default class Light extends IOBase {
     
         logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     
-
         return superTelemetry;
       }
 
     readLightState() {
         logger.log(logLevel,`>>>readLightState this.#RCLoopCount: ${this.#RCLoopCount}`);
-
-
 
         // const lightState = (this.#RCLoopCount > 1000) ? false : true;
         this.setState(this.#RCLoopCount > 1000 ? false : true);
@@ -165,7 +162,7 @@ export default class Light extends IOBase {
     }
 
     process() {
-        //if
+        //read light tx at min intervals
         this.readLightState();
         if (this.hasNewStateAvailable()) {
             if (this.getState()) {

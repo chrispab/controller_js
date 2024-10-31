@@ -126,17 +126,12 @@ export default class TemperatureSensor extends IOBase {
 
     this.lastVisitMs = Date.now();
 
-    if (Date.now() > this.lastStatePublishedMs + this.publishStateIntervalMs) {
+    if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       //publish state
       this.lastStatePublishedMs = Date.now();
       this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
       //simulate new state read from sensor just to get mqqtt to publish
     } 
-
-
-
-
-
 
 
     if (Date.now() >= this.lastReadTimeMs + this.sensorReadIntervalMs) {
