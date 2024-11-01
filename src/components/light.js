@@ -61,7 +61,7 @@ export default class Light extends IOBase {
     process() {
         // do an actual read of the sensor every sensorReadIntervalMs
         if (Date.now() >= (this.lastSensorReadTimeMs + this.sensorReadIntervalMs)) {
-            logger.info("READING Light SENSOR STATE: " + this.getState());
+            logger.log(logLevel, "READING Light SENSOR STATE: " + this.getState());
             this.readLightSensorState();
             this.lastSensorReadTimeMs = Date.now();
             
@@ -75,7 +75,7 @@ export default class Light extends IOBase {
 
         // ensure regular state publishing, at least every publishStateIntervalMs
         if (Date.now() >= (this.lastStatePublishedMs + this.publishStateIntervalMs)) {
-            logger.info("READING REGULAR Light STATE: " + this.getState());
+            logger.log(logLevel, "READING REGULAR Light STATE: " + this.getState());
             this.lastStatePublishedMs = Date.now();
             this.emitterManager.emit(
                 "lightStateChange",

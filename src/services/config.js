@@ -3,6 +3,8 @@
 //so it can be restored to last saved settings when app restarts
 // import c from "config";
 import config from "config";
+// import logger from "./logger";
+import logger from "./logger.js";
 
 class ConfigHandler {
     constructor() {
@@ -18,7 +20,8 @@ class ConfigHandler {
     }
 
     set(key, value) {
-        this.config.set(key, value);
+        logger.log('error', 'setting-config: ' + key + ' = ' + value);
+        // this.config.set(key, value);
     }
 
     saveConfig() {

@@ -138,12 +138,10 @@ function getwifiinfo() {
   return mycurrentConnections;
 }
 
-// export default MqttAgent;
 //export an instance so single instance can be used
 export const mqttAgent = new MqttAgent();
 export default mqttAgent;
 
-// MQTTClient.will_set(zoneName+"/LWT", "Offline", 0, False)
 const options = {
   will: {
     topic: cfg.get("mqtt.topicPrefix") + "/LWT",
@@ -153,7 +151,6 @@ const options = {
   },
 };
 
-// mqttAgent.client.connect(cfg.get("mqtt.brokerUrl"), options);
 
 mqttAgent.client.on("connect", function () {
   logger.info("MQTT client connected:" + JSON.stringify(options));
@@ -188,34 +185,35 @@ mqttAgent.client.on("message", (topic, message) => {
     case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
       logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
       mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
-      console.log('Oranges are $0.59 a pound.');
+      //set the high setpoint in the config object
+      cfg.set("zone.highSetpoint", message);
       break;
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
       logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
       mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
-      console.log('Mangoes and papayas are $2.79 a pound.');
-      //     // Expected output: "Mangoes and papayas are $2.79 a pound."
+      //set the low setpoint in the config object
+      cfg.set("zone.lowSetpoint", message);
       break;
     default:
-      console.log(`Sorry, we are out of ${topic}.`);
+      logger.error(`Topic- ${topic} - is not recognised.`);
   }
 
   //   Zone1/high_setpoint/set
-  if (topic == (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set")) {
-    //get the payload
-    const payload = message;
-    //set the high setpoint in the config object
-    // cfg.set("zone.highSetpoint", payload);
-    logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
+  // if (topic == (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set")) {
+  //   //get the payload
+  //   const payload = message;
+  //   //set the high setpoint in the config object
+  //   // cfg.set("zone.highSetpoint", payload);
+  //   logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
+  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
 
-    mqttAgent.highSetpoint = payload;
+  //   mqttAgent.highSetpoint = payload;
 
-  } else if (topic == (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set")) {
-    const payload = message;
-    // cfg.set("zone.lowSetpoint", payload);
-    logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
-    mqttAgent.lowSetpoint = payload;
-  }
+  // } else if (topic == (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set")) {
+  //   const payload = message;
+  //   // cfg.set("zone.lowSetpoint", payload);
+  //   logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
+  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
+  //   mqttAgent.lowSetpoint = payload;
+  // }
 });
