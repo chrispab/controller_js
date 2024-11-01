@@ -22,7 +22,7 @@
     },
     "zone": {
         "name": "zone_1",
-        "highSetpoint": 26.1,
+        "highSetpoint": 22.1,
         "lowSetpoint": 16.5
     },
     "system": {

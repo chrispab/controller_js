@@ -89,7 +89,7 @@ export default class Vent extends IOBase {
 
   control(currentTemp, currentHumi, setPointTemperature, lightState) {
 
-    // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
+    // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
     // loff vent/cooling
     const currentMs = Date.now();
 

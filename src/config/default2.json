@@ -21,7 +21,7 @@
     "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
   },
   "zone": {
-    "highSetpoint": 25,
+    "highSetpoint": 23.7,
     "name": "zone_1",
     "lowSetpoint": 16.5
   },
