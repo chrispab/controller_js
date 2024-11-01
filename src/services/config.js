@@ -28,11 +28,13 @@ class ConfigHandler {
         // var fs = require('fs');
         // const fs = require('node:fs');
         // const fs 
-
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
         var file_content = fs.readFileSync("./config/default.json");
         var content = JSON.parse(file_content);
-        content[key] = value;
-        fs.writeFileSync("./config/default2.json", JSON.stringify(content));
+        // content[key] = value;
+        // const mergedObject = {  ...content,...value};
+        const mergedObject = Object.assign({},content, value);
+        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObject));
 
         //write config file
 

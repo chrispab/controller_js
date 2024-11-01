@@ -186,7 +186,9 @@ mqttAgent.client.on("message", (topic, message) => {
       logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
       mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
       //set the high setpoint in the config object
-      cfg.set("zone.highSetpoint", message);
+      const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
+    //   cfg.set("zone.highSetpoint", Number(message.toString()));
+      cfg.set("zone.highSetpoint", obj1);
       break;
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
       logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
