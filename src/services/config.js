@@ -21,8 +21,8 @@ class ConfigHandler {
         return this.config.get(key);
     }
 
-    set(key, inobject) {
-        logger.log('error', 'setting - set config: ' + key + ' = ' + inobject);
+    set(key, value) {
+        // logger.log('error', 'setting - set config: ' + key + ' = ' + value);
         // this.config.set(key, value);
         //read config file
         // var fs = require('fs');
@@ -36,20 +36,11 @@ class ConfigHandler {
         var file_content = fs.readFileSync("./config/default.json");
         var content = JSON.parse(file_content);
 
-        const newObject = {...inobject};
-        // Object.keys(newObject).map((property) => {
-        //     newObject[property] = "Updated value";
-        //   });
-          const mergedObject = Object.assign(content, newObject);
 
-          const new_obj = { ...obj, name: { ...obj.name, first: 'blah'} }
+        // https://stackoverflow.com/questions/65817636/update-nested-js-objects-without-overwriting-missing-properties
+        const mergedObj = merge({ ...content}, {...value})
 
-        content[key] = value;
-        // const mergedObject = {  ...content,...value};
-        // mergedObject = Object.assign({},content, object);
-        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObject));
-
-        //write config file
+        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
 
     }
 
@@ -63,7 +54,15 @@ class ConfigHandler {
     
     
 }
-
+const merge = (target, source) => {
+    // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
+    for (const key of Object.keys(source)) {
+      if (source[key] instanceof Object) Object.assign(source[key], merge(target[key], source[key]))
+    }
+    // Join `target` and modified `source`
+    Object.assign(target || {}, source)
+    return target
+  }
 // export a single instance of ConfigHandler;
 export  const cfg = new ConfigHandler();
 export default cfg;
