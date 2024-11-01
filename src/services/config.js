@@ -32,7 +32,7 @@ class ConfigHandler {
     }
 
     save() {
-        saveConfig();
+        saveConfig(this.config);
     }
 
     get(stringkey) {
@@ -43,52 +43,27 @@ class ConfigHandler {
     }
 
     set(key, value) {
-        // logger.log('error', 'setting - set config: ' + key + ' = ' + value);
-        // this.config.set(key, value);
-        //read config file
-        // var fs = require('fs');
-        // const fs = require('node:fs');
-        // const fs 
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-
-        // https://stackoverflow.com/questions/9454863/updating-javascript-object-property
-
 
         var file_content = fs.readFileSync("./config/default.json");
         var content = JSON.parse(file_content);
 
-        const oldhisp = this.get("zone.highSetpoint");
-        logger.log('error', 'oldhisp: ' + oldhisp);
-        // fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
-        // logger.log('error', 'config: ' + JSON.stringify(content, null, 2));
-        // https://stackoverflow.com/questions/65817636/update-nested-js-objects-without-overwriting-missing-properties
+        // const oldhisp = this.get("zone.highSetpoint");
+        // logger.log('error', 'oldhisp: ' + oldhisp);
         const mergedObj = merge({ ...content }, { ...value })
 
-        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
+        // fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
 
-        // now force a reload of config to get new values
-        // this.config.
-        // ...reset your environment variables...
-        // global.NODE_CONFIG = null;
-        // delete import.meta.config;
-        // var config = require('config');
-        // import config from "config";
+        this.saveConfig(mergedObj);
 
         this.config = this.load();
-        // this.config = config;
-        const newhisp = this.config.get("zone.highSetpoint");
-        logger.log('error', 'newhisp: ' + newhisp);
+        // const newhisp = this.get("zone.highSetpoint");
+        // logger.log('error', 'newhisp: ' + newhisp);
 
-        // ...test the new configs...
-        // config
     }
 
-    saveConfigzz() {
-        var fs = require('fs');
-        var file_content = fs.readFileSync("default.json");
-        var content = JSON.parse(file_content);
-        content.SERVER.port = 6000;
-        fs.writeFileSync("default2.json", JSON.stringify(content));
+    saveConfig(mergedObj) {
+        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
+
     }
 
 

@@ -17,11 +17,11 @@ var ventStateEventHandler = function (state, mqttAgent) {
 
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnSecsTopic"), `${state / 1000}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${state / 1000}`);
 }
 var ventOffMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOffMsChangeEvent: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffSecsTopic"), `${state / 1000}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${state / 1000}`);
 }
 
 
