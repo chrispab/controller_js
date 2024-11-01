@@ -21,8 +21,8 @@ class ConfigHandler {
         return this.config.get(key);
     }
 
-    set(key, value) {
-        logger.log('error', 'setting - set config: ' + key + ' = ' + value);
+    set(key, inobject) {
+        logger.log('error', 'setting - set config: ' + key + ' = ' + inobject);
         // this.config.set(key, value);
         //read config file
         // var fs = require('fs');
@@ -31,9 +31,18 @@ class ConfigHandler {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
         var file_content = fs.readFileSync("./config/default.json");
         var content = JSON.parse(file_content);
-        // content[key] = value;
+
+        const newObject = {...inobject};
+        // Object.keys(newObject).map((property) => {
+        //     newObject[property] = "Updated value";
+        //   });
+          const mergedObject = Object.assign(content, newObject);
+
+          const new_obj = { ...obj, name: { ...obj.name, first: 'blah'} }
+
+        content[key] = value;
         // const mergedObject = {  ...content,...value};
-        const mergedObject = Object.assign({},content, value);
+        // mergedObject = Object.assign({},content, object);
         fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObject));
 
         //write config file
