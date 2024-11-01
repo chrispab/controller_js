@@ -6,6 +6,8 @@ import config from "config";
 // import logger from "./logger";
 import logger from "./logger.js";
 
+import fs from 'fs';
+
 class ConfigHandler {
     constructor() {
         this.config = config;
@@ -22,9 +24,21 @@ class ConfigHandler {
     set(key, value) {
         logger.log('error', 'setting - set config: ' + key + ' = ' + value);
         // this.config.set(key, value);
+        //read config file
+        // var fs = require('fs');
+        // const fs = require('node:fs');
+        // const fs 
+
+        var file_content = fs.readFileSync("./config/default.json");
+        var content = JSON.parse(file_content);
+        content[key] = value;
+        fs.writeFileSync("./config/default2.json", JSON.stringify(content));
+
+        //write config file
+
     }
 
-    saveConfig() {
+    saveConfigzz() {
         var fs = require('fs');
         var file_content = fs.readFileSync("default.json");
         var content = JSON.parse(file_content);

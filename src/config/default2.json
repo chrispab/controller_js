@@ -1,0 +1,92 @@
+{
+    "mqtt": {
+        "brokerUrl": "mqtt://192.168.0.100",
+        "username": "pi",
+        "password": "raspberry",
+        "topicPrefix": "Zone1",
+        "lightStateTopic": "/LightStatus",
+        "temperatureStateTopic": "/TemperatureStatus",
+        "humidityStateTopic": "/HumidityStatus",
+        "ventStateTopic": "/VentStatus",
+        "fanStateTopic": "/FanStatus",
+        "heaterStateTopic": "/HeaterStatus",
+        "ventOnSecsTopic": "/vent_on_delta_secs",
+        "ventOffSecsTopic": "/vent_off_delta_secs",
+        "highSetpointTopic": "/high_setpoint",
+        "lowSetpointTopic": "/low_setpoint",
+        "telemetryTopic": "/telemetry",
+        "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
+        "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
+        "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
+        "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
+    },
+    "zone": {
+        "name": "zone_1",
+        "highSetpoint": 22.1,
+        "lowSetpoint": 16.5
+    },
+    "system": {
+        "name": "system_1"
+    },
+    "telemetry": {
+        "name": "telemetry_1",
+        "enabled": true,
+        "interval": 300000
+    },
+    "logging": {
+        "enabled": true,
+        "level": "info"
+    },
+    "log_level": "info",
+    "hardware": {
+        "dhtSensor": {
+            "pin": 3,
+            "type": "22"
+        },
+        "fan": {
+            "pin": 13,
+            "physicalPin": 33
+        },
+        "heater": {
+            "pin": 5,
+            "physicalPin": 29
+        },
+        "vent": {
+            "pin": 26,
+            "physicalPin": 37
+        },
+        "RC": {
+            "pin": 27,
+            "physicalPin": 13
+        }
+    },
+    "temperatureSensor": {
+        "sensorReadIntervalMs": 30000,
+        "publishStateIntervalMs": 60000
+    },
+    "light": {
+        "sensorReadIntervalMs": 60000,
+        "publishStateIntervalMs": 60000
+    },
+    "vent": {
+        "speedPercent": 50,
+        "onMs": 10000,
+        "offMs": 60000,
+        "periodicPublishIntervalMs": 60000,
+        "publishStateIntervalMs": 60000
+    },
+    "fan": {
+        "speedPercent": 50,
+        "onMs": 10000,
+        "offMs": 60000,
+        "periodicPublishIntervalMs": 60000,
+        "publishStateIntervalMs": 60000
+    },
+    "zone.highSetpoint": {
+        "type": "Buffer",
+        "data": [
+            50,
+            52
+        ]
+    }
+}
