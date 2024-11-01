@@ -65,6 +65,28 @@ export default class Vent extends IOBase {
     this.publishStateIntervalMs = cfg.get("vent.publishStateIntervalMs");
   }
 
+  process() {
+    this.processPeriodicPublication();
+  }
+
+  processPeriodicPublication() {
+    // logger.warn("111vent periodic publishing: " + this.getState());
+
+    // ensure regular publishing of additional propperties
+    // such as ventOnMs and ventOffMs
+    if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
+      this.lastPeriodicPublishedMs = Date.now();
+      // Zonen/vent_on_delta_secs
+      logger.log('info', 'MQTT->ventOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
+
+      // Zonen/vent_off_delta_secs
+      logger.log('info', 'MQTT->ventOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+    }
+  }
+
+
   control(currentTemp, currentHumi, setPointTemperature, lightState) {
 
     // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
@@ -90,7 +112,7 @@ export default class Vent extends IOBase {
 
       // if at end of ON period
       if ((this.ventDarkStatus == true) && (currentMs > (this.ventDarkOnStartMs + this.ventDarkOnDelta))) {
-        logger.warn('VENT now at end of ON cylce');
+        logger.log(logLevel, 'VENT now at end of ON cylce');
         // now at end of ON cylce
         // enable off period
         this.ventDarkStatus = false;
@@ -238,27 +260,6 @@ export default class Vent extends IOBase {
 
   setSpeedPercent(percent) {
     this.speedPercent = percent;
-  }
-
-  process() {
-    this.processPeriodicPublication();
-  }
-
-  processPeriodicPublication() {
-    // logger.warn("111vent periodic publishing: " + this.getState());
-
-    // ensure regular publishing of additional propperties
-    // such as ventOnMs and ventOffMs
-    if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
-      this.lastPeriodicPublishedMs = Date.now();
-      // Zonen/vent_on_delta_secs
-      logger.log('info', 'MQTT->ventOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
-      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
-
-      // Zonen/vent_off_delta_secs
-      logger.log('info', 'MQTT->ventOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
-      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
-    }
   }
 
 

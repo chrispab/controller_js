@@ -20,7 +20,7 @@ class ConfigHandler {
     }
 
     set(key, value) {
-        logger.log('error', 'setting-config: ' + key + ' = ' + value);
+        logger.log('error', 'setting - set config: ' + key + ' = ' + value);
         // this.config.set(key, value);
     }
 
