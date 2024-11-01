@@ -29,6 +29,10 @@ class ConfigHandler {
         // const fs = require('node:fs');
         // const fs 
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
+
+        // https://stackoverflow.com/questions/9454863/updating-javascript-object-property
+
+
         var file_content = fs.readFileSync("./config/default.json");
         var content = JSON.parse(file_content);
 
