@@ -182,7 +182,11 @@ mqttAgent.client.on("connect", function () {
   // client.subscribe("/a", { qos: 0 });
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
-  mqttAgent.client.subscribe(["Zone1/high_setpoint/set", "Zone1/low_setpoint/set"]);
+  mqttAgent.client.subscribe(["Zone1/high_setpoint/set",
+    "Zone1/low_setpoint/set",
+    "Zone1/vent_on_delta_secs/set",
+    "Zone1/vent_off_delta_secs/set",
+  ]);
   //   Zone1/high_setpoint/set
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", {
     qos: 0,
@@ -214,8 +218,8 @@ mqttAgent.client.on("message", (topic, message) => {
         const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
         cfg.set("zone.highSetpoint", obj1);
       }
-
       break;
+
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
       if (Number(message.toString()) > 0) {
         logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
@@ -224,8 +228,29 @@ mqttAgent.client.on("message", (topic, message) => {
         const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
         cfg.set("zone.lowSetpoint", obj2);
       }
-
       break;
+
+    case (cfg.get("mqtt.topicPrefix") + "/vent_on_delta_secs/set"):
+      if (Number(message.toString()) > 0) {
+        logger.log('warn', 'MQTT->vent_on_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (message)}`);
+        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${message}`);
+        //set the low setpoint in the config object
+        const obj3 = { vent: { onMs: Number(message.toString()) * 1000 } };
+        cfg.set("vent.onMs", obj3);
+      }
+      break;
+
+    case (cfg.get("mqtt.topicPrefix") + "/vent_off_delta_secs/set"):
+      if (Number(message.toString()) > 0) {
+        logger.log('warn', 'MQTT->vent_off_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (message)}`);
+        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${message}`);
+        //set the low setpoint in the config object
+        const obj4 = { vent: { offMs: Number(message.toString()) * 1000 } };
+        cfg.set("vent.offMs", obj4);
+      }
+      break;
+
+
     default:
       logger.error(`Topic- ${topic} - is not recognised.`);
   }
