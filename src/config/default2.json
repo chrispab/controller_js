@@ -1,7 +1,8 @@
 {
   "zone": {
+    "highSetpoint": 22.1,
     "lowSetpoint": 13.1,
-    "highSetpoint": 25,
+    "periodicPublishIntervalMs": 60000,
     "name": "zone_1"
   },
   "system": {
@@ -49,7 +50,7 @@
   },
   "vent": {
     "speedPercent": 50,
-    "onMs": 10000,
+    "onMs": 5000,
     "offMs": 60000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000

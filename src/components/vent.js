@@ -55,11 +55,12 @@ export default class Vent extends IOBase {
     this.ventIO = this.IO;
     this.ventPulseOnDelta = 10000;
 
-    this.lastPeriodicPublishedMs = Date.now();
     this.periodicPublishIntervalMs = cfg.get("vent.periodicPublishIntervalMs");
 
-    this.lastStatePublishedMs = Date.now();
+    this.lastPeriodicPublishedMs = Date.now()- this.periodicPublishIntervalMs;
     this.publishStateIntervalMs = cfg.get("vent.publishStateIntervalMs");
+
+    this.lastStatePublishedMs = Date.now()- this.publishStateIntervalMs;
   }
 
   process() {
@@ -74,11 +75,11 @@ export default class Vent extends IOBase {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/vent_on_delta_secs
-      logger.log('info', 'MQTT->ventOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
+      logger.log('info', 'MQTT->periodic ventOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
       this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
 
       // Zonen/vent_off_delta_secs
-      logger.log('info', 'MQTT->ventOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
+      logger.log('info', 'MQTT->periodic ventOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
       this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
     }
   }

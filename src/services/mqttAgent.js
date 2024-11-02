@@ -37,6 +37,10 @@ class MqttAgent {
 
     this.highSetpoint = cfg.get("zone.highSetpoint");
     this.lowSetpoint = cfg.get("zone.lowSetpoint");
+
+    this.periodicPublishIntervalMs = cfg.get("zone.periodicPublishIntervalMs");
+    this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+
   }
 
   // publishAndLog(topic, payload) {
@@ -77,6 +81,27 @@ class MqttAgent {
       // console.log("xx=============:" + wifiInfo);
 
       // this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${myfunc()[0].quality}`);
+
+    }
+    this.processPeriodicPublication()
+
+  }
+
+  processPeriodicPublication() {
+
+    // process and publish additional properties for the zone
+    // e.g. lowSetpoint and highSetpoint
+
+
+    if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
+      this.lastPeriodicPublishedMs = Date.now();
+      // Zonen/vent_on_delta_secs
+      logger.log('info', 'MQTT->periodic highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (cfg.get("zone.highSetpoint"))}`);
+      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${(cfg.get("zone.highSetpoint"))}`);
+
+      // Zonen/vent_off_delta_secs
+      logger.log('info', 'MQTT->periodic lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (cfg.get("zone.lowSetpoint"))}`);
+      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${(cfg.get("zone.lowSetpoint"))}`);
     }
   }
 

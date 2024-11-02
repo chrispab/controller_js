@@ -28,8 +28,9 @@ export default class TemperatureSensor extends IOBase {
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
-    this.lastStatePublishedMs = Date.now();
+    
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
+    this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
 
     logger.info(`HostName: ${os.hostname()}`);
