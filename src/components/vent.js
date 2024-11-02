@@ -23,15 +23,16 @@ var ventOffMsChangeEventHandler = function (state, mqttAgent) {
 
 
 export default class Vent extends IOBase {
-  constructor(ventOpPin, onMs, offMs, emitterManager, mqttAgent) {
+  constructor(emitterManager, mqttAgent) {
     // const direction = ;
     // const initialValue = 0;
-    super(ventOpPin, 'out', 0);
+    super(cfg.get("hardware.vent.pin"), 'out', 0);
     this.setState(false); // this.state = false;
     this.setName('vent');
 
-    this.setOffMs(offMs);
-    this.setOnMs(onMs);
+    this.setOnMs(cfg.get("vent.onMs"));
+    this.setOffMs(cfg.get("vent.offMs"));
+    
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
@@ -56,11 +57,10 @@ export default class Vent extends IOBase {
     this.ventPulseOnDelta = 10000;
 
     this.periodicPublishIntervalMs = cfg.get("vent.periodicPublishIntervalMs");
+    this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
 
-    this.lastPeriodicPublishedMs = Date.now()- this.periodicPublishIntervalMs;
     this.publishStateIntervalMs = cfg.get("vent.publishStateIntervalMs");
-
-    this.lastStatePublishedMs = Date.now()- this.publishStateIntervalMs;
+    this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
   }
 
   process() {

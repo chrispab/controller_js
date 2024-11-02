@@ -35,8 +35,8 @@ export default class Light extends IOBase {
     #currentlySamplingLightSensor;
     #processCount;
     #RCLoopCount;
-    constructor(RCPin, emitterManager, mqttAgent) {
-        super(RCPin, "out", 0);
+    constructor(emitterManager, mqttAgent) {
+        super(cfg.get("hardware.RC.pin"), "out", 0);
         this.setPrevStateChangeMs(Date.now() - this.offMs);
         this.setName("light");
 

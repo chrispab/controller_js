@@ -1,14 +1,10 @@
 import IOBase from "./IOBase.js";
 import logger from "../services/logger.js";
 
-
 import { Gpio } from 'onoff';
 
-// import config from '../config/config.json' assert { type: 'json' };
-// import cfg from "config";
 import cfg from "../services/config.js";
 
-// import { debug } from "winston";
 
 var fanStateEventHandler = function (state, mqttAgent) {
   // logger.log('warn', 'MQTT->Fan: ' + `${state}`);
@@ -22,12 +18,12 @@ const logLevel = 'debug';
 
 
 class Fan extends IOBase {
-  constructor(fanOpPin, onMs, offMs, emitterManager, mqttAgent) {
-    super(fanOpPin, 'out', 0);
+  constructor(emitterManager, mqttAgent) {
+    super(cfg.get("hardware.fan.pin"), 'out', 0);
     this.setState(false);
     this.setName('fan');
-    this.setOffMs(offMs);
-    this.setOnMs(onMs);
+    this.setOffMs(cfg.get("fan.offMs"));
+    this.setOnMs(cfg.get("fan.onMs"));
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
 
     this.emitterManager = emitterManager;
@@ -37,9 +33,10 @@ class Fan extends IOBase {
     //set new reading available
     this.setNewStateAvailable(true);
     this.processCount = 0;
-    // this.fanIO = this.IO;
-    this.lastPeriodicPublishedMs = Date.now();
+
     this.periodicPublishIntervalMs = cfg.get("fan.periodicPublishIntervalMs");
+    this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+
   }
 
 
@@ -48,7 +45,7 @@ class Fan extends IOBase {
 
     this.processPeriodicPublication();
   }
-  
+
   processPeriodicPublication() {
     // ensure regular publishing of additional propperties
     // such as fanOnMs and fanOffMs
@@ -63,6 +60,7 @@ class Fan extends IOBase {
       this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
     }
   }
+
   manageFan() {
     const currentState = this.getState();
     const currentMs = Date.now();
@@ -87,7 +85,6 @@ class Fan extends IOBase {
 
     logger.log('debug', `tele fan: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-
     return superTelemetry;
   }
   turnOn() {
@@ -99,9 +96,9 @@ class Fan extends IOBase {
     } else {
       logger.error('==fanIO undefined==')
     }
-    if (this.emitIfStateChanged()){
+    if (this.emitIfStateChanged()) {
       logger.log('debug', '==fanIO on==')
-    } 
+    }
   }
 
   turnOff() {
@@ -112,9 +109,9 @@ class Fan extends IOBase {
     } else {
       logger.error('==fanIO undefined==')
     }
-    if (this.emitIfStateChanged()){
+    if (this.emitIfStateChanged()) {
       logger.log('debug', '==fanIO off==')
-    } 
+    }
   }
 
 

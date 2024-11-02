@@ -15,20 +15,24 @@ var temperatureStateChangeHandler = function (temperatureState, humidityState, m
 
 
 export default class TemperatureSensor extends IOBase {
-  constructor(dhtSensorType, dhtSensorPin, emitterManager, mqttAgent) {
-    super(dhtSensorPin, 'in', 0);
+  constructor(emitterManager, mqttAgent) {
+    super(cfg.get("hardware.dhtSensor.pin"), 'in', 0);
     this.setName('temperatureSensor');
+    this.dhtSensorType = cfg.get("hardware.dhtSensor.type");
+    this.dhtSensorPin = cfg.get("hardware.dhtSensor.pin");
+
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
-    this.dhtSensorType = dhtSensorType;
-    this.dhtSensorPin = dhtSensorPin;
+
     this.temperature = 0;
     this.humidity = 0;
 
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
-    
+    //force an initial sensor read
+    this.readSensor();
+
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
@@ -84,8 +88,8 @@ export default class TemperatureSensor extends IOBase {
     // logger.info("Trying to Read from DHT sensor...");
     sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
       let sensorData = { 'temperature': 0, 'humidity': 0 };
+      
       if (!err) {
-
         //limit to 1 dp
         temperature = temperature.toFixed(1);
         humidity = humidity.toFixed(1);
@@ -104,7 +108,7 @@ export default class TemperatureSensor extends IOBase {
         return sensorData;
 
       } else {
-        logger.error("Failed to read from DHT sensor");
+        logger.error("Failed to read from DHT sensor: " + err);
       }
     });
 

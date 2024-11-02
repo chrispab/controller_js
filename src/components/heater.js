@@ -12,8 +12,8 @@ var heaterStateEventHandler = function (state, mqttAgent) {
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
 }
 class Heater extends IOBase {
-  constructor(heaterIOPin, onMs, offMs, emitterManager, mqttAgent) {
-    super(heaterIOPin, 'out', false);
+  constructor(emitterManager, mqttAgent) {
+    super(cfg.get("hardware.heater.pin"),  'out', false);
     this.setName('heater');
     this.emitterManager = emitterManager;
     this.emitterManager.on('heaterStateChange', heaterStateEventHandler);

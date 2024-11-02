@@ -1,6 +1,3 @@
-//additions to 'config'
-//to support runtime adjusted configuration is written back to disk
-//so it can be restored to last saved settings when app restarts
 
 import logger from "./logger.js";
 import fs from 'fs';
@@ -17,7 +14,7 @@ class ConfigHandler {
 
     process() {
 
-        if (this.configHasChanged  && Date.now() - this.configChangedTime > 5000) {
+        if (this.configHasChanged && Date.now() - this.configChangedTime > 5000) {
             this.save();
             this.configHasChanged = false;
             this.configChangedTime = null;
@@ -78,7 +75,6 @@ class ConfigHandler {
      */
     saveConfig(configObj, path = "./config/default2.json") {
         fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
-        this.configHasChanged = false;
     }
 
 }
