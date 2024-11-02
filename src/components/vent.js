@@ -16,7 +16,7 @@ var ventStateEventHandler = function (state, speedState, mqttAgent) {
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
   //vent speed percent
   logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
   //vent value, 0 is off, 1 is 50%, 2 is 100%
   const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
   logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
@@ -37,7 +37,7 @@ export default class Vent extends IOBase {
   constructor(emitterManager, mqttAgent) {
     // const direction = ;
     // const initialValue = 0;
-    super(cfg.get("hardware.vent.pin"), 'out', 0);
+    super(cfg.get("hardware.vent.pin"), 'disabled', 0);
     this.setState(false); // this.state = false;
     this.setName('vent');
 
@@ -247,12 +247,14 @@ export default class Vent extends IOBase {
 
     if (Gpio.accessible) {
       // console.log("Turning on vent");
-      this.writeIO(1);
+      this.ventPowerPin.writeIO(1);
       if (this.speedPercent == 100) {
-        //  this.writeIO(1)
+        this.ventSpeedPin.writeIO(1);
+      } else if (this.speedPercent == 50) {
+        this.ventSpeedPin.writeIO(0);
       } else {
-        // this.writeIO(0)
-      };
+        logger.log('error', '==Vent speed invalid==')
+      }
     } else {
       logger.log('error', '==Vent IO undefined==')
     }
@@ -266,12 +268,17 @@ export default class Vent extends IOBase {
     this.setState(false);
 
     if (Gpio.accessible) {
-      this.writeIO(0);
+      // this.writeIO(0);
+      this.ventPowerPin.writeIO(0);
       if (this.speedPercent == 100) {
         //  this.writeIO(1)
-      } else {
+        this.ventSpeedPin.writeIO(1);
+      } else if (this.speedPercent == 50) {
         // this.writeIO(0)
-      };
+        this.ventSpeedPin.writeIO(0);
+      } else {
+        logger.log('error', '==Vent speed invalid==')
+      }
     } else {
       logger.log('error', '==Vent IO undefined==')
     }
@@ -301,7 +308,7 @@ export default class Vent extends IOBase {
         logger.log(logLevel, "Vent is off");
       }
 
-      const speedState = 0;
+      const speedState = this.speedPercent == 100 ? true : false;
       this.emitterManager.emit('ventStateChange', this.getState(), speedState, this.mqttAgent);
       //indicate data read and used e.g MQTT pub
       return true

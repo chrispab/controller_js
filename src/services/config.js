@@ -7,6 +7,7 @@ class ConfigHandler {
     constructor() {
         this.configHasChanged = false;
         this.configChangedTime = null;
+        this.configChangedTimeBeforeSave = 10000;
 
         this.config = this.load();
         logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
@@ -14,7 +15,7 @@ class ConfigHandler {
 
     process() {
 
-        if (this.configHasChanged && Date.now() - this.configChangedTime > 5000) {
+        if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedTimeBeforeSave) {
             this.save();
             this.configHasChanged = false;
             this.configChangedTime = null;
