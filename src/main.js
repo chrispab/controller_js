@@ -7,11 +7,10 @@ import Fan from "./components/fan.js";
 import Heater from "./components/heater.js";
 import Vent from "./components/vent.js";
 
+//import services as single instances
 // import os from 'os';
 import logger from "./services/logger.js";
 import cfg from "./services/config.js";
-
-//import services as single instances
 import emitterManager from "./services/emitterManager.js";
 import mqttAgent from "./services/mqttAgent.js";
 

@@ -44,8 +44,6 @@ export default class Vent extends IOBase {
 
     this.emitterManager.on('ventStateChange', ventStateEventHandler);
     // from config
-    // this.onDelta = config.vent.onDelta;
-    // this.offDelta = config.vent.offDelta;
     this.speedPercent = cfg.get("vent.speedPercent");
     this.lightOnSetpointOffset = 0.1;
     this.ventOverride = false;
@@ -68,8 +66,6 @@ export default class Vent extends IOBase {
   }
 
   processPeriodicPublication() {
-    // logger.warn("111vent periodic publishing: " + this.getState());
-
     // ensure regular publishing of additional propperties
     // such as ventOnMs and ventOffMs
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
@@ -234,6 +230,11 @@ export default class Vent extends IOBase {
     if (Gpio.accessible) {
       // console.log("Turning on vent");
       this.writeIO(1);
+      if(this.speedPercent == 100){
+        //  this.writeIO(1)
+        }else{
+          // this.writeIO(0)
+        };
     } else {
       logger.log('error', '==Vent IO undefined==')
     }
@@ -248,6 +249,11 @@ export default class Vent extends IOBase {
 
     if (Gpio.accessible) {
       this.writeIO(0);
+      if(this.speedPercent == 100){
+        //  this.writeIO(1)
+        }else{
+          // this.writeIO(0)
+        };
     } else {
       logger.log('error', '==Vent IO undefined==')
     }

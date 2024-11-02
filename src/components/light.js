@@ -37,7 +37,7 @@ export default class Light extends IOBase {
     #RCLoopCount;
     constructor(emitterManager, mqttAgent) {
         super(cfg.get("hardware.RC.pin"), "out", 0);
-        this.setPrevStateChangeMs(Date.now() - this.offMs);
+        this.setPrevStateChangeMs(Date.now());
         this.setName("light");
 
         this.#RCLoopCount = 0;
@@ -55,7 +55,6 @@ export default class Light extends IOBase {
         this.sensorReadIntervalMs = cfg.get("light.sensorReadIntervalMs");
         this.publishStateIntervalMs = cfg.get("light.publishStateIntervalMs");
         this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
-        // this.publishStateIntervalMs = 1000;
     }
 
     process() {
@@ -64,7 +63,7 @@ export default class Light extends IOBase {
             logger.log(logLevel, "READING Light SENSOR STATE: " + this.getState());
             this.readLightSensorState();
             this.lastSensorReadTimeMs = Date.now();
-            
+
             //if its a new value publish it
             if (this.hasNewStateAvailable()) {
                 this.lastStatePublishedMs = Date.now();
@@ -155,9 +154,6 @@ export default class Light extends IOBase {
         return this.#RCLoopCount;
     }
 
-    // wait(ms) {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
 
     /**
      * Measures the loop count required for the voltage across the capacitor to be read as high by the GPIO.
@@ -174,7 +170,6 @@ export default class Light extends IOBase {
         // Count loops until voltage across capacitor reads high on GPIO
         // console.log(`out self.rcIO.readSync(): ${self.rcIO.readSync()}`);
         // if not currently sampling then start counting
-        // console.log(`2.....var self = this:${JSON.stringify(self)}`);
         if (self.#currentlySamplingLightSensor == false) {
             self.#currentlySamplingLightSensor = true;
             logger.log(logLevel, "---3");
@@ -184,9 +179,7 @@ export default class Light extends IOBase {
 
             while (self.readIO() == 0 && self.#RCLoopCount < 999999) {
                 self.#RCLoopCount += 1;
-                // console.log(`self.rcIO.readSync(): ${self.#RCLoopCount}`);
             }
-            // self.setState(self.#RCLoopCount > 1000 ? false : true);
 
             // discharge capacitor
             self.setIODirection("out");
@@ -198,8 +191,7 @@ export default class Light extends IOBase {
                 logLevel,
                 `>>>>>>>>>>>>>self.#RCLoopCount: ${self.#RCLoopCount}`
             );
-            // console.log(`>>>>>this.#RCLoopCount: ${self.#RCLoopCount}`);
-            // console.log('World!');
+
             self.#currentlySamplingLightSensor = false;
         } else {
             Logger.log(
