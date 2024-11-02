@@ -7,9 +7,20 @@ const logLevel = 'debug';
 import cfg from "../services/config.js";
 
 
-var ventStateEventHandler = function (state, mqttAgent) {
+var ventStateEventHandler = function (state, speedState, mqttAgent) {
+  //vent state
   logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
+  //vent speed state
+  logger.log('info', 'MQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
+  //vent speed percent
+  logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState}`);
+  //vent value, 0 is off, 1 is 50%, 2 is 100%
+  const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
+  logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
+  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
 }
 
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
@@ -30,9 +41,16 @@ export default class Vent extends IOBase {
     this.setState(false); // this.state = false;
     this.setName('vent');
 
+    // two Pins, on/off and speed 50-100%
+    this.ventPowerPin = new IOBase(cfg.get("hardware.vent.pin"), 'out', 0);
+    this.ventPowerPin.setState(false);
+    this.ventSpeedPin = new IOBase(cfg.get("hardware.vent.speedPin"), 'out', 0);
+    this.ventSpeedPin.setState(false);
+
+
     this.setOnMs(cfg.get("vent.onMs"));
     this.setOffMs(cfg.get("vent.offMs"));
-    
+
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
     this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
@@ -74,7 +92,7 @@ export default class Vent extends IOBase {
       logger.log('info', 'MQTT->periodic ventOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
       this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
 
-      // Zonen/vent_off_delta_secs
+      // ZoneX/vent_off_delta_secs
       logger.log('info', 'MQTT->periodic ventOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
       this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
     }
@@ -230,11 +248,11 @@ export default class Vent extends IOBase {
     if (Gpio.accessible) {
       // console.log("Turning on vent");
       this.writeIO(1);
-      if(this.speedPercent == 100){
+      if (this.speedPercent == 100) {
         //  this.writeIO(1)
-        }else{
-          // this.writeIO(0)
-        };
+      } else {
+        // this.writeIO(0)
+      };
     } else {
       logger.log('error', '==Vent IO undefined==')
     }
@@ -249,11 +267,11 @@ export default class Vent extends IOBase {
 
     if (Gpio.accessible) {
       this.writeIO(0);
-      if(this.speedPercent == 100){
+      if (this.speedPercent == 100) {
         //  this.writeIO(1)
-        }else{
-          // this.writeIO(0)
-        };
+      } else {
+        // this.writeIO(0)
+      };
     } else {
       logger.log('error', '==Vent IO undefined==')
     }
@@ -265,7 +283,9 @@ export default class Vent extends IOBase {
   setSpeedPercent(percent) {
     this.speedPercent = percent;
   }
-
+  getSpeedPercent(percent) {
+    return this.speedPercent;
+  }
 
   manageVent() {
 
@@ -280,7 +300,9 @@ export default class Vent extends IOBase {
       } else {
         logger.log(logLevel, "Vent is off");
       }
-      this.emitterManager.emit('ventStateChange', this.getState(), this.mqttAgent);
+
+      const speedState = 0;
+      this.emitterManager.emit('ventStateChange', this.getState(), speedState, this.mqttAgent);
       //indicate data read and used e.g MQTT pub
       return true
     }

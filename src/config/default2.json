@@ -1,6 +1,6 @@
 {
   "zone": {
-    "highSetpoint": 22.1,
+    "highSetpoint": 22.5,
     "lowSetpoint": 13.1,
     "periodicPublishIntervalMs": 60000,
     "name": "zone_1"
@@ -33,7 +33,9 @@
     },
     "vent": {
       "pin": 26,
-      "physicalPin": 37
+      "physicalPin": 37,
+      "speedPin": 6,
+      "speedPhysicalPin": 31
     },
     "RC": {
       "pin": 27,
@@ -71,6 +73,9 @@
     "temperatureStateTopic": "/TemperatureStatus",
     "humidityStateTopic": "/HumidityStatus",
     "ventStateTopic": "/VentStatus",
+    "ventSpeedStateTopic": "/VentSpeedStatus",
+    "ventSpeedPercentTopic": "/VentPercent",
+    "ventValueTopic": "/VentValue",
     "fanStateTopic": "/FanStatus",
     "heaterStateTopic": "/HeaterStatus",
     "ventOnSecsTopic": "/vent_on_delta_secs",
