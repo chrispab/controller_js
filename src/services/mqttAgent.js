@@ -176,54 +176,27 @@ mqttAgent.client.on("packetsend", function () {
 // # publish(topic, payload=None, qos=0, retain=False)
 // MQTTClient.publish(zoneName + "/LWT", "Online", 0, True)
 
+
 mqttAgent.client.on("message", (topic, message) => {
-  // console.log(`Received message on topic ${topic}: ${message}`);
   logger.warn(`Received message on topic ${topic}: ${message}`);
 
-  // const expr = 'Papayas';
   switch (topic) {
     case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
       logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
       mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
       //set the high setpoint in the config object
       const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
-
-      // const obj1 = { highSetpoint: Number(message.toString())  };
-      // const obj1 = Number(message.toString());
-      // const mergedObj = { ...obj1, ...obj2 };
-      //   cfg.set("zone.highSetpoint", Number(message.toString()));
-      // const sym2 = Symbol("zone.highSetpoint");
-      cfg.set("zone", obj1);
-
-
-      // cfg.set("zone.highSetpoint", obj1);
+      cfg.set("zone.highSetpoint", obj1);
       break;
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
       logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
       mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
       //set the low setpoint in the config object
-      cfg.set("zone.lowSetpoint", message);
+      const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
+      cfg.set("zone.lowSetpoint", obj2);
       break;
     default:
       logger.error(`Topic- ${topic} - is not recognised.`);
   }
 
-  //   Zone1/high_setpoint/set
-  // if (topic == (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set")) {
-  //   //get the payload
-  //   const payload = message;
-  //   //set the high setpoint in the config object
-  //   // cfg.set("zone.highSetpoint", payload);
-  //   logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
-  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
-
-  //   mqttAgent.highSetpoint = payload;
-
-  // } else if (topic == (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set")) {
-  //   const payload = message;
-  //   // cfg.set("zone.lowSetpoint", payload);
-  //   logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
-  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
-  //   mqttAgent.lowSetpoint = payload;
-  // }
 });

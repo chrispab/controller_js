@@ -3,11 +3,8 @@ import logger from "../services/logger.js";
 import { Gpio } from 'onoff';
 
 const logLevel = 'debug';
-// const logLevel = 'info';
 
-// import cfg from "config";
 import cfg from "../services/config.js";
-
 
 
 var ventStateEventHandler = function (state, mqttAgent) {

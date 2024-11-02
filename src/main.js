@@ -35,6 +35,9 @@ const heater = new Heater(cfg.get("hardware.heater.pin"), 10000, 10000, emitterM
 
 setInterval(() => {
 
+    // update config if changed
+    cfg.process();
+
     temperatureSensor.process();
 
     fan.process();

@@ -1,22 +1,28 @@
 //additions to 'config'
 //to support runtime adjusted configuration is written back to disk
 //so it can be restored to last saved settings when app restarts
-// import c from "config";
-// import config from "config";
-// import logger from "./logger";
-import logger from "./logger.js";
 
+import logger from "./logger.js";
 import fs from 'fs';
+
 
 class ConfigHandler {
     constructor() {
+        this.configHasChanged = false;
+        this.configChangedTime = null;
 
-        // const cfg = fs.loadFile('./config/default.json');
         this.config = this.load();
-
         logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
     }
 
+    process() {
+
+        if (this.configHasChanged  && Date.now() - this.configChangedTime > 5000) {
+            this.save();
+            this.configHasChanged = false;
+            this.configChangedTime = null;
+        }
+    }
     load() {
         // load default.json file as an object
         if (fs.existsSync("./config/default2.json")) {
@@ -32,40 +38,48 @@ class ConfigHandler {
     }
 
     save() {
-        saveConfig(this.config);
+        this.saveConfig(this.config);
     }
 
     get(stringkey) {
-
         const name = getValueByPath(this.config, stringkey);
-
         return name;
     }
 
-    set(key, value) {
+    set(key, valueObj) {
 
-        var file_content = fs.readFileSync("./config/default.json");
-        var content = JSON.parse(file_content);
+        // var file_content = fs.readFileSync("./config/default.json");
+        // var content = JSON.parse(file_content);
 
+        var currentConfig = this.config
         // const oldhisp = this.get("zone.highSetpoint");
         // logger.log('error', 'oldhisp: ' + oldhisp);
-        const mergedObj = merge({ ...content }, { ...value })
+        const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj })
 
-        // fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
+        this.config = mergedObj;
 
-        this.saveConfig(mergedObj);
+        this.configHasChanged = true;
+        this.configChangedTime = new Date();
 
-        this.config = this.load();
+        // this.saveConfig(mergedObj);
+        // this.config = this.load();
+
+
         // const newhisp = this.get("zone.highSetpoint");
         // logger.log('error', 'newhisp: ' + newhisp);
 
     }
 
-    saveConfig(mergedObj) {
-        fs.writeFileSync("./config/default2.json", JSON.stringify(mergedObj, null, 2));
-
+    /**
+     * Save the config object to the given path as a json file.
+     * If path is not given, it defaults to "./config/default2.json".
+     * @param {Object} configObj - The config object to save.
+     * @param {String} [path] - The path to save the config to. Defaults to "./config/default2.json".
+     */
+    saveConfig(configObj, path = "./config/default2.json") {
+        fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
+        this.configHasChanged = false;
     }
-
 
 }
 
@@ -76,10 +90,10 @@ class ConfigHandler {
  * @param {Object} source - The source object to merge from.
  * @returns The merged object.
  */
-const merge = (target, source) => {
+const fullMerge = (target, source) => {
     // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
     for (const key of Object.keys(source)) {
-        if (source[key] instanceof Object) Object.assign(source[key], merge(target[key], source[key]))
+        if (source[key] instanceof Object) Object.assign(source[key], fullMerge(target[key], source[key]))
     }
     // Join `target` and modified `source`
     Object.assign(target || {}, source)
