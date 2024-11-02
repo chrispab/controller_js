@@ -39,10 +39,10 @@ class MqttAgent {
     this.lowSetpoint = cfg.get("zone.lowSetpoint");
   }
 
-  publishAndLog(topic, payload) {
-    this.client.publish(topic, payload);
-    logger.log(this.logLevel, `MQTT->${topic}: ${payload}`);
-  }
+  // publishAndLog(topic, payload) {
+  //   this.client.publish(topic, payload);
+  //   logger.log(this.logLevel, `MQTT->${topic}: ${payload}`);
+  // }
 
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
@@ -182,18 +182,24 @@ mqttAgent.client.on("message", (topic, message) => {
 
   switch (topic) {
     case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
-      logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
-      //set the high setpoint in the config object
-      const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
-      cfg.set("zone.highSetpoint", obj1);
+      if (Number(message.toString()) > 0) {
+        logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
+        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
+        //set the high setpoint in the config object
+        const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
+        cfg.set("zone.highSetpoint", obj1);
+      }
+
       break;
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
-      logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
-      //set the low setpoint in the config object
-      const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
-      cfg.set("zone.lowSetpoint", obj2);
+      if (Number(message.toString()) > 0) {
+        logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
+        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
+        //set the low setpoint in the config object
+        const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
+        cfg.set("zone.lowSetpoint", obj2);
+      }
+
       break;
     default:
       logger.error(`Topic- ${topic} - is not recognised.`);

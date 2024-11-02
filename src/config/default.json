@@ -1,25 +1,4 @@
 {
-    "mqtt": {
-        "brokerUrl": "mqtt://192.168.0.100",
-        "username": "pi",
-        "password": "raspberry",
-        "topicPrefix": "Zone1",
-        "lightStateTopic": "/LightStatus",
-        "temperatureStateTopic": "/TemperatureStatus",
-        "humidityStateTopic": "/HumidityStatus",
-        "ventStateTopic": "/VentStatus",
-        "fanStateTopic": "/FanStatus",
-        "heaterStateTopic": "/HeaterStatus",
-        "ventOnSecsTopic": "/vent_on_delta_secs",
-        "ventOffSecsTopic": "/vent_off_delta_secs",
-        "highSetpointTopic": "/high_setpoint",
-        "lowSetpointTopic": "/low_setpoint",
-        "telemetryTopic": "/telemetry",
-        "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
-        "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
-        "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
-        "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
-    },
     "zone": {
         "name": "zone_1",
         "highSetpoint": 22.1,
@@ -81,5 +60,26 @@
         "offMs": 60000,
         "periodicPublishIntervalMs": 60000,
         "publishStateIntervalMs": 60000
+    },
+    "mqtt": {
+        "brokerUrl": "mqtt://192.168.0.100",
+        "username": "pi",
+        "password": "raspberry",
+        "topicPrefix": "Zone1",
+        "lightStateTopic": "/LightStatus",
+        "temperatureStateTopic": "/TemperatureStatus",
+        "humidityStateTopic": "/HumidityStatus",
+        "ventStateTopic": "/VentStatus",
+        "fanStateTopic": "/FanStatus",
+        "heaterStateTopic": "/HeaterStatus",
+        "ventOnSecsTopic": "/vent_on_delta_secs",
+        "ventOffSecsTopic": "/vent_off_delta_secs",
+        "highSetpointTopic": "/high_setpoint",
+        "lowSetpointTopic": "/low_setpoint",
+        "telemetryTopic": "/telemetry",
+        "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
+        "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
+        "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
+        "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
     }
 }

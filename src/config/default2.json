@@ -1,7 +1,7 @@
 {
   "zone": {
-    "highSetpoint": 22.8,
-    "lowSetpoint": 13.3,
+    "lowSetpoint": 13.1,
+    "highSetpoint": 25,
     "name": "zone_1"
   },
   "system": {
@@ -51,14 +51,14 @@
     "speedPercent": 50,
     "onMs": 10000,
     "offMs": 60000,
-    "periodicPublishIntervalMs": 60000,
+    "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
   },
   "fan": {
     "speedPercent": 50,
     "onMs": 10000,
     "offMs": 60000,
-    "periodicPublishIntervalMs": 60000,
+    "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
   },
   "mqtt": {
