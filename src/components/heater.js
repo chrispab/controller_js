@@ -18,7 +18,7 @@ class Heater extends IOBase {
   }
   heaterStateEventHandler = function (state, mqttAgent) {
     // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
-    logger.log('error', `HI FROM NEW HANDLER heaterStateEventHandler`);
+    // logger.log('error', `HI FROM NEW HANDLER heaterStateEventHandler`);
 
     logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
   

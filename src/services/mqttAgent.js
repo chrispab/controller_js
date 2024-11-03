@@ -217,6 +217,8 @@ mqttAgent.client.on("message", (topic, message) => {
         //set the high setpoint in the config object
         const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
         cfg.set("zone.highSetpoint", obj1);
+      } else {
+        logger.log('error', 'MQTT->highSetpoint/set: NULL PAYLOAD RECEIVED');
       }
       break;
 
@@ -227,6 +229,8 @@ mqttAgent.client.on("message", (topic, message) => {
         //set the low setpoint in the config object
         const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
         cfg.set("zone.lowSetpoint", obj2);
+      } else {
+        logger.log('error', 'MQTT->lowSetpoint/set: NULL PAYLOAD RECEIVED');
       }
       break;
 
@@ -237,6 +241,8 @@ mqttAgent.client.on("message", (topic, message) => {
         //set the low setpoint in the config object
         const obj3 = { vent: { onMs: Number(message.toString()) * 1000 } };
         cfg.set("vent.onMs", obj3);
+      } else {
+        logger.log('error', 'MQTT->vent_on_delta_secs/set: NULL PAYLOAD RECEIVED');
       }
       break;
 
@@ -247,6 +253,8 @@ mqttAgent.client.on("message", (topic, message) => {
         //set the low setpoint in the config object
         const obj4 = { vent: { offMs: Number(message.toString()) * 1000 } };
         cfg.set("vent.offMs", obj4);
+      } else {
+        logger.log('error', 'MQTT->vent_off_delta_secs/set: NULL PAYLOAD RECEIVED');
       }
       break;
 

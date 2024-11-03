@@ -1,37 +1,27 @@
 import IOBase from "./IOBase.js";
-import logger from "../services/logger.js";
 
 import { Gpio } from 'onoff';
 
 import cfg from "../services/config.js";
 
-
-// var fanStateEventHandler = function (state, mqttAgent) {
-//   // logger.log('warn', 'MQTT->Fan: ' + `${state}`);
-//   logger.log('info', 'MQTT->Fan: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
-
-//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic"), `${state ? 1 : 0}`);
-// }
-
+import logger from "../services/logger.js";
 const logLevel = 'debug';
 // const logLevel = 'info';
 
 
-class Fan extends IOBase {
-  constructor(mqttAgent) {
-    super(cfg.get("hardware.fan.pin"), 'out', 0);
+class Fan {
+  constructor(name, fanPin, mqttAgent) {
+    // super(cfg.get("hardware.fan.pin"), 'out', 0);
+    this.IOPin = new IOBase(fanPin, 'out', 0);
+    this.name = name;
     this.setState(false);
-    this.setName('fan');
     this.setOffMs(cfg.get("fan.offMs"));
     this.setOnMs(cfg.get("fan.onMs"));
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
 
-    // this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
 
-    // this.emitterManager.on('fanStateChange', fanStateEventHandler);
     this.on("fanStateChange", this.fanStateEventHandler);
-
 
     //set new reading available
     this.setNewStateAvailable(true);
@@ -39,18 +29,15 @@ class Fan extends IOBase {
 
     this.periodicPublishIntervalMs = cfg.get("fan.periodicPublishIntervalMs");
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
-
   }
+
 
   fanStateEventHandler = function (state, mqttAgent) {
-    // logger.log('warn', 'MQTT->Fan: ' + `${state}`);
-    logger.log('error', `HI FROM NEW HANDLER fanStateEventHandler`);
-
+    // logger.log('error', `HI FROM NEW HANDLER fanStateEventHandler`);
     logger.log('info', 'MQTT->Fan: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
-  
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic"), `${state ? 1 : 0}`);
   }
-  
+
   process() {
     this.manageFan();
 
@@ -90,40 +77,7 @@ class Fan extends IOBase {
     }
   }
 
-  getTelemetryData() {
 
-    let superTelemetry = this.getBaseTelemetryData();
-
-    logger.log('debug', `tele fan: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
-
-    return superTelemetry;
-  }
-  turnOn() {
-    this.setState(true);
-
-    if (Gpio.accessible) {
-      // console.log("Turning on vent");
-      this.writeIO(1);
-    } else {
-      logger.error('==fanIO undefined==')
-    }
-    if (this.emitIfStateChanged()) {
-      logger.log('debug', '==fanIO on==')
-    }
-  }
-
-  turnOff() {
-    this.setState(false);
-
-    if (Gpio.accessible) {
-      this.writeIO(0);
-    } else {
-      logger.error('==fanIO undefined==')
-    }
-    if (this.emitIfStateChanged()) {
-      logger.log('debug', '==fanIO off==')
-    }
-  }
 
 
 
@@ -148,5 +102,8 @@ class Fan extends IOBase {
 import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
 Object.assign(Fan.prototype, eventMixin);
+
+import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
+Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
 export default Fan;

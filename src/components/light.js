@@ -46,7 +46,7 @@ export default class Light extends IOBase {
         this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     }
     lightStateEventHandler = function (state, mqttAgent) {
-        logger.log('error', `HI FROM NEW HANDLER lightStateEventHandler`);
+        // logger.log('error', `HI FROM NEW HANDLER lightStateEventHandler`);
         logger.log(
             "info",
             "MQTT->Light: " +

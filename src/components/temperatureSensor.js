@@ -44,7 +44,7 @@ export default class TemperatureSensor extends IOBase {
     }
   }
   temperatureStateChangeHandler = function (temperatureState, humidityState, mqttAgent) {
-    logger.log('error', `HI FROM NEW HANDLER temperatureStateChangeHandler`);
+    // logger.log('error', `HI FROM NEW HANDLER temperatureStateChangeHandler`);
 
     logger.log('info', 'MQTT->Temp: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + (temperatureState)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);

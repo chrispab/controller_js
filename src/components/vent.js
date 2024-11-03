@@ -89,7 +89,7 @@ export default class Vent extends IOBase {
 
   ventStateEventHandler = function (state, speedState, mqttAgent) {
     //vent state
-    logger.log('error', `HI FROM NEW HANDLER ventStateEventHandler`);
+    // logger.log('error', `HI FROM NEW HANDLER ventStateEventHandler`);
 
     logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
