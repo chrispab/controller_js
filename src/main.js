@@ -14,13 +14,15 @@ import cfg from "./services/config.js";
 import emitterManager from "./services/emitterManager.js";
 import mqttAgent from "./services/mqttAgent.js";
 
-//createcomponenmts
+//create components
 // inputs
-const light = new Light(mqttAgent);
+const fan = new Fan("fan", cfg.get("hardware.fan.pin"), mqttAgent);
+const light = new Light("light", cfg.get("hardware.RC.pin"), mqttAgent);
+
 const temperatureSensor = new TemperatureSensor(mqttAgent);
 // outputs
 const vent = new Vent(mqttAgent);
-const fan = new Fan("fan",cfg.get("hardware.fan.pin"),mqttAgent);
+
 const heater = new Heater(mqttAgent);
 
 

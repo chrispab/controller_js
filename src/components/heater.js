@@ -55,7 +55,7 @@ class Heater extends IOBase {
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() == true) {
-        Logger.log(logLevel, "Heater is on");
+        logger.log(logLevel, "Heater is on");
       } else {
         logger.log(logLevel, "Heater is off");
       }

@@ -6,36 +6,32 @@ import { Gpio } from "onoff";
 const logLevel = "debug";
 // const logLevel = 'warn';
 
-// import config from '../config/config.json' assert { type: 'json' };
-// import cfg from "config";
 import cfg from "../services/config.js";
 
 import Logger from "../services/logger.js";
 import logger from "../services/logger.js";
 
 
-
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default class Light extends IOBase {
+export default class Light {
     #currentlySamplingLightSensor;
     #processCount;
     #RCLoopCount;
-    constructor(mqttAgent) {
-        super(cfg.get("hardware.RC.pin"), "out", 0);
+
+    constructor(name, LDRPin, mqttAgent) {
+        this.IOPin = new IOBase(LDRPin, 'out', 0);
+        this.name = name;
+        this.setState(false);
         this.setPrevStateChangeMs(Date.now());
-        this.setName("light");
+
+        this.mqttAgent = mqttAgent;
+
+        this.on("lightStateChange", this.lightStateEventHandler);
 
         this.#RCLoopCount = 0;
 
         this.#currentlySamplingLightSensor = false;
-
-        this.mqttAgent = mqttAgent;
-        // this.emitterManager = emitterManager;
-        // this.emitterManager.on("lightStateChange", lightStateEventHandler);
-        this.on("lightStateChange", this.lightStateEventHandler);
-
-
         //set new reading available
         // this.setNewStateAvailable(true);
         this.#processCount = 0;
@@ -94,13 +90,13 @@ export default class Light extends IOBase {
 
     }
 
-    turnOn() {
-        this.setState(true);
-    }
+    // turnOn() {
+    //     this.setState(true);
+    // }
 
-    turnOff() {
-        this.setState(false);
-    }
+    // turnOff() {
+    //     this.setState(false);
+    // }
     getTelemetryData() {
         let superTelemetry = this.getBaseTelemetryData();
 
@@ -215,3 +211,6 @@ export default class Light extends IOBase {
 import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
 Object.assign(Light.prototype, eventMixin);
+
+import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
+Object.assign(Light.prototype, IOPinAccessorsMixin);

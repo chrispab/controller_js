@@ -7,24 +7,6 @@ const logLevel = 'debug';
 import cfg from "../services/config.js";
 
 
-// var ventStateEventHandler = function (state, speedState, mqttAgent) {
-  
-//   logger.log('error', `HI FROM old HANDLER ventStateEventHandler`);
-//   //vent state
-//   logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
-//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
-//   //vent speed state
-//   logger.log('info', 'MQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
-//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
-//   //vent speed percent
-//   logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
-//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
-//   //vent value, 0 is off, 1 is 50%, 2 is 100%
-//   const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
-//   logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
-//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
-// }
-
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${state / 1000}`);
@@ -64,10 +46,7 @@ export default class Vent extends IOBase {
     this.ventDarkOnStartMs = 0;
     this.ventDarkOffStartMs = 0;
 
-    // this.emitterManager.on('ventStateChange', ventStateEventHandler);
-    // add a handler, to be called on selection:
     this.on("ventStateChange", this.ventStateEventHandler);
-
 
     // from config
     this.speedPercent = cfg.get("vent.speedPercent");
@@ -89,8 +68,6 @@ export default class Vent extends IOBase {
 
   ventStateEventHandler = function (state, speedState, mqttAgent) {
     //vent state
-    // logger.log('error', `HI FROM NEW HANDLER ventStateEventHandler`);
-
     logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
     //vent speed state

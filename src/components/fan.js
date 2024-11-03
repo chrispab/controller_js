@@ -9,7 +9,7 @@ const logLevel = 'debug';
 // const logLevel = 'info';
 
 
-class Fan {
+export default class Fan {
   constructor(name, fanPin, mqttAgent) {
     // super(cfg.get("hardware.fan.pin"), 'out', 0);
     this.IOPin = new IOBase(fanPin, 'out', 0);
@@ -77,7 +77,31 @@ class Fan {
     }
   }
 
+  turnOn() {
+    this.setState(true);
 
+    if (Gpio.accessible) {
+      this.IOPin.writeIO(1);
+    } else {
+      logger.error('==' + this.getName() + ' IO undefined==')
+    }
+    if (this.emitIfStateChanged()) {
+      logger.log('debug', '==' + this.getName() + ' IO on==')
+    }
+  }
+
+  turnOff() {
+    this.setState(false);
+
+    if (Gpio.accessible) {
+      this.IOPin.writeIO(0);
+    } else {
+      logger.error('==' + this.getName() + ' IO undefined==')
+    }
+    if (this.emitIfStateChanged()) {
+      logger.log('debug', '==' + this.getName() + ' IO off==')
+    }
+  }
 
 
 
@@ -106,4 +130,6 @@ Object.assign(Fan.prototype, eventMixin);
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
-export default Fan;
+import turnOnOffMixin from "./mixins/turnOnOffMixin.js";
+Object.assign(Fan.prototype, turnOnOffMixin);
+// export default Fan;
