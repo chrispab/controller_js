@@ -7,21 +7,23 @@ const logLevel = 'debug';
 import cfg from "../services/config.js";
 
 
-var ventStateEventHandler = function (state, speedState, mqttAgent) {
-  //vent state
-  logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
-  //vent speed state
-  logger.log('info', 'MQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
-  //vent speed percent
-  logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
-  //vent value, 0 is off, 1 is 50%, 2 is 100%
-  const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
-  logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
-}
+// var ventStateEventHandler = function (state, speedState, mqttAgent) {
+  
+//   logger.log('error', `HI FROM old HANDLER ventStateEventHandler`);
+//   //vent state
+//   logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
+//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
+//   //vent speed state
+//   logger.log('info', 'MQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
+//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
+//   //vent speed percent
+//   logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
+//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
+//   //vent value, 0 is off, 1 is 50%, 2 is 100%
+//   const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
+//   logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
+//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
+// }
 
 var ventOnMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
@@ -33,8 +35,9 @@ var ventOffMsChangeEventHandler = function (state, mqttAgent) {
 }
 
 
+
 export default class Vent extends IOBase {
-  constructor(emitterManager, mqttAgent) {
+  constructor(mqttAgent) {
     // const direction = ;
     // const initialValue = 0;
     super(cfg.get("hardware.vent.pin"), 'disabled', 0);
@@ -52,7 +55,7 @@ export default class Vent extends IOBase {
     this.setOffMs(cfg.get("vent.offMs"));
 
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-    this.emitterManager = emitterManager;
+    // this.emitterManager = emitterManager;
     this.mqttAgent = mqttAgent;
 
     this.ventDarkOnDelta = 10000;  // vent on time
@@ -60,7 +63,11 @@ export default class Vent extends IOBase {
     this.ventDarkOnStartMs = 0;
     this.ventDarkOffStartMs = 0;
 
-    this.emitterManager.on('ventStateChange', ventStateEventHandler);
+    // this.emitterManager.on('ventStateChange', ventStateEventHandler);
+    // add a handler, to be called on selection:
+    this.on("ventStateChange", this.ventStateEventHandler);
+
+
     // from config
     this.speedPercent = cfg.get("vent.speedPercent");
     this.lightOnSetpointOffset = 0.1;
@@ -78,6 +85,25 @@ export default class Vent extends IOBase {
     this.publishStateIntervalMs = cfg.get("vent.publishStateIntervalMs");
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
   }
+
+  ventStateEventHandler = function (state, speedState, mqttAgent) {
+    //vent state
+    logger.log('error', `HI FROM NEW HANDLER ventStateEventHandler`);
+
+    logger.log('info', 'zzMQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
+    //vent speed state
+    logger.log('info', 'zzMQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
+    //vent speed percent
+    logger.log('info', 'zzMQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
+    //vent value, 0 is off, 1 is 50%, 2 is 100%
+    const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
+    logger.log('info', 'zzMQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
+  }
+
 
   process() {
     this.processPeriodicPublication();
@@ -309,7 +335,8 @@ export default class Vent extends IOBase {
       }
 
       const speedState = this.speedPercent == 100 ? true : false;
-      this.emitterManager.emit('ventStateChange', this.getState(), speedState, this.mqttAgent);
+      // this.emitterManager.emit('ventStateChange', this.getState(), speedState, this.mqttAgent);
+      this.trigger("ventStateChange", this.getState(), speedState, this.mqttAgent);
       //indicate data read and used e.g MQTT pub
       return true
     }
@@ -317,4 +344,7 @@ export default class Vent extends IOBase {
     return false
   }
 }
-
+// https://javascript.info/mixins
+import eventMixin from './mixins/eventMixin.js'
+// Add the mixin with event-related methods
+Object.assign(Vent.prototype, eventMixin);
