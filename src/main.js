@@ -20,7 +20,7 @@ const light = new Light(emitterManager, mqttAgent);
 const temperatureSensor = new TemperatureSensor(emitterManager, mqttAgent);
 // outputs
 const vent = new Vent(mqttAgent);
-const fan = new Fan(emitterManager, mqttAgent);
+const fan = new Fan(mqttAgent);
 const heater = new Heater(emitterManager, mqttAgent);
 
 

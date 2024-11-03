@@ -29,6 +29,7 @@ var ventOnMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOnMsChangeEvent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${state / 1000}`);
 }
+
 var ventOffMsChangeEventHandler = function (state, mqttAgent) {
   logger.log('warn', 'MQTT->ventOffMsChangeEvent: ' + `${state}`);
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${state / 1000}`);
@@ -343,7 +344,7 @@ export default class Vent extends IOBase {
     //indicate data NOT NEW and not published e.g MQTT pub
     return false
   }
-}
+} 
 // https://javascript.info/mixins
 import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
