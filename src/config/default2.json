@@ -1,6 +1,6 @@
 {
   "zone": {
-    "highSetpoint": 21,
+    "highSetpoint": 21.2,
     "lowSetpoint": 13.1,
     "periodicPublishIntervalMs": 60000,
     "name": "zone_1"
@@ -55,7 +55,8 @@
     "onMs": 10000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
-    "publishStateIntervalMs": 60000
+    "publishStateIntervalMs": 60000,
+    "lightOnSetpointOffset": 0.1
   },
   "fan": {
     "speedPercent": 50,

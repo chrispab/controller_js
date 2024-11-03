@@ -26,7 +26,7 @@ class IOBase {
         }
     }
 
-    constructor(IOPin, direction, initialValue=0) {
+    constructor(IOPin, direction, initialValue = 0) {
         this.state = initialValue;
         this.#newStateFlag = false;
         this.#prevStateChangeMs = Date.now();
@@ -52,8 +52,10 @@ class IOBase {
             if (this.#IO && typeof this.#IO.readSync === 'function' && this.GPIOAccesible) {
                 this.#IO.setDirection("in");
             }
+        } else if (direction === 'disabled') {
+            logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
         } else {
-            logger.error("Invalid IO direction value given.");
+            logger.error(`Invalid IO direction value given. Direction: ${direction}`);
         }
 
     }
@@ -148,7 +150,7 @@ class IOBase {
     }
 
     getStateAndClearNewStateFlag() {
-        //ensures MQTT pub only sent once per state change since last readState
+        //ensures state change only seen once per state change since last readState
         this.newStateFlag = false; //indicate data read and used e.g MQTT pub
         return this.state;
     }

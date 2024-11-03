@@ -5,11 +5,11 @@ const logLevel = 'debug';
 let IOPinAccessorsMixin = {
 
   setName(name) {
-    this.name = name;
+    this.IOPin.name = name;
   },
 
   getName() {
-    return this.name;
+    return this.IOPin.name;
   },
 
   setState(newState) {
@@ -56,18 +56,6 @@ let IOPinAccessorsMixin = {
     return this.IOPin.getStateAndClearNewStateFlag();
   },
 
-  // turnOn() {
-  //   this.setState(true);
-
-  //   if (Gpio.accessible) {
-  //     this.IOPin.writeIO(1);
-  //   } else {
-  //     logger.error('==' + this.getName() + ' IO undefined==')
-  //   }
-  //   if (this.emitIfStateChanged()) {
-  //     logger.log('debug', '==' + this.getName() + ' IO on==')
-  //   }
-  // },
 
   setIODirection(direction) {
     this.IOPin.setIODirection(direction);
@@ -81,18 +69,6 @@ let IOPinAccessorsMixin = {
     this.IOPin.writeIO(value);
   },
 
-  // turnOff() {
-  //   this.setState(false);
-
-  //   if (Gpio.accessible) {
-  //     this.IOPin.writeIO(0);
-  //   } else {
-  //     logger.error('==' + this.getName() + ' IO undefined==')
-  //   }
-  //   if (this.emitIfStateChanged()) {
-  //     logger.log('debug', '==' + this.getName() + ' IO off==')
-  //   }
-  // },
 
   getTelemetryData() {
 
