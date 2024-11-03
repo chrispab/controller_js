@@ -13,21 +13,7 @@ import cfg from "../services/config.js";
 import Logger from "../services/logger.js";
 import logger from "../services/logger.js";
 
-var lightStateEventHandler = function (state, mqttAgent) {
-    logger.log(
-        "info",
-        "MQTT->Light: " +
-        `${cfg.get("mqtt.topicPrefix") +
-        cfg.get("mqtt.lightStateTopic") +
-        ": " +
-        (state ? 1 : 0)
-        }`
-    );
-    mqttAgent.client.publish(
-        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic"),
-        `${state ? 1 : 0}`
-    );
-};
+
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -35,7 +21,7 @@ export default class Light extends IOBase {
     #currentlySamplingLightSensor;
     #processCount;
     #RCLoopCount;
-    constructor(emitterManager, mqttAgent) {
+    constructor(mqttAgent) {
         super(cfg.get("hardware.RC.pin"), "out", 0);
         this.setPrevStateChangeMs(Date.now());
         this.setName("light");
@@ -45,8 +31,11 @@ export default class Light extends IOBase {
         this.#currentlySamplingLightSensor = false;
 
         this.mqttAgent = mqttAgent;
-        this.emitterManager = emitterManager;
-        this.emitterManager.on("lightStateChange", lightStateEventHandler);
+        // this.emitterManager = emitterManager;
+        // this.emitterManager.on("lightStateChange", lightStateEventHandler);
+        this.on("lightStateChange", this.lightStateEventHandler);
+
+
         //set new reading available
         // this.setNewStateAvailable(true);
         this.#processCount = 0;
@@ -56,7 +45,22 @@ export default class Light extends IOBase {
         this.publishStateIntervalMs = cfg.get("light.publishStateIntervalMs");
         this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     }
-
+    lightStateEventHandler = function (state, mqttAgent) {
+        logger.log('error', `HI FROM NEW HANDLER lightStateEventHandler`);
+        logger.log(
+            "info",
+            "MQTT->Light: " +
+            `${cfg.get("mqtt.topicPrefix") +
+            cfg.get("mqtt.lightStateTopic") +
+            ": " +
+            (state ? 1 : 0)
+            }`
+        );
+        mqttAgent.client.publish(
+            cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lightStateTopic"),
+            `${state ? 1 : 0}`
+        );
+    };
     process() {
         // do an actual read of the sensor every sensorReadIntervalMs
         if (Date.now() >= (this.lastSensorReadTimeMs + this.sensorReadIntervalMs)) {
@@ -67,7 +71,10 @@ export default class Light extends IOBase {
             //if its a new value publish it
             if (this.hasNewStateAvailable()) {
                 this.lastStatePublishedMs = Date.now();
-                this.emitterManager.emit('lightStateChange', this.getState, this.mqttAgent);
+                // this.emitterManager.emit('lightStateChange', this.getState, this.mqttAgent);
+                this.trigger("lightStateChange", this.getState(), this.mqttAgent);
+
+
                 this.setNewStateAvailable(false);
             }
         }
@@ -76,11 +83,13 @@ export default class Light extends IOBase {
         if (Date.now() >= (this.lastStatePublishedMs + this.publishStateIntervalMs)) {
             logger.log(logLevel, "READING REGULAR Light STATE: " + this.getState());
             this.lastStatePublishedMs = Date.now();
-            this.emitterManager.emit(
-                "lightStateChange",
-                this.getState(),
-                this.mqttAgent
-            );
+            // this.emitterManager.emit(
+            //     "lightStateChange",
+            //     this.getState(),
+            //     this.mqttAgent
+            // );
+            this.trigger("lightStateChange", this.getState(), this.mqttAgent);
+
         }
 
     }
@@ -202,3 +211,7 @@ export default class Light extends IOBase {
         }
     }
 }
+// https://javascript.info/mixins
+import eventMixin from './mixins/eventMixin.js'
+// Add the mixin with event-related methods
+Object.assign(Light.prototype, eventMixin);

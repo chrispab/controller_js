@@ -5,21 +5,25 @@ import cfg from "../services/config.js";
 import logger from "../services/logger.js";
 const logLevel = 'debug';
 
-var heaterStateEventHandler = function (state, mqttAgent) {
-  // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
-  logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
 
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
-}
 class Heater extends IOBase {
-  constructor(emitterManager, mqttAgent) {
+  constructor( mqttAgent) {
     super(cfg.get("hardware.heater.pin"),  'out', false);
     this.setName('heater');
-    this.emitterManager = emitterManager;
-    this.emitterManager.on('heaterStateChange', heaterStateEventHandler);
+    // this.emitterManager = emitterManager;
+    // this.emitterManager.on('heaterStateChange', heaterStateEventHandler);
+    this.on("heaterStateChange", this.heaterStateEventHandler);
+
     this.mqttAgent = mqttAgent;
   }
+  heaterStateEventHandler = function (state, mqttAgent) {
+    // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
+    logger.log('error', `HI FROM NEW HANDLER heaterStateEventHandler`);
 
+    logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
+  
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
+  }
   turnOn() {
     this.setState(true);
     // console.log("Turning on heater");
@@ -55,13 +59,17 @@ class Heater extends IOBase {
       } else {
         logger.log(logLevel, "Heater is off");
       }
-      this.emitterManager.emit('heaterStateChange', this.getState(), this.mqttAgent);
+      // this.emitterManager.emit('heaterStateChange', this.getState(), this.mqttAgent);
+      this.trigger("heaterStateChange", this.getState(), this.mqttAgent);
+
     }
   }
 
 }
 
-//   export { Heater };
-
+// https://javascript.info/mixins
+import eventMixin from './mixins/eventMixin.js'
+// Add the mixin with event-related methods
+Object.assign(Heater.prototype, eventMixin);
 
 export default Heater;

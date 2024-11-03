@@ -16,12 +16,12 @@ import mqttAgent from "./services/mqttAgent.js";
 
 //createcomponenmts
 // inputs
-const light = new Light(emitterManager, mqttAgent);
-const temperatureSensor = new TemperatureSensor(emitterManager, mqttAgent);
+const light = new Light(mqttAgent);
+const temperatureSensor = new TemperatureSensor(mqttAgent);
 // outputs
 const vent = new Vent(mqttAgent);
 const fan = new Fan(mqttAgent);
-const heater = new Heater(emitterManager, mqttAgent);
+const heater = new Heater(mqttAgent);
 
 
 setInterval(() => {

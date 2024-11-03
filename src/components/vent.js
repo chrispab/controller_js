@@ -91,17 +91,17 @@ export default class Vent extends IOBase {
     //vent state
     logger.log('error', `HI FROM NEW HANDLER ventStateEventHandler`);
 
-    logger.log('info', 'zzMQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
+    logger.log('info', 'MQTT->Vent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (state ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${state ? 1 : 0}`);
     //vent speed state
-    logger.log('info', 'zzMQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
+    logger.log('info', 'MQTT->Vent speed state: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
     //vent speed percent
-    logger.log('info', 'zzMQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
+    logger.log('info', 'MQTT->Vent speed percent: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${(speedState ? 100 : 50)}`);
     //vent value, 0 is off, 1 is 50%, 2 is 100%
     const ventValue = (state == 1 && speedState == 0) ? 1 : (state == 1 && speedState == 1) ? 2 : 0
-    logger.log('info', 'zzMQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
+    logger.log('info', 'MQTT->Vent value: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
   }
 
