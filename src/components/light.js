@@ -21,7 +21,9 @@ export default class Light {
 
     constructor(name, LDRPin, mqttAgent) {
         this.IOPin = new IOBase(LDRPin, 'out', 0);
-        this.name = name;
+        // this.name = name;
+        this.setName(name);
+
         this.setState(false);
         this.setPrevStateChangeMs(Date.now());
 

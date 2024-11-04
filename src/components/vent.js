@@ -232,11 +232,11 @@ export default class Vent {
 
   getTelemetryData() {
 
-    let superTelemetry = this.getBaseTelemetryData();
+    let telemetry = this.getTelemetryData();
 
-    logger.log('debug', `tele vent: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele vent: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-    return superTelemetry;
+    return telemetry;
   }
 
   // getPropertyValue(propertyName) {

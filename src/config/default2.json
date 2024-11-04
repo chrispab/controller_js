@@ -51,7 +51,7 @@
     "publishStateIntervalMs": 60000
   },
   "vent": {
-    "offMs": 220000,
+    "offMs": 60000,
     "onMs": 10000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,

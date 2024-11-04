@@ -10,7 +10,7 @@ class IOBase {
     #offMs = 0;
     #IOPin = 0;
     #IO = null;
-    #name = "not yet set-IOBase";
+    name = "not yet set-IOBase";
     #newOnMsFlag = false;
     #newOffMsFlag = false;
     #prevOnMsChangeMs = 0;
@@ -61,11 +61,11 @@ class IOBase {
     }
 
     getName() {
-        return this.#name;
+        return this.name;
     }
 
     setName(name) {
-        this.#name = name;
+        this.name = name;
     }
     getIOPin() {
         return this.#IOPin;

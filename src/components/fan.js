@@ -13,7 +13,9 @@ export default class Fan {
   constructor(name, fanPin, mqttAgent) {
     // super(cfg.get("hardware.fan.pin"), 'out', 0);
     this.IOPin = new IOBase(fanPin, 'out', 0);
-    this.name = name;
+    // this.name = name;
+    this.setName(name);
+
     this.setState(false);
     this.setOffMs(cfg.get("fan.offMs"));
     this.setOnMs(cfg.get("fan.onMs"));
