@@ -16,7 +16,6 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
     #currentlySamplingLightSensor;
-    #processCount;
     #RCLoopCount;
 
     constructor(name, LDRPin, mqttAgent) {
@@ -36,7 +35,7 @@ export default class Light {
         this.#currentlySamplingLightSensor = false;
         //set new reading available
         // this.setNewStateAvailable(true);
-        this.#processCount = 0;
+        this.processCount = 0;
         this.readLightSensorState();
         this.lastStatePublishedMs = Date.now() - cfg.get("light.publishStateIntervalMs");
         this.sensorReadIntervalMs = cfg.get("light.sensorReadIntervalMs");

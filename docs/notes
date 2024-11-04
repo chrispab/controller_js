@@ -62,3 +62,5 @@ import { setTimeout } from 'node:timers/promises';
 
 await setTimeout(1000);
 
+ESLint
+https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code

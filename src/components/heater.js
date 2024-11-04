@@ -6,8 +6,8 @@ import logger from "../services/logger.js";
 const logLevel = 'debug';
 
 
-class Heater{
-  constructor( name, heaterPin, mqttAgent) {
+class Heater {
+  constructor(name, heaterPin, mqttAgent) {
     this.IOPin = new IOBase(heaterPin, 'out', 0);
     this.setName(name);
 
@@ -19,7 +19,7 @@ class Heater{
   heaterStateEventHandler = function (state, mqttAgent) {
 
     logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
-  
+
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
   }
 
@@ -32,15 +32,18 @@ class Heater{
   }
 
   turnOff() {
-    this.setState(false);
-    this.writeIO(0);
+    this.setState(  false);
+
+    
+      this.writeIO(0);
     // console.log("Turning off heater");
     this.emitIfStateChanged();
 
   }
-  getTelemetryData() {
+  getTelemetryData() 
+  {
 
-    let telemetry = this.getBaseTelemetryData();
+    let   telemetry = this.getBaseTelemetryData();
 
     logger.log('debug', `tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
@@ -49,8 +52,9 @@ class Heater{
 
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-    
+
     //addd heater logic here
+
     // this.turnOff();
 
   }

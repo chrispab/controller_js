@@ -57,7 +57,7 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "lightOnSetpointOffset": 0.1
+    "lightOnSetpointOffset": 0.0
   },
   "fan": {
     "speedPercent": 50,

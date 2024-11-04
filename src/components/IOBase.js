@@ -3,54 +3,47 @@ import logger from "../services/logger.js";
 
 
 class IOBase {
-    #state = false;
-    #newStateFlag = false;
-    #prevStateChangeMs = 0;
-    #onMs = 0;
-    #offMs = 0;
-    #IOPin = 0;
-    #IO = null;
-    name = "not yet set-IOBase";
+    // #state = false;
+    // #newStateFlag = false;
+    // #prevStateChangeMs = 0;
+    // onMs = 0;
+    // offMs = 0;
+    // IOPin = 0;
+    // IO = null;
+    // name = "not yet set-IOBase";
     #newOnMsFlag = false;
     #newOffMsFlag = false;
     #prevOnMsChangeMs = 0;
     #prevOffMsChangeMs = 0;
     // #setPrevStateChangeMs = 0;
 
-    readIO() {
-        if (this.#IO && typeof this.#IO.readSync === 'function') {
-            return this.#IO.readSync();
-        } else {
-            logger.error("IO read operation is not supported.");
-            return null;
-        }
-    }
+
 
     constructor(IOPin, direction, initialValue = 0) {
         this.state = initialValue;
-        this.#newStateFlag = false;
-        this.#prevStateChangeMs = Date.now();
-        this.#onMs = 10 * 1000;
-        this.#offMs = 10 * 1000;
-        this.#IOPin = IOPin;
-        this.name = "not yet set";
-        this.#newOnMsFlag = false;
-        this.#newOffMsFlag = false;
-        this.#prevOnMsChangeMs = Date.now();
-        this.#prevOffMsChangeMs = Date.now();
+        this.newStateFlag = false;
+        this.prevStateChangeMs = Date.now();
+        this.onMs = 10 * 1000;
+        this.offMs = 10 * 1000;
+        this.IOPin = IOPin;
+        this.name = "not yet set-IOBase";
+        this.newOnMsFlag = false;
+        this.newOffMsFlag = false;
+        this.prevOnMsChangeMs = Date.now();
+        this.prevOffMsChangeMs = Date.now();
         //log constructor parameters
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
         this.GPIOAccesible = Gpio.accessible;
         if (direction === 'out') {
-            this.#IO = Gpio.accessible ? new Gpio(this.#IOPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
-            if (this.#IO && typeof this.#IO.writeSync === 'function' && this.GPIOAccesible) {
-                this.#IO.setDirection("out");
-                this.#IO.writeSync(initialValue);
+            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'out') : { writeSync: value => { console.log('virtual led now uses value: ' + value); } };
+            if (this.IO && typeof this.IO.writeSync === 'function' && this.GPIOAccesible) {
+                this.IO.setDirection("out");
+                this.IO.writeSync(initialValue);
             }
         } else if (direction === 'in') {
-            this.#IO = Gpio.accessible ? new Gpio(this.#IOPin, 'in') : { readSync: value => { console.log('virtual input now uses value: ' + value); } };
-            if (this.#IO && typeof this.#IO.readSync === 'function' && this.GPIOAccesible) {
-                this.#IO.setDirection("in");
+            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'in') : { readSync: value => { console.log('virtual input now uses value: ' + value); } };
+            if (this.IO && typeof this.IO.readSync === 'function' && this.GPIOAccesible) {
+                this.IO.setDirection("in");
             }
         } else if (direction === 'disabled') {
             logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
@@ -68,12 +61,12 @@ class IOBase {
         this.name = name;
     }
     getIOPin() {
-        return this.#IOPin;
+        return this.IOPin;
     }
 
     setIODirection(direction) {
-        if (this.#IO && typeof this.#IO.setDirection === 'function') {
-            this.#IO.setDirection(direction);
+        if (this.IO && typeof this.IO.setDirection === 'function') {
+            this.IO.setDirection(direction);
         } else {
             logger.error("IO direction operation is not supported.");
         }
@@ -81,14 +74,14 @@ class IOBase {
 
     setIOPin(IOPin) {
         if (typeof IOPin === 'number' && IOPin >= 0) {
-            this.#IOPin = IOPin;
+            this.IOPin = IOPin;
         } else {
             logger.error("Invalid IOPin value.");
         }
     }
     readIO() {
-        if (this.#IO && typeof this.#IO.readSync === 'function') {
-            return this.#IO.readSync();
+        if (this.IO && typeof this.IO.readSync === 'function') {
+            return this.IO.readSync();
         } else {
             logger.error("IO read operation is not supported.");
             return null;
@@ -96,8 +89,8 @@ class IOBase {
     }
 
     writeIO(value) {
-        if (this.#IO && typeof this.#IO.writeSync === 'function') {
-            this.#IO.writeSync(value);
+        if (this.IO && typeof this.IO.writeSync === 'function') {
+            this.IO.writeSync(value);
         } else {
             logger.error("IO write operation is not supported.");
         }
@@ -157,7 +150,7 @@ class IOBase {
 
     setOnMs(newOnMs) {
         if (newOnMs !== this.getOnMs()) {
-            this.#onMs = newOnMs;
+            this.onMs = newOnMs;
             this.newOnMsFlag = true;
             this.setPrevOnMsChangeMs(Date.now());
         }
@@ -165,18 +158,18 @@ class IOBase {
 
     setOffMs(newOffMs) {
         if (newOffMs !== this.getOffMs()) {
-            this.#offMs = newOffMs;
+            this.offMs = newOffMs;
             this.newOffMsFlag = true;
             this.setPrevOffMsChangeMs(Date.now());
         }
     }
 
     getOnMs() {
-        return this.#onMs;
+        return this.onMs;
     }
 
     getOffMs() {
-        return this.#offMs;
+        return this.offMs;
     }
 
     getPrevOnMsChangeMs() {
