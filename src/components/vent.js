@@ -7,21 +7,21 @@ const logLevel = "debug";
 
 import cfg from "../services/config.js";
 
-var ventOnMsChangeEventHandler = function (state, mqttAgent) {
-  logger.log("warn", "MQTT->ventOnMsChangeEvent: " + `${state}`);
-  mqttAgent.client.publish(
-    cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"),
-    `${state / 1000}`
-  );
-};
+// var ventOnMsChangeEventHandler = function (state, mqttAgent) {
+//   logger.log("warn", "MQTT->ventOnMsChangeEvent: " + `${state}`);
+//   mqttAgent.client.publish(
+//     cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"),
+//     `${state / 1000}`
+//   );
+// };
 
-var ventOffMsChangeEventHandler = function (state, mqttAgent) {
-  logger.log("warn", "MQTT->ventOffMsChangeEvent: " + `${state}`);
-  mqttAgent.client.publish(
-    cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"),
-    `${state / 1000}`
-  );
-};
+// var ventOffMsChangeEventHandler = function (state, mqttAgent) {
+//   logger.log("warn", "MQTT->ventOffMsChangeEvent: " + `${state}`);
+//   mqttAgent.client.publish(
+//     cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"),
+//     `${state / 1000}`
+//   );
+// };
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin, mqttAgent) {
@@ -241,8 +241,8 @@ export default class Vent {
     //!add some hysteresys here
     // only for upperlon control
     if (lightState == true) {
-      const lowerHys = setPointTemperature - 0.1;
-      const upperHys = setPointTemperature + 0.2;
+      // const lowerHys = setPointTemperature - 0.1;
+      // const upperHys = setPointTemperature + 0.2;
       // maybe use a dead band?
 
       // if (this.speedPercent == 100) {
@@ -390,7 +390,7 @@ export default class Vent {
   setSpeedPercent(percent) {
     this.speedPercent = percent;
   }
-  getSpeedPercent(percent) {
+  getSpeedPercent() {
     return this.speedPercent;
   }
 

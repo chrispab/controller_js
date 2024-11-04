@@ -3,21 +3,6 @@ import logger from "../services/logger.js";
 
 
 class IOBase {
-    // #state = false;
-    // #newStateFlag = false;
-    // #prevStateChangeMs = 0;
-    // onMs = 0;
-    // offMs = 0;
-    // IOPin = 0;
-    // IO = null;
-    // name = "not yet set-IOBase";
-    #newOnMsFlag = false;
-    #newOffMsFlag = false;
-    #prevOnMsChangeMs = 0;
-    #prevOffMsChangeMs = 0;
-    // #setPrevStateChangeMs = 0;
-
-
 
     constructor(IOPin, direction, initialValue = 0) {
         this.state = initialValue;
@@ -173,19 +158,19 @@ class IOBase {
     }
 
     getPrevOnMsChangeMs() {
-        return this.#prevOnMsChangeMs;
+        return this.prevOnMsChangeMs;
     }
 
     setPrevOnMsChangeMs(newPrevOnMsChangeMs) {
-        this.#prevOnMsChangeMs = newPrevOnMsChangeMs;
+        this.prevOnMsChangeMs = newPrevOnMsChangeMs;
     }
 
     getPrevOffMsChangeMs() {
-        return this.#prevOffMsChangeMs;
+        return this.prevOffMsChangeMs;
     }
 
     setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
-        this.#prevOffMsChangeMs = newPrevOffMsChangeMs;
+        this.prevOffMsChangeMs = newPrevOffMsChangeMs;
     }
 
     hasNewOnMsAvailable() {

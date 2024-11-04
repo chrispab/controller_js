@@ -2,5 +2,12 @@
     "eslint.codeActionsOnSave.rules": null,
     "eslint.validate": [
         "javascript"
-    ]
+    ],
+    // "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
+    // {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+    //   }
 }
