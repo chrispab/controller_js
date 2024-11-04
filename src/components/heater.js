@@ -15,12 +15,14 @@ class Heater extends IOBase {
 
     this.mqttAgent = mqttAgent;
   }
+
   heaterStateEventHandler = function (state, mqttAgent) {
 
     logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
   
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
   }
+
   turnOn() {
     this.setState(true);
     // console.log("Turning on heater");
@@ -36,13 +38,13 @@ class Heater extends IOBase {
   }
   getTelemetryData() {
 
-    let superTelemetry = this.getBaseTelemetryData();
+    let telemetry = this.getBaseTelemetryData();
 
-    logger.log('debug', `tele heater: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
 
-
-    return superTelemetry;
+    return telemetry;
   }
+
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
     this.turnOff();
