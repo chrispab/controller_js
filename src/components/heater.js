@@ -6,9 +6,9 @@ import logger from "../services/logger.js";
 const logLevel = 'debug';
 
 
-class Heater extends IOBase {
+class Heater{
   constructor( name, heaterPin, mqttAgent) {
-    super(heaterPin,  'out', 0);
+    this.IOPin = new IOBase(heaterPin, 'out', 0);
     this.setName(name);
 
     this.on("heaterStateChange", this.heaterStateEventHandler);
@@ -25,6 +25,7 @@ class Heater extends IOBase {
 
   turnOn() {
     this.setState(true);
+    this.writeIO(1);
     // console.log("Turning on heater");
     this.emitIfStateChanged();
 
@@ -32,6 +33,7 @@ class Heater extends IOBase {
 
   turnOff() {
     this.setState(false);
+    this.writeIO(0);
     // console.log("Turning off heater");
     this.emitIfStateChanged();
 
@@ -69,5 +71,8 @@ class Heater extends IOBase {
 import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
 Object.assign(Heater.prototype, eventMixin);
+
+import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
+Object.assign(Heater.prototype, IOPinAccessorsMixin);
 
 export default Heater;
