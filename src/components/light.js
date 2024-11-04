@@ -13,8 +13,6 @@ import logger from '../services/logger.js';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
-  currentlySamplingLightSensor;
-  RCLoopCount;
 
   constructor(name, LDRPin, mqttAgent) {
     this.IOPin = new IOBase(LDRPin, 'out', 0);

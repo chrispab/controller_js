@@ -5,9 +5,11 @@ import logger from "../services/logger.js";
 // import cfg from "config";
 import cfg from "../services/config.js";
 
-export default class TemperatureSensor extends IOBase {
+export default class TemperatureSensor  {
   constructor(name, dhtSensorPin, mqttAgent) {
-    super(cfg.get("hardware.dhtSensor.pin"), "in", 0);
+    // super(cfg.get("hardware.dhtSensor.pin"), "in", 0);
+    this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
+
     this.setName(name);
     this.dhtSensorType = cfg.get("hardware.dhtSensor.type");
     this.dhtSensorPin = dhtSensorPin;
@@ -139,3 +141,6 @@ export default class TemperatureSensor extends IOBase {
 import eventMixin from "./mixins/eventMixin.js";
 // Add the mixin with event-related methods
 Object.assign(TemperatureSensor.prototype, eventMixin);
+
+import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
+Object.assign(TemperatureSensor.prototype, IOPinAccessorsMixin);

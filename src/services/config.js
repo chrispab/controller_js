@@ -23,13 +23,13 @@ class ConfigHandler {
     }
     load() {
         // load default.json file as an object
-        if (fs.existsSync("./config/default2.json")) {
-            logger.log('error', 'default2.json exists');
-            var file_content = fs.readFileSync("./config/default2.json");
+        if (fs.existsSync("./config/custom_config.json")) {
+            logger.log('error', 'custom_config.json exists');
+            var file_content = fs.readFileSync("./config/custom_config.json");
         }
         else {
             var file_content = fs.readFileSync("./config/default.json");
-            logger.log('error', 'default2.json does not exist. Using default.json');
+            logger.log('error', 'custom_config.json does not exist. Using default.json');
         }
         var content = JSON.parse(file_content);
         return content;
@@ -70,11 +70,11 @@ class ConfigHandler {
 
     /**
      * Save the config object to the given path as a json file.
-     * If path is not given, it defaults to "./config/default2.json".
+     * If path is not given, it defaults to "./config/custom_config.json".
      * @param {Object} configObj - The config object to save.
-     * @param {String} [path] - The path to save the config to. Defaults to "./config/default2.json".
+     * @param {String} [path] - The path to save the config to. Defaults to "./config/custom_config.json".
      */
-    saveConfig(configObj, path = "./config/default2.json") {
+    saveConfig(configObj, path = "./config/custom_config.json") {
         fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
     }
 
