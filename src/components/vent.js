@@ -1,9 +1,9 @@
 import IOBase from "./IOBase.js";
 import logger from "../services/logger.js";
 import { Gpio } from "onoff";
-
-const logLevel = "debug";
-// const logLevel = 'warn';
+// 
+// const logLevel = "debug";
+const logLevel = 'warn';
 
 import cfg from "../services/config.js";
 
@@ -27,7 +27,6 @@ export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin, mqttAgent) {
 
     this.IOPin = new IOBase(ventPowerPin, "dummy vent", 0);
-
     this.setState(false); // this.state = false;
     this.setName(name);
 
@@ -69,12 +68,20 @@ export default class Vent {
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
   }
 
-
+  logAndPublishState(topic, powerState) {
+    logger.log(logLevel, "MQTT->" + this.getName() + `:${topic + ": " + powerState}`);
+    this.mqttAgent.client.publish(topic, `${powerState}`);
+  }
 
   ventStateEventHandler = function (powerState, speedState, mqttAgent) {
     //vent powerState
+
     logger.log("info", "MQTT->Vent: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (powerState ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${powerState ? 1 : 0}`);
+
+    this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
+
+
     //vent speed powerState
     logger.log("info", "MQTT->Vent speed state: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
