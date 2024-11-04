@@ -13,8 +13,8 @@ import logger from '../services/logger.js';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
-  #currentlySamplingLightSensor;
-  #RCLoopCount;
+  currentlySamplingLightSensor;
+  RCLoopCount;
 
   constructor(name, LDRPin, mqttAgent) {
     this.IOPin = new IOBase(LDRPin, 'out', 0);
@@ -28,9 +28,9 @@ export default class Light {
 
     this.on('lightStateChange', this.lightStateEventHandler);
 
-    this.#RCLoopCount = 0;
+    this.RCLoopCount = 0;
 
-    this.#currentlySamplingLightSensor = false;
+    this.currentlySamplingLightSensor = false;
     //set new reading available
     // this.setNewStateAvailable(true);
     this.processCount = 0;
@@ -42,10 +42,7 @@ export default class Light {
   }
   lightStateEventHandler = function (state, mqttAgent) {
     // logger.log('error', `HI FROM NEW HANDLER lightStateEventHandler`);
-    logger.log(
-      'info',
-      'MQTT->Light: ' + `${cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic') + ': ' + (state ? 1 : 0)}`
-    );
+    logger.log('info', 'MQTT->Light: ' + `${cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic') + ': ' + (state ? 1 : 0)}`);
     mqttAgent.client.publish(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), `${state ? 1 : 0}`);
   };
   process() {
@@ -94,11 +91,11 @@ export default class Light {
   }
 
   readLightSensorState() {
-    logger.log(logLevel, `>>>readLightSensorState this.#RCLoopCount: ${this.#RCLoopCount}`);
+    logger.log(logLevel, `>>>readLightSensorState this.RCLoopCount: ${this.RCLoopCount}`);
 
-    // const lightState = (this.#RCLoopCount > 1000) ? false : true;
-    this.setState(this.#RCLoopCount > 1000 ? false : true);
-    logger.log(logLevel, `>>>.#RCLoopCount: ${this.#RCLoopCount}`);
+    // const lightState = (this.RCLoopCount > 1000) ? false : true;
+    this.setState(this.RCLoopCount > 1000 ? false : true);
+    logger.log(logLevel, `>>>.RCLoopCount: ${this.RCLoopCount}`);
 
     const lightState = this.getState();
     logger.log(logLevel, `>>>lightState: ${lightState}`);
@@ -121,7 +118,7 @@ export default class Light {
   initiateGetRCChargeLoopCount() {
     logger.log(logLevel, '==initiateGetRCChargeLoopCount');
 
-    this.#RCLoopCount = 0;
+    this.RCLoopCount = 0;
     if (Gpio.accessible) {
       // Discharge capacitor
       // this.rcIO.setDirection('out');
@@ -134,10 +131,10 @@ export default class Light {
         .then(() => this.readLDRChargeLoopCount(self))
         .catch(console.error);
     } else {
-      this.#RCLoopCount = 111;
-      logger.log('error', `DEMO-Gpio not accessible returning default #RCLoopCount: ${this.#RCLoopCount}`);
+      this.RCLoopCount = 111;
+      logger.log('error', `DEMO-Gpio not accessible returning default RCLoopCount: ${this.RCLoopCount}`);
     }
-    return this.#RCLoopCount;
+    return this.RCLoopCount;
   }
 
   /**
@@ -155,15 +152,15 @@ export default class Light {
     // Count loops until voltage across capacitor reads high on GPIO
     // console.log(`out self.rcIO.readSync(): ${self.rcIO.readSync()}`);
     // if not currently sampling then start counting
-    if (self.#currentlySamplingLightSensor == false) {
-      self.#currentlySamplingLightSensor = true;
+    if (self.currentlySamplingLightSensor == false) {
+      self.currentlySamplingLightSensor = true;
       logger.log(logLevel, '---3');
 
       // charge capacitor
       self.setIODirection('in');
 
-      while (self.readIO() == 0 && self.#RCLoopCount < 999999) {
-        self.#RCLoopCount += 1;
+      while (self.readIO() == 0 && self.RCLoopCount < 999999) {
+        self.RCLoopCount += 1;
       }
 
       // discharge capacitor
@@ -172,11 +169,11 @@ export default class Light {
 
       logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
 
-      logger.log(logLevel, `>>>>>>>>>>>>>self.#RCLoopCount: ${self.#RCLoopCount}`);
+      logger.log(logLevel, `>>>>>>>>>>>>>self.RCLoopCount: ${self.RCLoopCount}`);
 
-      self.#currentlySamplingLightSensor = false;
+      self.currentlySamplingLightSensor = false;
     } else {
-      logger.log(logLevel, `!! currently SamplingLight Sensor: ${self.#currentlySamplingLightSensor}`);
+      logger.log(logLevel, `!! currently SamplingLight Sensor: ${self.currentlySamplingLightSensor}`);
     }
   }
 }

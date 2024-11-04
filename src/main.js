@@ -38,6 +38,12 @@ setInterval(() => {
   fan.process();
 
   heater.process();
+  heater.control(
+    temperatureSensor.getTemperature(),
+    cfg.get("zone.highSetpoint"),
+    light.getState(),
+    temperatureSensor.getHumidity()
+  )
 
   light.process();
 

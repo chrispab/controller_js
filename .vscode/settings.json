@@ -3,11 +3,11 @@
     "eslint.validate": [
         "javascript"
     ],
-    // "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
+    "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
     // {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "[javascript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        }
+        // "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // "[javascript]": {
+        //   "editor.defaultFormatter": "vscode.typescript-language-features"
+        // }
     //   }
 }

@@ -25,18 +25,16 @@ import cfg from "../services/config.js";
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin, mqttAgent) {
-    // const direction = ;
-    // const initialValue = 0;
-    // super(cfg.get("hardware.vent.pin"), 'out', 0);
-    this.IOPin = new IOBase(name, ventPowerPin, ventSpeedPin, "dummy vent", 0);
+
+    this.IOPin = new IOBase(ventPowerPin, "dummy vent", 0);
 
     this.setState(false); // this.state = false;
-    this.setName("vent");
+    this.setName(name);
 
     // two Pins, on/off and speed 50-100%
-    this.ventPowerPin = new IOBase(cfg.get("hardware.vent.pin"), "out", 0);
+    this.ventPowerPin = new IOBase(ventPowerPin, "out", 0);
     this.ventPowerPin.setState(false);
-    this.ventSpeedPin = new IOBase(cfg.get("hardware.vent.speedPin"), "out", 0);
+    this.ventSpeedPin = new IOBase(ventSpeedPin, "out", 0);
     this.ventSpeedPin.setState(false);
 
     this.setOnMs(cfg.get("vent.onMs"));
@@ -71,49 +69,18 @@ export default class Vent {
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
   }
 
+
+
   ventStateEventHandler = function (powerState, speedState, mqttAgent) {
     //vent powerState
-    logger.log(
-      "info",
-      "MQTT->Vent: " +
-      `${cfg.get("mqtt.topicPrefix") +
-      cfg.get("mqtt.ventStateTopic") +
-      ": " +
-      (powerState ? 1 : 0)
-      }`
-    );
-    mqttAgent.client.publish(
-      cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"),
-      `${powerState ? 1 : 0}`
-    );
+    logger.log("info", "MQTT->Vent: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic") + ": " + (powerState ? 1 : 0)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), `${powerState ? 1 : 0}`);
     //vent speed powerState
-    logger.log(
-      "info",
-      "MQTT->Vent speed state: " +
-      `${cfg.get("mqtt.topicPrefix") +
-      cfg.get("mqtt.ventSpeedStateTopic") +
-      ": " +
-      (speedState ? 1 : 0)
-      }`
-    );
-    mqttAgent.client.publish(
-      cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"),
-      `${speedState ? 1 : 0}`
-    );
+    logger.log("info", "MQTT->Vent speed state: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic") + ": " + (speedState ? 1 : 0)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), `${speedState ? 1 : 0}`);
     //vent speed percent
-    logger.log(
-      "info",
-      "MQTT->Vent speed percent: " +
-      `${cfg.get("mqtt.topicPrefix") +
-      cfg.get("mqtt.ventSpeedPercentTopic") +
-      ": " +
-      (speedState ? 100 : 50)
-      }`
-    );
-    mqttAgent.client.publish(
-      cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"),
-      `${speedState ? 100 : 50}`
-    );
+    logger.log("info", "MQTT->Vent speed percent: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic") + ": " + (speedState ? 100 : 50)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState ? 100 : 50}`);
     //vent value, 0 is off, 1 is 50%, 2 is 100%
     const ventValue =
       powerState == 1 && speedState == 0
@@ -121,19 +88,8 @@ export default class Vent {
         : powerState == 1 && speedState == 1
           ? 2
           : 0;
-    logger.log(
-      "info",
-      "MQTT->Vent value: " +
-      `${cfg.get("mqtt.topicPrefix") +
-      cfg.get("mqtt.ventValueTopic") +
-      ": " +
-      ventValue
-      }`
-    );
-    mqttAgent.client.publish(
-      cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"),
-      `${ventValue}`
-    );
+    logger.log("info", "MQTT->Vent value: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic") + ": " + ventValue}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
   };
 
   process() {
@@ -143,40 +99,15 @@ export default class Vent {
   processPeriodicPublication() {
     // ensure regular publishing of additional propperties
     // such as ventOnMs and ventOffMs
-    if (
-      Date.now() >=
-      this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs
-    ) {
+    if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/vent_on_delta_secs
-      logger.log(
-        "info",
-        "MQTT->periodic ventOnDeltaSecs: " +
-        `${cfg.get("mqtt.topicPrefix") +
-        cfg.get("mqtt.ventOnDeltaSecsTopic") +
-        ": " +
-        this.getOnMs() / 1000
-        }`
-      );
-      this.mqttAgent.client.publish(
-        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"),
-        `${this.getOnMs() / 1000}`
-      );
+      logger.log("info", "MQTT->periodic ventOnDeltaSecs: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + this.getOnMs() / 1000}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
 
       // ZoneX/vent_off_delta_secs
-      logger.log(
-        "info",
-        "MQTT->periodic ventOffDeltaSecs: " +
-        `${cfg.get("mqtt.topicPrefix") +
-        cfg.get("mqtt.ventOffDeltaSecsTopic") +
-        ": " +
-        this.getOffMs() / 1000
-        }`
-      );
-      this.mqttAgent.client.publish(
-        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"),
-        `${this.getOffMs() / 1000}`
-      );
+      logger.log("info", "MQTT->periodic ventOffDeltaSecs: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + this.getOffMs() / 1000}`);
+      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
     }
   }
 
@@ -265,10 +196,7 @@ export default class Vent {
         this.ventOverride = true;
         this.speedPercent = 100;
         this.turnOn();
-        logger.log(
-          logLevel,
-          "VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse"
-        );
+        logger.log(logLevel, "VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse");
       }
       // temp below target, change state to OFF after pulse delay
       else if (
@@ -406,17 +334,8 @@ export default class Vent {
 
       const speedState = this.speedPercent == 100 ? 1 : 0;
       // this.emitterManager.emit('ventStateChange', this.getState(), speedState, this.mqttAgent);
-      logger.log(
-        "error",
-        `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0
-        }, speedState: ${speedState}`
-      );
-      this.trigger(
-        "ventStateChange",
-        this.ventPowerPin.getState() ? 1 : 0,
-        speedState,
-        this.mqttAgent
-      );
+      logger.log("warn", `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0}, speedState: ${speedState}`);
+      this.trigger("ventStateChange", this.ventPowerPin.getState() ? 1 : 0, speedState, this.mqttAgent);
 
       //indicate data read and used e.g MQTT pub
       return true;
