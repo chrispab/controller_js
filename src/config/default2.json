@@ -3,7 +3,8 @@
     "highSetpoint": 21.2,
     "lowSetpoint": 13.1,
     "periodicPublishIntervalMs": 60000,
-    "name": "zone_1"
+    "name": "zone_1",
+    "customConfigFilename": "customConfig.json"
   },
   "system": {
     "name": "system_1"

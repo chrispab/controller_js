@@ -2,7 +2,8 @@
     "zone": {
         "name": "zone_1",
         "highSetpoint": 22.1,
-        "lowSetpoint": 16.5
+        "lowSetpoint": 16.5,
+        "customConfigFilename": "customConfig.json"
     },
     "system": {
         "name": "system_1"

@@ -7,18 +7,15 @@ const logLevel = 'debug';
 
 
 class Heater extends IOBase {
-  constructor( mqttAgent) {
-    super(cfg.get("hardware.heater.pin"),  'out', false);
-    this.setName('heater');
-    // this.emitterManager = emitterManager;
-    // this.emitterManager.on('heaterStateChange', heaterStateEventHandler);
+  constructor( name, heaterPin, mqttAgent) {
+    super(heaterPin,  'out', 0);
+    this.setName(name);
+
     this.on("heaterStateChange", this.heaterStateEventHandler);
 
     this.mqttAgent = mqttAgent;
   }
   heaterStateEventHandler = function (state, mqttAgent) {
-    // logger.log('warn', 'MQTT->Heater: ' + `${state}`);
-    // logger.log('error', `HI FROM NEW HANDLER heaterStateEventHandler`);
 
     logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
   
@@ -59,7 +56,6 @@ class Heater extends IOBase {
       } else {
         logger.log(logLevel, "Heater is off");
       }
-      // this.emitterManager.emit('heaterStateChange', this.getState(), this.mqttAgent);
       this.trigger("heaterStateChange", this.getState(), this.mqttAgent);
 
     }
