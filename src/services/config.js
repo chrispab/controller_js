@@ -4,79 +4,69 @@ import fs from 'fs';
 
 
 class ConfigHandler {
-    constructor() {
-        this.configHasChanged = false;
-        this.configChangedTime = null;
-        this.configChangedTimeBeforeSave = 10000;
+  constructor() {
+    this.configHasChanged = false;
+    this.configChangedTime = null;
+    this.configChangedTimeBeforeSave = 10000;
 
-        this.config = this.load();
-        logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
+    this.config = this.load();
+    logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
+  }
+
+  process() {
+    if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedTimeBeforeSave) {
+      this.save();
+      this.configHasChanged = false;
+      this.configChangedTime = null;
     }
-
-    process() {
-
-        if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedTimeBeforeSave) {
-            this.save();
-            this.configHasChanged = false;
-            this.configChangedTime = null;
-        }
+  }
+  
+  load() {
+    // load default.json file as an object
+    var file_content = null
+    if (fs.existsSync("./config/custom_config.json")) {
+      logger.log('error', 'custom_config.json exists');
+      file_content = fs.readFileSync("./config/custom_config.json");
     }
-    load() {
-        // load default.json file as an object
-        if (fs.existsSync("./config/custom_config.json")) {
-            logger.log('error', 'custom_config.json exists');
-            var file_content = fs.readFileSync("./config/custom_config.json");
-        }
-        else {
-            var file_content = fs.readFileSync("./config/default.json");
-            logger.log('error', 'custom_config.json does not exist. Using default.json');
-        }
-        var content = JSON.parse(file_content);
-        return content;
+    else {
+      file_content = fs.readFileSync("./config/default.json");
+      logger.log('error', 'custom_config.json does not exist. Using default.json');
     }
+    var content = JSON.parse(file_content);
+    return content;
+  }
 
-    save() {
-        this.saveConfig(this.config);
-    }
+  save() {
+    this.saveConfig(this.config);
+  }
 
-    get(stringkey) {
-        const name = getValueByPath(this.config, stringkey);
-        return name;
-    }
+  get(stringkey) {
+    const name = getValueByPath(this.config, stringkey);
+    return name;
+  }
 
-    set(key, valueObj) {
+  set(key, valueObj) {
 
-        // var file_content = fs.readFileSync("./config/default.json");
-        // var content = JSON.parse(file_content);
+    var currentConfig = this.config
 
-        var currentConfig = this.config
-        // const oldhisp = this.get("zone.highSetpoint");
-        // logger.log('error', 'oldhisp: ' + oldhisp);
-        const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj })
+    const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj })
 
-        this.config = mergedObj;
+    this.config = mergedObj;
 
-        this.configHasChanged = true;
-        this.configChangedTime = new Date();
+    this.configHasChanged = true;
+    this.configChangedTime = new Date();
 
-        // this.saveConfig(mergedObj);
-        // this.config = this.load();
+  }
 
-
-        // const newhisp = this.get("zone.highSetpoint");
-        // logger.log('error', 'newhisp: ' + newhisp);
-
-    }
-
-    /**
-     * Save the config object to the given path as a json file.
-     * If path is not given, it defaults to "./config/custom_config.json".
-     * @param {Object} configObj - The config object to save.
-     * @param {String} [path] - The path to save the config to. Defaults to "./config/custom_config.json".
-     */
-    saveConfig(configObj, path = "./config/custom_config.json") {
-        fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
-    }
+  /**
+   * Save the config object to the given path as a json file.
+   * If path is not given, it defaults to "./config/custom_config.json".
+   * @param {Object} configObj - The config object to save.
+   * @param {String} [path] - The path to save the config to. Defaults to "./config/custom_config.json".
+   */
+  saveConfig(configObj, path = "./config/custom_config.json") {
+    fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
+  }
 
 }
 
@@ -88,29 +78,29 @@ class ConfigHandler {
  * @returns The merged object.
  */
 const fullMerge = (target, source) => {
-    // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
-    for (const key of Object.keys(source)) {
-        if (source[key] instanceof Object) Object.assign(source[key], fullMerge(target[key], source[key]))
-    }
-    // Join `target` and modified `source`
-    Object.assign(target || {}, source)
-    return target
+  // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
+  for (const key of Object.keys(source)) {
+    if (source[key] instanceof Object) Object.assign(source[key], fullMerge(target[key], source[key]))
+  }
+  // Join `target` and modified `source`
+  Object.assign(target || {}, source)
+  return target
 }
 
 // Helper function to access nested objects and arrays
 function getValueByPath(obj, path) {
-    const keys = path.split(".");
-    let value = obj;
+  const keys = path.split(".");
+  let value = obj;
 
-    for (let key of keys) {
-        if (typeof value === "object" && value !== null) {
-            value = value[key];
-        } else {
-            return undefined;
-        }
+  for (let key of keys) {
+    if (typeof value === "object" && value !== null) {
+      value = value[key];
+    } else {
+      return undefined;
     }
+  }
 
-    return value;
+  return value;
 }
 // export a single instance of ConfigHandler;
 export const cfg = new ConfigHandler();

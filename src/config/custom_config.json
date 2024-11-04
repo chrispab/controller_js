@@ -1,6 +1,6 @@
 {
   "zone": {
-    "highSetpoint": 21.3,
+    "highSetpoint": 21.5,
     "lowSetpoint": 13.1,
     "periodicPublishIntervalMs": 60000,
     "name": "zone_1",
