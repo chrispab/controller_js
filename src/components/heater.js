@@ -18,6 +18,11 @@ class Heater {
     this.ExternalTDiffMs = cfg.get("heater.ExternalTDiffMs");
   }
 
+  heaterStateEventHandler = function (state, mqttAgent) {
+    logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
+    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
+  }
+
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
     //addd heater logic here
@@ -102,12 +107,6 @@ class Heater {
     }
   }
 
-
-  heaterStateEventHandler = function (state, mqttAgent) {
-    logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
-  }
-
   turnOn() {
     this.setState(true);
     this.writeIO(1);
@@ -125,8 +124,6 @@ class Heater {
     logger.log('debug', `tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return telemetry;
   }
-
-
 
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
