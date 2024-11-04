@@ -49,9 +49,10 @@ class Heater{
 
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-    this.turnOff();
-    // console.log(`Heater process count: ${this.processCount}`);
-    //   console.log("Heater process");
+    
+    //addd heater logic here
+    // this.turnOff();
+
   }
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
