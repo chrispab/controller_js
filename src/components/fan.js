@@ -132,6 +132,6 @@ Object.assign(Fan.prototype, eventMixin);
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
-import turnOnOffMixin from "./mixins/turnOnOffMixin.js";
-Object.assign(Fan.prototype, turnOnOffMixin);
+// import turnOnOffMixin from "./mixins/turnOnOffMixin.js";
+// Object.assign(Fan.prototype, turnOnOffMixin);
 // export default Fan;
