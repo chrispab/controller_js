@@ -41,6 +41,7 @@ class Heater {
       return;
       // logger.log('warning', '..d on, in heat off hours - skipping lon heatctl');
     } else { // d off here
+      this.heatOffMs = cfg.get('heater.heatOffMs');
       // logger.log('warning', '..light off..do heatctl');
       // logger.log('warning', 'self.heatingCycleState:', this.heatingCycleState);
       if (currentTemp >= (setPointTemperature + this.heater_sp_offset)) {
