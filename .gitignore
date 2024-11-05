@@ -4,3 +4,4 @@ logs/controller_js-error.log
 src/logs/controller_js-combined.log
 src/logs/controller_js-error.log
 src/logs/controller_js-combined.log
+src/secret.js
