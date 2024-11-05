@@ -18,16 +18,16 @@ class IOBase {
         this.prevOffMsChangeMs = Date.now();
         //log constructor parameters
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
-        this.GPIOAccesible = Gpio.accessible;
+        this.GPIOAccessible = Gpio.accessible;
         if (direction === 'out') {
-            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'out') : { writeSync: value => { console.log('virtual OP set to: ' + value); } };
-            if (this.IO && typeof this.IO.writeSync === 'function' && this.GPIOAccesible) {
+            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'out') : { writeSync: value => { logger.log('warn','virtual OP set to: ' + value); } };
+            if (this.IO && typeof this.IO.writeSync === 'function' && this.GPIOAccessible) {
                 this.IO.setDirection("out");
                 this.IO.writeSync(initialValue);
             }
         } else if (direction === 'in') {
-            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'in') : { readSync: value => { console.log('virtual IP now uses value: ' + value); } };
-            if (this.IO && typeof this.IO.readSync === 'function' && this.GPIOAccesible) {
+            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'in') : { readSync: value => { logger.log('warn','virtual IP now uses value: ' + value); } };
+            if (this.IO && typeof this.IO.readSync === 'function' && this.GPIOAccessible) {
                 this.IO.setDirection("in");
             }
         } else if (direction === 'disabled') {

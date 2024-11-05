@@ -1,9 +1,13 @@
 {
     "eslint.codeActionsOnSave.rules": null,
     "eslint.validate": [
+        
         "javascript"
     ],
-    "[javascript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "eslint.format.enable": true,
     // {
         // "editor.defaultFormatter": "esbenp.prettier-vscode",
         // "[javascript]": {

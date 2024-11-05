@@ -3,5 +3,8 @@
 		{
 			"path": "."
 		}
-	]
+    ],
+    "settings": {
+        "eslint.format.enable": true
+    }
 }

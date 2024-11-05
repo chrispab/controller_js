@@ -47,7 +47,7 @@ export default class Fan {
   }
 
   processPeriodicPublication() {
-    // ensure regular publishing of additional propperties
+    // ensure regular publishing of additional properties
     // such as fanOnMs and fanOffMs
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
