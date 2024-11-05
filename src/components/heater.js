@@ -1,7 +1,5 @@
 import IOBase from "./IOBase.js";
-// import cfg from "config";
 import cfg from "../services/config.js";
-
 import logger from "../services/logger.js";
 const logLevel = 'debug';
 
@@ -25,9 +23,6 @@ class Heater {
 
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-    //addd heater logic here
-    // this.turnOff();
-
   }
 
   control(currentTemp, setPointTemperature, lightState, outsideTemp =10) {
@@ -43,6 +38,7 @@ class Heater {
     // if (cfg.getItemValueFromConfig('heat_off_hours').includes(currentHour)) { // l on and not hh:mm pm
     if (lightState == true) {
       this.turnOff();// = 'OFF';
+      return;
       // logger.log('warning', '..d on, in heat off hours - skipping lon heatctl');
     } else { // d off here
       // logger.log('warning', '..light off..do heatctl');
@@ -69,14 +65,16 @@ class Heater {
           }
           // let externalDiffT = Math.floor((setPointTemperature - 2 - outsideTemp) * this.ExternalTDiffMs);
           // Milliseconds per degree diff
-          let externalDiffT = Math.floor((setPointTemperature - outsideTemp) * this.ExternalTDiffMs);
+          // let externalDiffT = Math.floor((setPointTemperature - outsideTemp) * this.ExternalTDiffMs);
+          let externalDiffT = (setPointTemperature - outsideTemp) * this.ExternalTDiffMs;
+          logger.log('warn', `setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
 
-          // logger.log('warning', '--EXTERNAL DIFF tdelta on to add ms:', externalDiffT);
+          logger.log('error', `--EXTERNAL DIFF tdelta on to add ms:${externalDiffT}` );
 
           // this.heatOnMs = cfg.getItemValueFromConfig('heatOnMs') + internalDiffT + externalDiffT; // + (outsideTemp / 50);
           this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT; // + (outsideTemp / 50);
           this.heatOffMs = cfg.get('heater.heatOffMs');
-          logger.log('warn', '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALCULATED TOTAL delta ON ms:', this.heatOnMs);
+          logger.log('warn', '>>>>>>> CALCULATED TOTAL delta ON ms:', this.heatOnMs);
 
           // Start a cycle - ON first
           this.heatingCycleState = 'ON';

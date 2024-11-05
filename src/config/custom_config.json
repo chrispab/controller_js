@@ -66,8 +66,8 @@
     "publishStateIntervalMs": 60000,
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 1000,
-    "heatOnMs": 0,
-    "heatOffMs": 0
+    "heatOnMs": 10000,
+    "heatOffMs":10000
   },
   "fan": {
     "speedPercent": 50,

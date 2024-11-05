@@ -42,7 +42,7 @@ setInterval(() => {
     temperatureSensor.getTemperature(),
     cfg.get("zone.highSetpoint"),
     light.getState(),
-    temperatureSensor.getHumidity()
+    10
   )
 
   light.process();
