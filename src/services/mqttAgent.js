@@ -1,21 +1,25 @@
 import logger from "./logger.js";
 
-// import cfg from "config";
 import cfg from "./config.js";
 
-// import utils from "../utils/utils.js";
-// import {wifi} from "../utils/utils.js";
-
-//Assign the event handler to an event:
-// eventEmitter.on('scream', ventEvent);
-// import mqtt from 'mqtt';
-// import { log } from "console";
-// const client = mqtt.connect(config.mqtt.brokerUrl);
+import { logAndPublishStateMqtt } from "../utils/utils.js";
 
 import mqtt from "mqtt";
 // const client = mqtt.connect(config.mqtt.brokerUrl);
-
+// let transporter = nodemailer.createTransport(transport[, defaults])
+// var nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 // import { mod1Function } from "../utils/utils.js";
+const transporter = nodemailer.createTransport({
+  host: "smtp.ethereal.email",
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: "maddison53@ethereal.email",
+    pass: "jn7jnAPss4f63QBp6D",
+  },
+});
+
 
 class MqttAgent {
   constructor() {
@@ -29,9 +33,7 @@ class MqttAgent {
     };
     this.name = "mqttAgent";
     this.client = mqtt.connect(cfg.get("mqtt.brokerUrl"), options);
-    // this.brokerUrl = brokerUrl;
     this.processCount = 0;
-    // this.mqttClient = mqtt.connect(this.brokerUrl);
     this.telemetryIntervalMs = cfg.get("telemetry.interval");
     this.lastTelemetryMs = Date.now() - this.telemetryIntervalMs;
     this.logLevel = "info";
@@ -48,59 +50,55 @@ class MqttAgent {
     return this.name;
   }
 
+
+  emailTest() {
+    transporter.sendMail({
+      from: "maddison53@ethereal.email",
+      to: "maddison53@ethereal.email",
+      subject: "Hello ✔",
+      text: "Hello world?",
+      html: "<b>Hello world?</b>",
+    });
+
+    console.log("Message sent: %s", info.messageId);
+  }
+  
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-    // logger.info(`components: ${(components)}`); //JSON.stringify(components}`);
-    // this.telemetry(components);
-    if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
-      this.lastTelemetryMs = Date.now();
-      const data = this.getTelemetryData(components);
 
-      this.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"), `${data}`);
-      //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
-      // this.client;
-      // logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`,);
-      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), (data), this.client);
-
-      //publish wifi info
-      const wifiInfo = wifi.getCurrentConnections(
-        (error, currentConnections) => {
-          if (error) {
-            console.log(error);
-          } else {
-            // console.log(currentConnections);
-            // return currentConnections;
-            this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${currentConnections[0].quality}`);
-            // this.logAndPublishState(cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
-          }
-        }
-      );
-      // logger.error("client connected:" + (mod1Function()));
-      // console.log("xx=============:" + wifiInfo);
-
-      // this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${myfunc()[0].quality}`);
-
-    }
+    this.doTelemetry(components)
     this.processPeriodicPublication()
 
   }
 
+  doTelemetry(components) {
+    if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
+      this.lastTelemetryMs = Date.now();
+      const data = this.getTelemetryData(components);
+
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), (data), this.client);
+
+      //publish wifi info
+      wifi.getCurrentConnections(
+        (error, currentConnections) => {
+          if (error) {
+            console.log(error);
+          } else {
+            this.logAndPublishState(cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`, this.client);
+          }
+        }
+      );
+
+    }
+  }
   processPeriodicPublication() {
-
-    // process and publish additional properties for the zone
-    // e.g. lowSetpoint and highSetpoint
-
 
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/vent_on_delta_secs
-      // logger.log('info', 'MQTT->periodic highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (cfg.get("zone.highSetpoint"))}`);
-      // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${(cfg.get("zone.highSetpoint"))}`);
       this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${(cfg.get("zone.highSetpoint"))}`, this.client);
 
       // Zonen/vent_off_delta_secs
-      // logger.log('info', 'MQTT->periodic lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (cfg.get("zone.lowSetpoint"))}`);
-      // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${(cfg.get("zone.lowSetpoint"))}`);
       this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${(cfg.get("zone.lowSetpoint"))}`, this.client);
     }
   }
@@ -108,22 +106,15 @@ class MqttAgent {
 
   getTelemetryData(components) {
     const componentData = [];
-    // let componentData = [];
 
     for (const component of components) {
       var teledata = component.getTelemetryData();
-      // var jsoncomponent = {};
-      // jsoncomponent = JSON.stringify(teledata);
 
       const obj1 = JSON.parse(JSON.stringify(teledata));
 
       componentData.push(JSON.stringify(obj1));
 
     }
-
-    // var $stringData = JSON.stringify(componentData);
-    // var $arrStringData = componentData.toString();
-    // logger.info("2======> " + componentData.toString());
 
     return (componentData.toString());
   }
@@ -205,16 +196,30 @@ mqttAgent.client.on("packetsend", function () {
 // # publish(topic, payload=None, qos=0, retain=False)
 // MQTTClient.publish(zoneName + "/LWT", "Online", 0, True)
 
+// function getwifiinfo() {
+//   let mycurrentConnections = [];
+//   wifi.getCurrentConnections((error, currentConnections) => {
+//     if (error) {
+//       console.log(error);
+//     } else {
+//       console.log("function getwifiinfo()");
+//       // console.log(currentConnections);
+//       mycurrentConnections = currentConnections;
+//       // return currentConnections;
+//     }
+//   });
+//   return mycurrentConnections;
+// }
 
 mqttAgent.client.on("message", (topic, message) => {
-  logger.warn(`Received message on topic ${topic}: ${message}`);
+  logger.warn(`MQTT->Received: ${topic}: ${message}`);
 
   switch (topic) {
     case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
       if (Number(message.toString()) > 0) {
-        logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
-        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
-        // this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${message}`, mqttAgent.client);
+        // logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
+        // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
+        logAndPublishStateMqtt('highSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${message}`, mqttAgent.client);
         //set the high setpoint in the config object
         const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
         cfg.set("zone.highSetpoint", obj1);
@@ -225,8 +230,9 @@ mqttAgent.client.on("message", (topic, message) => {
 
     case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
       if (Number(message.toString()) > 0) {
-        logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
-        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
+        // logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
+        // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
+        logAndPublishStateMqtt('lowSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${message}`, mqttAgent.client);
         //set the low setpoint in the config object
         const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
         cfg.set("zone.lowSetpoint", obj2);
@@ -237,8 +243,9 @@ mqttAgent.client.on("message", (topic, message) => {
 
     case (cfg.get("mqtt.topicPrefix") + "/vent_on_delta_secs/set"):
       if (Number(message.toString()) > 0) {
-        logger.log('warn', 'MQTT->vent_on_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (message)}`);
-        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${message}`);
+        // logger.log('warn', 'MQTT->vent_on_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic") + ": " + (message)}`);
+        // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${message}`);
+        logAndPublishStateMqtt('vent_on_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOnDeltaSecsTopic'), `${message}`, mqttAgent.client);
         //set the low setpoint in the config object
         const obj3 = { vent: { onMs: Number(message.toString()) * 1000 } };
         cfg.set("vent.onMs", obj3);
@@ -249,8 +256,9 @@ mqttAgent.client.on("message", (topic, message) => {
 
     case (cfg.get("mqtt.topicPrefix") + "/vent_off_delta_secs/set"):
       if (Number(message.toString()) > 0) {
-        logger.log('warn', 'MQTT->vent_off_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (message)}`);
-        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${message}`);
+        // logger.log('warn', 'MQTT->vent_off_delta_secs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic") + ": " + (message)}`);
+        // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${message}`);
+        logAndPublishStateMqtt('vent_off_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOffDeltaSecsTopic'), `${message}`, mqttAgent.client);
         //set the low setpoint in the config object
         const obj4 = { vent: { offMs: Number(message.toString()) * 1000 } };
         cfg.set("vent.offMs", obj4);

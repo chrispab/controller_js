@@ -1,27 +1,27 @@
 // import IOBase from "./IOBase.js";
-import Logger from "../services/logger.js";
+// import Logger from "../services/logger.js";
 
 
 // import config from '../config/config.json' assert { type: 'json' };
-import cfg from "config";
+// import cfg from "config";
 
-var fanStateEventHandler = function (state, mqttAgent) {
-  Logger.log('warn', 'MQTT->Fan: ' + `${state}`);
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/fan_state", `${state ? 1 : 0}`);
-}
+// var fanStateEventHandler = function (state, mqttAgent) {
+//   Logger.log('warn', 'MQTT->Fan: ' + `${state}`);
+//   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/fan_state", `${state ? 1 : 0}`);
+// }
 
-const logLevel = 'debug';
+// const logLevel = 'debug';
 // const logLevel = 'info';
 
 
-function getHMSStr() {
-  const date = new Date(Date.now());
-  const hh = `0${date.getHours()}`.slice(-2);
-  const mm = `0${date.getMinutes()}`.slice(-2);
-  const ss = `0${date.getSeconds()}`.slice(-2);
-  // console.log(`${hh}:${mm}:${ss}`);
-  return `${hh}:${mm}:${ss}`;
-}
+// function getHMSStr() {
+//   const date = new Date(Date.now());
+//   const hh = `0${date.getHours()}`.slice(-2);
+//   const mm = `0${date.getMinutes()}`.slice(-2);
+//   const ss = `0${date.getSeconds()}`.slice(-2);
+//   // console.log(`${hh}:${mm}:${ss}`);
+//   return `${hh}:${mm}:${ss}`;
+// }
 
 
 // const wifi = require('node-wifi');
@@ -63,5 +63,13 @@ const mod1Function = () => wifi.getCurrentConnections((error, currentConnections
     */
   }
 });
+// export { mod1Function, mod1Function2 }
 
-export { mod1Function }
+
+const logAndPublishStateMqtt = (name,topic, state, client) => {
+  var logLevel = "info";
+  logger.log(logLevel, "MQTT->" + name + `:${topic + ": " + state}`);
+  client.publish(topic, `${state}`);
+}
+
+export { mod1Function, logAndPublishStateMqtt }
