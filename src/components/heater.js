@@ -27,15 +27,11 @@ class Heater {
 
   control(currentTemp, setPointTemperature, lightState, outsideTemp =10) {
     // logger.log('warn',`currentTemp:${currentTemp} setPointTemperature:${setPointTemperature} lightState:${lightState}`);
-    const currentMillis = Date.now();
+    const currentMs = Date.now();
     // logger.log('warn', '==Heat ctl==');
     // Calculate new heater on time based on temperature gap
     // this.heatOnMs = ((setPointTemperature - currentTemp) * 20 * 1000) + cfg.getItemValueFromConfig('heatOnMs');
-    // logger.log('warning', '==Heat tdelta on:', this.heatOnMs);
 
-    // Check for heater OFF hours // TODO: improve this
-    // const currentHour = new Date().getHours();
-    // if (cfg.getItemValueFromConfig('heat_off_hours').includes(currentHour)) { // l on and not hh:mm pm
     if (lightState == true) {
       this.turnOff();// = 'OFF';
       return;
@@ -80,47 +76,44 @@ class Heater {
           // Start a cycle - ON first
           this.heatingCycleState = 'ON';
           // Init ON state timer
-          // this.lastStateChangeMillis = currentMillis;
           this.turnOn();
           logger.log('warn', "..........temp low - currently INACTIVE - TURN HEATing cycle state ON");
         }
       }
 
       if (this.heatingCycleState === 'ON') {
-        if ((currentMillis - this.getPrevStateChangeMs() ) >= this.heatOnMs) {
+        if ((currentMs - this.getPrevStateChangeMs() ) >= this.heatOnMs) {
           this.heatingCycleState = 'OFF';
           this.turnOff
-          // this.lastStateChangeMillis = currentMillis;
           logger.log('warn', ".......... - currently ON - TURN HEATing cycle state OFF");
         }
       }
 
       if (this.heatingCycleState === 'OFF') {
-        if ((currentMillis - this.getPrevStateChangeMs()) >= this.heatOffMs) {
+        if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOffMs) {
           this.heatingCycleState = 'INACTIVE';
           logger.log('warn', ".......... - currently OFF - MAKE HEATing cycle state INACTIVE");
           this.turnOff();
-          // this.lastStateChangeMillis = currentMillis;
         }
       }
     }
   }
 
   turnOn() {
-    this.setState(true);
+    this.setState(1);
     this.writeIO(1);
     this.emitIfStateChanged();
   }
 
   turnOff() {
-    this.setState(false);
+    this.setState(0);
     this.writeIO(0);
     this.emitIfStateChanged();
   }
 
   getTelemetryData() {
     let telemetry = this.getBaseTelemetryData();
-    logger.log('debug', `tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `Tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return telemetry;
   }
 
