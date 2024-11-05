@@ -15,7 +15,7 @@ import cfg from "./config.js";
 import mqtt from "mqtt";
 // const client = mqtt.connect(config.mqtt.brokerUrl);
 
-import { mod1Function } from "../utils/utils.js";
+// import { mod1Function } from "../utils/utils.js";
 
 class MqttAgent {
   constructor() {
@@ -27,6 +27,7 @@ class MqttAgent {
         payload: "Offline",
       },
     };
+    this.name = "mqttAgent";
     this.client = mqtt.connect(cfg.get("mqtt.brokerUrl"), options);
     // this.brokerUrl = brokerUrl;
     this.processCount = 0;
@@ -43,10 +44,9 @@ class MqttAgent {
 
   }
 
-  // publishAndLog(topic, payload) {
-  //   this.client.publish(topic, payload);
-  //   logger.log(this.logLevel, `MQTT->${topic}: ${payload}`);
-  // }
+  getName() {
+    return this.name;
+  }
 
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
@@ -55,12 +55,12 @@ class MqttAgent {
     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
-      this.client.publish(
-        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"),
-        `${data}`
-      );
+
+      this.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"), `${data}`);
       //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
-      logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
+      // this.client;
+      // logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`,);
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), (data), this.client);
 
       //publish wifi info
       const wifiInfo = wifi.getCurrentConnections(
@@ -70,10 +70,8 @@ class MqttAgent {
           } else {
             // console.log(currentConnections);
             // return currentConnections;
-            this.client.publish(
-              cfg.get("mqtt.topicPrefix") + "/rssi",
-              `${currentConnections[0].quality}`
-            );
+            this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${currentConnections[0].quality}`);
+            // this.logAndPublishState(cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
           }
         }
       );
@@ -96,12 +94,14 @@ class MqttAgent {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/vent_on_delta_secs
-      logger.log('info', 'MQTT->periodic highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (cfg.get("zone.highSetpoint"))}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${(cfg.get("zone.highSetpoint"))}`);
+      // logger.log('info', 'MQTT->periodic highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (cfg.get("zone.highSetpoint"))}`);
+      // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${(cfg.get("zone.highSetpoint"))}`);
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${(cfg.get("zone.highSetpoint"))}`, this.client);
 
       // Zonen/vent_off_delta_secs
-      logger.log('info', 'MQTT->periodic lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (cfg.get("zone.lowSetpoint"))}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${(cfg.get("zone.lowSetpoint"))}`);
+      // logger.log('info', 'MQTT->periodic lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (cfg.get("zone.lowSetpoint"))}`);
+      // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${(cfg.get("zone.lowSetpoint"))}`);
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${(cfg.get("zone.lowSetpoint"))}`, this.client);
     }
   }
 
@@ -112,8 +112,8 @@ class MqttAgent {
 
     for (const component of components) {
       var teledata = component.getTelemetryData();
-      var jsoncomponent = {};
-      jsoncomponent = JSON.stringify(teledata);
+      // var jsoncomponent = {};
+      // jsoncomponent = JSON.stringify(teledata);
 
       const obj1 = JSON.parse(JSON.stringify(teledata));
 
@@ -121,8 +121,8 @@ class MqttAgent {
 
     }
 
-    var $stringData = JSON.stringify(componentData);
-    var $arrStringData = componentData.toString();
+    // var $stringData = JSON.stringify(componentData);
+    // var $arrStringData = componentData.toString();
     // logger.info("2======> " + componentData.toString());
 
     return (componentData.toString());
@@ -136,32 +136,32 @@ import wifi from "node-wifi";
 wifi.init({
   iface: null, // network interface, choose a random wifi interface if set to null
 });
-// List the current wifi connections
-const myfunc = () =>
-  wifi.getCurrentConnections((error, currentConnections) => {
-    if (error) {
-      console.log(error);
-    } else {
-      // console.log(currentConnections);
-      return currentConnections;
-    }
-  });
+// // List the current wifi connections
+// const myfunc = () =>
+//   wifi.getCurrentConnections((error, currentConnections) => {
+//     if (error) {
+//       console.log(error);
+//     } else {
+//       // console.log(currentConnections);
+//       return currentConnections;
+//     }
+//   });
 
-function getwifiinfo() {
-  let mycurrentConnections = [];
+// function getwifiinfo() {
+//   let mycurrentConnections = [];
 
-  wifi.getCurrentConnections((error, currentConnections) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("function getwifiinfo()");
-      // console.log(currentConnections);
-      mycurrentConnections = currentConnections;
-      // return currentConnections;
-    }
-  });
-  return mycurrentConnections;
-}
+//   wifi.getCurrentConnections((error, currentConnections) => {
+//     if (error) {
+//       console.log(error);
+//     } else {
+//       console.log("function getwifiinfo()");
+//       // console.log(currentConnections);
+//       mycurrentConnections = currentConnections;
+//       // return currentConnections;
+//     }
+//   });
+//   return mycurrentConnections;
+// }
 
 //export an instance so single instance can be used
 export const mqttAgent = new MqttAgent();
@@ -214,6 +214,7 @@ mqttAgent.client.on("message", (topic, message) => {
       if (Number(message.toString()) > 0) {
         logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
         mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
+        // this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${message}`, mqttAgent.client);
         //set the high setpoint in the config object
         const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
         cfg.set("zone.highSetpoint", obj1);
@@ -264,3 +265,8 @@ mqttAgent.client.on("message", (topic, message) => {
   }
 
 });
+
+
+
+import mqttPublishAndLogMixin from "../components/mixins/mqttPublishAndLogMixin.js";
+Object.assign(MqttAgent.prototype, mqttPublishAndLogMixin);

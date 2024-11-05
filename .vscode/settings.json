@@ -1,17 +1,19 @@
 {
-    "eslint.codeActionsOnSave.rules": null,
-    "eslint.validate": [
-
-        "javascript"
-    ],
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    },
     "eslint.format.enable": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    // "eslint.validate": [
+    //     "javascript"
+    // ],
+    // "[javascript]": 
     // {
-        // "editor.defaultFormatter": "esbenp.prettier-vscode",
-        // "[javascript]": {
-        //   "editor.defaultFormatter": "vscode.typescript-language-features"
-        // }
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    // },
+    // {
+    // "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // "[javascript]": {
+    //   "editor.defaultFormatter": "vscode.typescript-language-features"
+    // }
     //   }
 }

@@ -40,12 +40,9 @@ export default class TemperatureSensor  {
 
   temperatureStateChangeHandler = function (temperatureState, humidityState, mqttAgent) {
     // logger.log('error', `HI FROM NEW HANDLER temperatureStateChangeHandler`);
+    this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), (temperatureState));
 
-    logger.log("info", "MQTT->Temp: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic") + ": " + temperatureState}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), `${temperatureState}`);
-
-    logger.log("info", "MQTT->Humi: " + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic") + ": " + humidityState}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), `${humidityState}`);
+    this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), (humidityState));
   };
 
   process() {
@@ -144,3 +141,6 @@ Object.assign(TemperatureSensor.prototype, eventMixin);
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(TemperatureSensor.prototype, IOPinAccessorsMixin);
+
+import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+Object.assign(TemperatureSensor.prototype, mqttPublishAndLogMixin);

@@ -28,7 +28,7 @@ export default class Light {
 
     this.RCLoopCount = 0;
 
-    this.currentlySamplingLightSensor = false;
+    this.currentlySamplingLightSensor = false
     //set new reading available
     // this.setNewStateAvailable(true);
     this.processCount = 0;
@@ -38,11 +38,11 @@ export default class Light {
     this.publishStateIntervalMs = cfg.get('light.publishStateIntervalMs');
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
   }
-  lightStateEventHandler = function (state, mqttAgent) {
-    // logger.log('error', `HI FROM NEW HANDLER lightStateEventHandler`);
-    logger.log('info', 'MQTT->Light: ' + `${cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic') + ': ' + (state ? 1 : 0)}`);
-    mqttAgent.client.publish(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), `${state ? 1 : 0}`);
+
+  lightStateEventHandler = function (state) {
+    this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), state ? 1 : 0);
   };
+
   process() {
     // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
@@ -64,22 +64,12 @@ export default class Light {
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
       this.lastStatePublishedMs = Date.now();
-      // this.emitterManager.emit(
-      //     "lightStateChange",
-      //     this.getState(),
-      //     this.mqttAgent
-      // );
+
       this.trigger('lightStateChange', this.getState(), this.mqttAgent);
     }
   }
 
-  // turnOn() {
-  //     this.setState(true);
-  // }
 
-  // turnOff() {
-  //     this.setState(false);
-  // }
   getTelemetryData() {
     let superTelemetry = this.getBaseTelemetryData();
 
@@ -182,3 +172,6 @@ Object.assign(Light.prototype, eventMixin);
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Light.prototype, IOPinAccessorsMixin);
+
+import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+Object.assign(Light.prototype, mqttPublishAndLogMixin);

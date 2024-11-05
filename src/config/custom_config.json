@@ -1,6 +1,6 @@
 {
   "zone": {
-    "highSetpoint": 21.5,
+    "highSetpoint": 21.6,
     "lowSetpoint": 13.1,
     "periodicPublishIntervalMs": 60000,
     "name": "zone_1",
@@ -67,7 +67,7 @@
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 1000,
     "heatOnMs": 10000,
-    "heatOffMs":10000
+    "heatOffMs": 10000
   },
   "fan": {
     "speedPercent": 50,

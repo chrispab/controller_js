@@ -34,10 +34,8 @@ export default class Fan {
   }
 
 
-  fanStateEventHandler = function (state, mqttAgent) {
-    // logger.log('error', `HI FROM NEW HANDLER fanStateEventHandler`);
-    logger.log('info', 'MQTT->Fan: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic") + ": " + (state ? 1 : 0)}`);
-    mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanStateTopic"), `${state ? 1 : 0}`);
+  fanStateEventHandler = function (state) {
+    this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), (state ? 1 : 0));
   }
 
   process() {
@@ -52,12 +50,13 @@ export default class Fan {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/fan_on_delta_secs
-      logger.log('info', 'MQTT->periodic fanOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
-      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
-
+      // logger.log('info', 'MQTT->periodic fanOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
+      // this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'),  (this.getOnMs() / 1000));
       // Zonen/fan_off_delta_secs
-      logger.log('info', 'MQTT->periodic fanOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
-      this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+      // logger.log('info', 'MQTT->periodic fanOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
+      // this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+      this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'),  (this.getOffMs() / 1000));
     }
   }
 
@@ -132,6 +131,6 @@ Object.assign(Fan.prototype, eventMixin);
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
-// import turnOnOffMixin from "./mixins/turnOnOffMixin.js";
-// Object.assign(Fan.prototype, turnOnOffMixin);
-// export default Fan;
+
+import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+Object.assign(Fan.prototype, mqttPublishAndLogMixin);

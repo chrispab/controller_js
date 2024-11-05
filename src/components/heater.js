@@ -16,10 +16,10 @@ class Heater {
         this.ExternalTDiffMs = cfg.get("heater.ExternalTDiffMs");
     }
 
-    heaterStateEventHandler = function (state, mqttAgent) {
-        logger.log('info', 'MQTT->Heater: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic") + ": " + (state ? 1 : 0)}`);
-        mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.heaterStateTopic"), `${state ? 1 : 0}`);
-    }
+    heaterStateEventHandler = function (state) {
+        this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.heaterStateTopic'), (state ? 1 : 0));
+      }
+
 
     process() {
         this.processCount = this.processCount ? this.processCount + 1 : 1;
@@ -138,4 +138,6 @@ Object.assign(Heater.prototype, eventMixin);
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Heater.prototype, IOPinAccessorsMixin);
 
+import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+Object.assign(Heater.prototype, mqttPublishAndLogMixin);
 export default Heater;
