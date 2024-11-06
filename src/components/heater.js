@@ -71,28 +71,28 @@ class Heater {
                     // this.heatOnMs = cfg.getItemValueFromConfig('heatOnMs') + internalDiffT + externalDiffT; // + (outsideTemp / 50);
                     this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT; // + (outsideTemp / 50);
                     this.heatOffMs = cfg.get('heater.heatOffMs');
-                    logger.log('warn', '>>>>>>> CALCULATED TOTAL delta ON ms:', this.heatOnMs);
+                    logger.log('warn', `>>CALCULATED TOTAL delta ON ms:this.heatOnMs:${this.heatOnMs}` );
 
                     // Start a cycle - ON first
                     this.heatingCycleState = 'ON';
                     // Init ON state timer
                     this.turnOn();
-                    logger.log('warn', "..........temp low - currently INACTIVE - TURN HEATing cycle state ON");
+                    logger.log('warn', "..temp low - currently INACTIVE - TURN HEATing cycle state ON");
                 }
             }
-
+            this.heatOffMs = cfg.get('heater.heatOffMs');
             if (this.heatingCycleState === 'ON') {
                 if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOnMs) {
                     this.heatingCycleState = 'OFF';
-                    this.turnOff
-                    logger.log('warn', ".......... - currently ON - TURN HEATing cycle state OFF");
+                    this.turnOff();
+                    logger.log('warn', "..currently ON - TURN HEATing cycle state OFF");
                 }
             }
 
             if (this.heatingCycleState === 'OFF') {
                 if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOffMs) {
                     this.heatingCycleState = 'INACTIVE';
-                    logger.log('warn', ".......... - currently OFF - MAKE HEATing cycle state INACTIVE");
+                    logger.log('warn', "..currently OFF - MAKE HEATing cycle state INACTIVE");
                     this.turnOff();
                 }
             }
