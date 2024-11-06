@@ -20,7 +20,7 @@ class IOBase {
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
         this.GPIOAccessible = Gpio.accessible;
         if (direction === 'out') {
-            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'out') : { writeSync: value => { logger.log('warn','virtual OP set to: ' + value); } };
+            this.IO = Gpio.accessible ? new Gpio(this.IOPin, 'out') : { writeSync: value => { logger.log('warn','virtual OP set to: ' + value + this.name); } };
             if (this.IO && typeof this.IO.writeSync === 'function' && this.GPIOAccessible) {
                 this.IO.setDirection("out");
                 this.IO.writeSync(initialValue);

@@ -102,14 +102,19 @@ class Heater {
 
     turnOn() {
         this.setState(1);
-        this.writeIO(1);
-        this.emitIfStateChanged();
+        if (this.hasNewStateAvailable()) {
+            this.writeIO(1);
+            this.emitIfStateChanged();
+        }
+
     }
 
     turnOff() {
         this.setState(0);
-        this.writeIO(0);
-        this.emitIfStateChanged();
+        if (this.hasNewStateAvailable()) {
+            this.writeIO(0);
+            this.emitIfStateChanged();
+        }
     }
 
     getTelemetryData() {

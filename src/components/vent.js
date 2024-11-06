@@ -26,7 +26,6 @@ export default class Vent {
         this.setOffMs(cfg.get("vent.offMs"));
 
         this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-        // this.emitterManager = emitterManager;
         this.mqttAgent = mqttAgent;
 
         this.ventDarkOnDelta = 10000; // vent on time
@@ -58,7 +57,6 @@ export default class Vent {
         //vent powerState
         this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
 
-
         //vent speed powerState
         this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), (speedState ? 1 : 0));
         //vent speed percent
@@ -82,10 +80,10 @@ export default class Vent {
         // such as ventOnMs and ventOffMs
         if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
             this.lastPeriodicPublishedMs = Date.now();
-            // Zonen/vent_on_delta_secs
+            // ZoneN/vent_on_delta_secs
             this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
 
-            // ZoneX/vent_off_delta_secs
+            // ZoneN/vent_off_delta_secs
             this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
         }
     }
@@ -229,53 +227,60 @@ export default class Vent {
         const ventValue = 1 + (this.speedPercent == 100 ? 1 : 0);
 
         this.setState(ventValue);
+        if (this.hasNewStateAvailable()) {
 
-        if (Gpio.accessible) {
-            // console.log("Turning on vent");
-            this.ventPowerPin.writeIO(1);
-            this.ventPowerPin.setState(1);
+            if (Gpio.accessible) {
+                // console.log("Turning on vent");
+                this.ventPowerPin.writeIO(1);
+                this.ventPowerPin.setState(1);
 
-            if (this.speedPercent == 100) {
-                this.ventSpeedPin.writeIO(1);
-                this.ventSpeedPin.setState(1);
-            } else if (this.speedPercent == 50) {
-                this.ventSpeedPin.writeIO(0);
-                this.ventSpeedPin.setState(0);
+                if (this.speedPercent == 100) {
+                    this.ventSpeedPin.writeIO(1);
+                    this.ventSpeedPin.setState(1);
+                } else if (this.speedPercent == 50) {
+                    this.ventSpeedPin.writeIO(0);
+                    this.ventSpeedPin.setState(0);
+                } else {
+                    logger.log("error", "==Vent speed invalid==");
+                }
             } else {
-                logger.log("error", "==Vent speed invalid==");
+                logger.log("error", "==Vent IO undefined==");
             }
-        } else {
-            logger.log("error", "==Vent IO undefined==");
-        }
-        if (this.emitIfStateChanged()) {
-            logger.log("debug", "==Vent on==");
+            if (this.emitIfStateChanged()) {
+                logger.log("debug", "==Vent on==");
+            }
         }
     }
 
     turnOff() {
+        // do not write to pin port if the state is the same as previous
+
         const ventValue = 0;
 
         this.setState(ventValue);
 
-        if (Gpio.accessible) {
-            // this.writeIO(0);
-            this.ventPowerPin.writeIO(0);
-            this.ventPowerPin.setState(0);
+        if (this.hasNewStateAvailable()) {
+            if (Gpio.accessible) {
+                // this.writeIO(0);
+                this.ventPowerPin.writeIO(0);
+                this.ventPowerPin.setState(0);
 
-            if (this.speedPercent == 100) {
-                //  this.writeIO(1)
-                this.ventSpeedPin.writeIO(1);
-                this.ventSpeedPin.setState(1);
-            } else if (this.speedPercent == 50) {
-                // this.writeIO(0)
-                this.ventSpeedPin.writeIO(0);
-                this.ventSpeedPin.setState(0);
+                if (this.speedPercent == 100) {
+                    //  this.writeIO(1)
+                    this.ventSpeedPin.writeIO(1);
+                    this.ventSpeedPin.setState(1);
+                } else if (this.speedPercent == 50) {
+                    // this.writeIO(0)
+                    this.ventSpeedPin.writeIO(0);
+                    this.ventSpeedPin.setState(0);
+                } else {
+                    logger.log("error", "==Vent speed invalid==");
+                }
             } else {
-                logger.log("error", "==Vent speed invalid==");
+                logger.log("error", "==Vent IO undefined==");
             }
-        } else {
-            logger.log("error", "==Vent IO undefined==");
         }
+
         if (this.emitIfStateChanged()) {
             logger.log("debug", "==Vent off==");
         }
