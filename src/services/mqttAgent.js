@@ -51,9 +51,9 @@ class MqttAgent {
     transporter.sendMail({
       from: secret.user,
       to: secret.user,
-      subject: "Hello ✔",
-      text: "is this body text",
-      html: "<b>is this body html?</b>",
+      subject: "controller_js",
+      text: "controller_js",
+      html: "<b>controller_js</b>",
     });
 
     console.log("Message sent: %s", "this is my message");

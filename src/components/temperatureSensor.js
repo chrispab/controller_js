@@ -24,7 +24,6 @@ export default class TemperatureSensor  {
     this.readSensor();
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
-    // this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
     this.on("temperatureStateChange", this.temperatureStateChangeHandler);
 
     logger.info(`HostName: ${os.hostname()}`);
@@ -44,7 +43,6 @@ export default class TemperatureSensor  {
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       this.lastStatePublishedMs = Date.now();
-      // this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
       this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity(), mqttAgent);
     }
 
@@ -56,7 +54,6 @@ export default class TemperatureSensor  {
         //get value from readSensor()
         // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
         this.lastStatePublishedMs = Date.now();
-        // this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
         this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity(), mqttAgent);
         this.setNewStateAvailable(false);
       }
