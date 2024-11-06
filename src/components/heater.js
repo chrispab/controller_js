@@ -33,11 +33,10 @@ class Heater {
         // this.heatOnMs = ((setPointTemperature - currentTemp) * 20 * 1000) + cfg.getItemValueFromConfig('heatOnMs');
 
         if (lightState == true) {
-            this.turnOff();// = 'OFF';
+            this.turnOff();
             return;
-            // logger.log('warning', '..d on, in heat off hours - skipping lon heat ctl');
         }
-        // else { // d off here
+        // light is off
         this.heatOffMs = cfg.get('heater.heatOffMs');
         // logger.log('warning', '..light off..do heat ctl');
         // logger.log('warning', 'self.heatingCycleState:', this.heatingCycleState);

@@ -279,11 +279,14 @@ export default class Vent {
             } else {
                 logger.log("error", "==Vent IO undefined==");
             }
+            
+            if (this.emitIfStateChanged()) {
+                logger.log("debug", "==Vent off==");
+            }
+
         }
 
-        if (this.emitIfStateChanged()) {
-            logger.log("debug", "==Vent off==");
-        }
+
     }
 
     setSpeedPercent(percent) {
