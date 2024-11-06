@@ -27,6 +27,8 @@
 // const wifi = require('node-wifi');
 import wifi from 'node-wifi';
 import logger from "../services/logger.js";
+import mqtt from 'mqtt';
+import mqttAgent from '../services/mqttAgent.js';
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
 wifi.init({
@@ -66,10 +68,11 @@ const mod1Function = () => wifi.getCurrentConnections((error, currentConnections
 // export { mod1Function, mod1Function2 }
 
 
-const logAndPublishStateMqtt = (name,topic, state, client) => {
+const logAndPublishState = (comment, topic, state) => {
   var logLevel = "info";
-  logger.log(logLevel, "MQTT->" + name + `:${topic + ": " + state}`);
-  client.publish(topic, `${state}`);
+  logger.log(logLevel, "TT->" + comment + `:${topic + ": " + state}`);
+  mqttAgent.client.publish(topic, `${state}`);
 }
 
-export { mod1Function, logAndPublishStateMqtt }
+// export utils;
+export { logAndPublishState, mod1Function }

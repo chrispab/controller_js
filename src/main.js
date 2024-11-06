@@ -15,11 +15,13 @@ import mqttAgent from "./services/mqttAgent.js";
 
 //create components
 // inputs
-const fan = new Fan("fan", cfg.get("hardware.fan.pin"), mqttAgent);
-const light = new Light("light", cfg.get("hardware.RC.pin"), mqttAgent);
-const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.vent.speedPin"), mqttAgent);
-const heater = new Heater("heater", cfg.get("hardware.heater.pin"), mqttAgent);
-const temperatureSensor = new TemperatureSensor("temperature_sensor", cfg.get("hardware.dhtSensor.pin"), mqttAgent);
+// const fan = new Fan("fan", cfg.get("hardware.fan.pin"), mqttAgent);
+const fan = new Fan("fan", cfg.get("hardware.fan.pin"));
+const heater = new Heater("heater", cfg.get("hardware.heater.pin"));
+const light = new Light("light", cfg.get("hardware.RC.pin"));
+const temperatureSensor = new TemperatureSensor("temperature_sensor", cfg.get("hardware.dhtSensor.pin"));
+const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.vent.speedPin"));
+
 
 
 setInterval(() => {

@@ -3,21 +3,23 @@ import cfg from "../services/config.js";
 import logger from "../services/logger.js";
 const logLevel = 'debug';
 
+import * as utils from "../utils/utils.js";
+import mqttAgent from "../services/mqttAgent.js";
 
 class Heater {
-    constructor(name, heaterPin, mqttAgent) {
+    constructor(name, heaterPin) {
         this.IOPin = new IOBase(heaterPin, 'out', 0);
         this.setName(name);
         this.heater_sp_offset = cfg.get("heater.heater_sp_offset");
         this.heatingCycleState = 'INACTIVE';
         this.on("heaterStateChange", this.heaterStateEventHandler);
 
-        this.mqttAgent = mqttAgent;
+        // this.mqttAgent = mqttAgent;
         this.ExternalTDiffMs = cfg.get("heater.ExternalTDiffMs");
     }
 
     heaterStateEventHandler = function (state) {
-        this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.heaterStateTopic'), (state ? 1 : 0));
+        utils.logAndPublishState("heaterState", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.heaterStateTopic'), (state ? 1 : 0));
     }
 
 
@@ -129,20 +131,22 @@ class Heater {
             } else {
                 logger.log(logLevel, "Heater is off");
             }
-            this.trigger("heaterStateChange", this.getState(), this.mqttAgent);
+            this.trigger("heaterStateChange", this.getState(), mqttAgent);
         }
     }
 
 }
 
 // https://javascript.info/mixins
-import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
+import eventMixin from './mixins/eventMixin.js'
 Object.assign(Heater.prototype, eventMixin);
 
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Heater.prototype, IOPinAccessorsMixin);
 
-import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-Object.assign(Heater.prototype, mqttPublishAndLogMixin);
+// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+// Object.assign(Heater.prototype, mqttPublishAndLogMixin);
+
+
 export default Heater;

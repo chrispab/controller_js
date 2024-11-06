@@ -7,10 +7,11 @@ const logLevel = "debug";
 
 import cfg from "../services/config.js";
 
-
+import * as utils from "../utils/utils.js";
+import mqttAgent from "../services/mqttAgent.js";
 
 export default class Vent {
-    constructor(name, ventPowerPin, ventSpeedPin, mqttAgent) {
+    constructor(name, ventPowerPin, ventSpeedPin) {
 
         this.IOPin = new IOBase(ventPowerPin, "dummy vent", 0);
         this.setState(false); // this.state = false;
@@ -26,7 +27,7 @@ export default class Vent {
         this.setOffMs(cfg.get("vent.offMs"));
 
         this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-        this.mqttAgent = mqttAgent;
+        // this.mqttAgent = mqttAgent;
 
         this.ventDarkOnDelta = 10000; // vent on time
         this.ventDarkOffDelta = 60000;
@@ -55,12 +56,12 @@ export default class Vent {
 
     ventStateEventHandler = function (powerState, speedState) {
         //vent powerState
-        this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
+        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
 
         //vent speed powerState
-        this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), (speedState ? 1 : 0));
+        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), (speedState ? 1 : 0));
         //vent speed percent
-        this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState ? 100 : 50}`);
+        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState ? 100 : 50}`);
         //vent value, 0 is off, 1 is 50%, 2 is 100%
         const ventValue =
             powerState == 1 && speedState == 0
@@ -68,7 +69,7 @@ export default class Vent {
                 : powerState == 1 && speedState == 1
                     ? 2
                     : 0;
-        this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
+                    utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
     };
 
     process() {
@@ -81,10 +82,10 @@ export default class Vent {
         if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
             this.lastPeriodicPublishedMs = Date.now();
             // ZoneN/vent_on_delta_secs
-            this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
+            utils.logAndPublishState("processPeriodic", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
 
             // ZoneN/vent_off_delta_secs
-            this.logAndPublishState(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+            utils.logAndPublishState("processPeriodic",cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
         }
     }
 
@@ -308,7 +309,7 @@ export default class Vent {
 
             const speedState = this.speedPercent == 100 ? 1 : 0;
             logger.log("warn", `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0}, speedState: ${speedState}`);
-            this.trigger("ventStateChange", this.ventPowerPin.getState() ? 1 : 0, speedState, this.mqttAgent);
+            this.trigger("ventStateChange", this.ventPowerPin.getState() ? 1 : 0, speedState, mqttAgent);
 
             //indicate data read and used e.g MQTT pub
             return true;
@@ -328,5 +329,5 @@ Object.assign(Vent.prototype, eventMixin);
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Vent.prototype, IOPinAccessorsMixin);
 
-import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-Object.assign(Vent.prototype, mqttPublishAndLogMixin);
+// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+// Object.assign(Vent.prototype, mqttPublishAndLogMixin);

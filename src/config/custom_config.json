@@ -1,10 +1,14 @@
 {
   "zone": {
+    "highSetpoint": 21,
     "lowSetpoint": 15.1,
-    "highSetpoint": 21.2,
     "periodicPublishIntervalMs": 60000,
     "name": "zone_1",
-    "customConfigFilename": "customConfig.json"
+    "customConfigFilename": "customConfig.json",
+    "telemetry": {
+      "enabled": false,
+      "interval": 300000
+    }
   },
   "system": {
     "name": "system_1"

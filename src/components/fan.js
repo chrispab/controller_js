@@ -2,26 +2,24 @@ import IOBase from "./IOBase.js";
 
 import { Gpio } from 'onoff';
 
+import mqttAgent from "../services/mqttAgent.js";
+
 import cfg from "../services/config.js";
 
 import logger from "../services/logger.js";
 const logLevel = 'debug';
 // const logLevel = 'info';
-
+// import utils from "../utils/utils.js";
+import * as utils from "../utils/utils.js";
 
 export default class Fan {
-    constructor(name, fanPin, mqttAgent) {
-        // super(cfg.get("hardware.fan.pin"), 'out', 0);
+    constructor(name, fanPin) {
         this.IOPin = new IOBase(fanPin, 'out', 0);
-        // this.name = name;
         this.setName(name);
-
         this.setState(false);
         this.setOffMs(cfg.get("fan.offMs"));
         this.setOnMs(cfg.get("fan.onMs"));
         this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-
-        this.mqttAgent = mqttAgent;
 
         this.on("fanStateChange", this.fanStateEventHandler);
 
@@ -35,7 +33,7 @@ export default class Fan {
 
 
     fanStateEventHandler = function (state) {
-        this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), (state ? 1 : 0));
+        utils.logAndPublishState("fanState", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), (state ? 1 : 0));
     }
 
     process() {
@@ -52,11 +50,11 @@ export default class Fan {
             // Zonen/fan_on_delta_secs
             // logger.log('info', 'MQTT->periodic fanOnDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic") + ": " + (this.getOnMs() / 1000)}`);
             // this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
-            this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), (this.getOnMs() / 1000));
+            utils.logAndPublishState("PeriodicPublication", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), (this.getOnMs() / 1000));
             // Zonen/fan_off_delta_secs
             // logger.log('info', 'MQTT->periodic fanOffDeltaSecs: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic") + ": " + (this.getOffMs() / 1000)}`);
             // this.mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.fanOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
-            this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), (this.getOffMs() / 1000));
+            utils.logAndPublishState("PeriodicPublication",cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), (this.getOffMs() / 1000));
         }
     }
 
@@ -118,8 +116,8 @@ export default class Fan {
             } else {
                 logger.log(logLevel, "Fan is off");
             }
-            // this.emitterManager.emit('fanStateChange', this.getState(), this.mqttAgent);
-            this.trigger("fanStateChange", this.getState(), this.mqttAgent);
+            // this.trigger("fanStateChange", this.getState(), this.mqttAgent);
+            this.trigger("fanStateChange", this.getState(), mqttAgent);
 
             return true
         }
@@ -129,13 +127,16 @@ export default class Fan {
 
 }
 // https://javascript.info/mixins
-import eventMixin from './mixins/eventMixin.js'
 // Add the mixin with event-related methods
+import eventMixin from './mixins/eventMixin.js'
 Object.assign(Fan.prototype, eventMixin);
 
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
 
-import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-Object.assign(Fan.prototype, mqttPublishAndLogMixin);
+// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+// Object.assign(Fan.prototype, mqttPublishAndLogMixin);
+// import logAndPublishStateMixin from "./mixins/logAndPublishStateMixin.js";
+// Object.assign(Fan.prototype, logAndPublishStateMixin);
+

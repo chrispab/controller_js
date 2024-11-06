@@ -1,28 +1,22 @@
 import IOBase from './IOBase.js';
-
 import { Gpio } from 'onoff';
-
+import cfg from '../services/config.js';
+import logger from '../services/logger.js';
 // const logLevel = 'info';
 const logLevel = 'debug';
 // const logLevel = 'warn';
-
-import cfg from '../services/config.js';
-
-import logger from '../services/logger.js';
+import * as utils from "../utils/utils.js";
+import mqttAgent from "../services/mqttAgent.js";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
 
-  constructor(name, LDRPin, mqttAgent) {
+  constructor(name, LDRPin) {
     this.IOPin = new IOBase(LDRPin, 'out', 0);
-    // this.name = name;
     this.setName(name);
-
     this.setState(false);
     this.setPrevStateChangeMs(Date.now());
-
-    this.mqttAgent = mqttAgent;
 
     this.on('lightStateChange', this.lightStateEventHandler);
 
@@ -40,7 +34,7 @@ export default class Light {
   }
 
   lightStateEventHandler = function (state) {
-    this.logAndPublishState(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), state ? 1 : 0);
+    utils.logAndPublishState("lightStateEvent", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), state ? 1 : 0);
   };
 
   process() {
@@ -54,7 +48,7 @@ export default class Light {
       if (this.hasNewStateAvailable()) {
         this.lastStatePublishedMs = Date.now();
         // this.emitterManager.emit('lightStateChange', this.getState, this.mqttAgent);
-        this.trigger('lightStateChange', this.getState(), this.mqttAgent);
+        this.trigger('lightStateChange', this.getState(), mqttAgent);
 
         this.setNewStateAvailable(false);
       }
@@ -65,7 +59,7 @@ export default class Light {
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
       this.lastStatePublishedMs = Date.now();
 
-      this.trigger('lightStateChange', this.getState(), this.mqttAgent);
+      this.trigger('lightStateChange', this.getState(), mqttAgent);
     }
   }
 
@@ -173,5 +167,5 @@ Object.assign(Light.prototype, eventMixin);
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Light.prototype, IOPinAccessorsMixin);
 
-import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-Object.assign(Light.prototype, mqttPublishAndLogMixin);
+// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
+// Object.assign(Light.prototype, mqttPublishAndLogMixin);
