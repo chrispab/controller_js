@@ -40,9 +40,9 @@ export default class Fan {
         if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
             this.lastPeriodicPublishedMs = Date.now();
             // Zonen/fan_on_delta_secs
-            utils.logAndPublishState("PeriodicPublication", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), (this.getOnMs() / 1000));
+            utils.logAndPublishState("fanPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), (this.getOnMs() / 1000));
             // Zonen/fan_off_delta_secs
-            utils.logAndPublishState("PeriodicPublication",cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), (this.getOffMs() / 1000));
+            utils.logAndPublishState("fanPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), (this.getOffMs() / 1000));
         }
     }
 
@@ -54,58 +54,31 @@ export default class Fan {
         if (currentState == true) {
             // is it time to turn off?
             if (elapsedMs >= this.getOnMs()) {
-                this.turnOff();
+                // this.turnOff();
+                this.toggleFan(0);
             }
         } else {// 0
             // is it time to turn on?
             if (elapsedMs >= this.getOffMs()) {
-                this.turnOn();
+                // this.turnOn();
+                this.toggleFan(1);
             }
         }
     }
 
-    turnOn() {
-        this.setState(true);
-
+    toggleFan(state) {
+        this.setState(state);
         if (this.hasNewStateAvailable()) {
             if (Gpio.accessible) {
-                this.IOPin.writeIO(1);
+                this.IOPin.writeIO(state);
             } else {
-                logger.error('==' + this.getName() + ' IO undefined==')
+                logger.error('==' + this.getName() + ' IO undefined==');
             }
-            if (this.emitIfStateChanged()) {
-                logger.log('debug', '==' + this.getName() + ' IO on==')
+            if (this.getStateAndClearNewStateFlag() == state) {
+                logger.log(logLevel, state ? "Fan is on" : "Fan is off");
+                this.trigger("fanStateChange", this.getState());
             }
         }
-    }
-
-    turnOff() {
-        this.setState(false);
-        if (this.hasNewStateAvailable()) {
-            if (Gpio.accessible) {
-                this.IOPin.writeIO(0);
-            } else {
-                logger.error('==' + this.getName() + ' IO undefined==')
-            }
-            if (this.emitIfStateChanged()) {
-                logger.log('debug', '==' + this.getName() + ' IO off==')
-            }
-        }
-    }
-
-
-    emitIfStateChanged() {
-        if (this.hasNewStateAvailable()) {
-            if (this.getStateAndClearNewStateFlag() == true) {
-                logger.log(logLevel, "Fan is on");
-            } else {
-                logger.log(logLevel, "Fan is off");
-            }
-            // this.trigger("fanStateChange", this.getState(), this.mqttAgent);
-            this.trigger("fanStateChange", this.getState(), mqttAgent);
-            return true
-        }
-        return false
     }
 
 }

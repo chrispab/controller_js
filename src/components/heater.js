@@ -2,6 +2,7 @@ import IOBase from "./IOBase.js";
 import cfg from "../services/config.js";
 import logger from "../services/logger.js";
 const logLevel = 'debug';
+import { Gpio } from 'onoff';
 
 import * as utils from "../utils/utils.js";
 import mqttAgent from "../services/mqttAgent.js";
@@ -13,7 +14,6 @@ class Heater {
         this.heater_sp_offset = cfg.get("heater.heater_sp_offset");
         this.heatingCycleState = 'INACTIVE';
         this.on("heaterStateChange", this.heaterStateEventHandler);
-        // this.mqttAgent = mqttAgent;
         this.ExternalTDiffMs = cfg.get("heater.ExternalTDiffMs");
     }
 
@@ -32,7 +32,8 @@ class Heater {
         // Calculate new heater on time based on temperature gap
         // this.heatOnMs = ((setPointTemperature - currentTemp) * 20 * 1000) + cfg.getItemValueFromConfig('heatOnMs');
         if (lightState == true) {
-            this.turnOff();
+            // this.turnOff();
+            this.toggleHeater(0);
             return;
         }
         // light is off
@@ -41,7 +42,8 @@ class Heater {
         // logger.log('warning', 'self.heatingCycleState:', this.heatingCycleState);
         if (currentTemp >= (setPointTemperature + this.heater_sp_offset)) {
             if (this.heatingCycleState === 'INACTIVE') {
-                this.turnOff();
+                // this.turnOff();
+                this.toggleHeater(0);
             }
         }
         // Just trigger a defined ON period - force it to complete
@@ -74,7 +76,8 @@ class Heater {
                 // Start a cycle - ON first
                 this.heatingCycleState = 'ON';
                 // Init ON state timer
-                this.turnOn();
+                // this.turnOn();
+                this.toggleHeater(1);
                 logger.log('warn', "..temp low - currently INACTIVE - TURN HEATing cycle state ON");
             }
         }
@@ -82,7 +85,8 @@ class Heater {
         if (this.heatingCycleState == 'ON') {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOnMs) {
                 this.heatingCycleState = 'OFF';
-                this.turnOff();
+                // this.turnOff();
+                this.toggleHeater(0);
                 logger.log('warn', "..currently ON - TURN HEATing cycle state OFF");
             }
         }
@@ -91,26 +95,11 @@ class Heater {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOffMs) {
                 this.heatingCycleState = 'INACTIVE';
                 logger.log('warn', "..currently OFF - MAKE HEATing cycle state INACTIVE");
-                this.turnOff();
+                // this.turnOff();
+                this.toggleHeater(0);
             }
         }
         // }
-    }
-
-    turnOn() {
-        this.setState(1);
-        if (this.hasNewStateAvailable()) {
-            this.writeIO(1);
-            this.emitIfStateChanged();
-        }
-    }
-
-    turnOff() {
-        this.setState(0);
-        if (this.hasNewStateAvailable()) {
-            this.writeIO(0);
-            this.emitIfStateChanged();
-        }
     }
 
     getTelemetryData() {
@@ -119,16 +108,46 @@ class Heater {
         return telemetry;
     }
 
-    emitIfStateChanged() {
+    // turnOn() {
+    //     this.setState(1);
+    //     if (this.hasNewStateAvailable()) {
+    //         this.writeIO(1);
+    //         this.emitIfStateChanged();
+    //     }
+    // }
+
+    // turnOff() {
+    //     this.setState(0);
+    //     if (this.hasNewStateAvailable()) {
+    //         this.writeIO(0);
+    //         this.emitIfStateChanged();
+    //     }
+    // }
+
+    toggleHeater(state) {
+        this.setState(state);
         if (this.hasNewStateAvailable()) {
-            if (this.getStateAndClearNewStateFlag() == true) {
-                logger.log(logLevel, "Heater is on");
+            if (Gpio.accessible) {
+                this.writeIO(state);
             } else {
-                logger.log(logLevel, "Heater is off");
+                logger.error('==' + this.getName() + ' IO undefined==');
             }
-            this.trigger("heaterStateChange", this.getState(), mqttAgent);
+            if (this.getStateAndClearNewStateFlag() == state) {
+                logger.log(logLevel, state ? "Heater is on" : "Heater is off");
+                this.trigger("heaterStateChange", this.getState());
+            }
         }
     }
+    // emitIfStateChanged() {
+    //     if (this.hasNewStateAvailable()) {
+    //         if (this.getStateAndClearNewStateFlag() == true) {
+    //             logger.log(logLevel, "Heater is on");
+    //         } else {
+    //             logger.log(logLevel, "Heater is off");
+    //         }
+    //         this.trigger("heaterStateChange", this.getState(), mqttAgent);
+    //     }
+    // }
 
 }
 

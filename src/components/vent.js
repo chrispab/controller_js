@@ -1,15 +1,17 @@
 import IOBase from "./IOBase.js";
 import logger from "../services/logger.js";
 import { Gpio } from "onoff";
-const logLevel = "debug";
-// const logLevel = 'warn';
+
 import cfg from "../services/config.js";
 import * as utils from "../utils/utils.js";
 import mqttAgent from "../services/mqttAgent.js";
 
+const logLevel = "debug";
+// const logLevel = 'warn';
+
+
 export default class Vent {
     constructor(name, ventPowerPin, ventSpeedPin) {
-
         this.IOPin = new IOBase(ventPowerPin, "dummy vent", 0);
         this.setState(false); // this.state = false;
         this.setName(name);
@@ -22,12 +24,10 @@ export default class Vent {
         this.setOnMs(cfg.get("vent.onMs"));
         this.setOffMs(cfg.get("vent.offMs"));
         this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-        // this.mqttAgent = mqttAgent;
         this.ventDarkOnDelta = 10000; // vent on time
         this.ventDarkOffDelta = 60000;
         this.ventDarkOnStartMs = 0;
         this.ventDarkOffStartMs = 0;
-        this.on("ventStateChange", this.ventStateEventHandler);
         // from config
         this.speedPercent = cfg.get("vent.speedPercent");
         this.lightOnSetpointOffset = cfg.get("vent.lightOnSetpointOffset");
@@ -42,23 +42,19 @@ export default class Vent {
         this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
         this.publishStateIntervalMs = cfg.get("vent.publishStateIntervalMs");
         this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
+        this.on("ventStateChange", this.ventStateEventHandler);
     }
 
     ventStateEventHandler = function (powerState, speedState) {
         //vent powerState
-        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
+        utils.logAndPublishState("vent", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventStateTopic"), (powerState ? 1 : 0));
         //vent speed powerState
-        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), (speedState ? 1 : 0));
+        utils.logAndPublishState("vent", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedStateTopic"), (speedState ? 1 : 0));
         //vent speed percent
-        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState ? 100 : 50}`);
+        utils.logAndPublishState("vent", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventSpeedPercentTopic"), `${speedState ? 100 : 50}`);
         //vent value, 0 is off, 1 is 50%, 2 is 100%
-        const ventValue =
-            powerState == 1 && speedState == 0
-                ? 1
-                : powerState == 1 && speedState == 1
-                    ? 2
-                    : 0;
-        utils.logAndPublishState("ventState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
+        const ventValue = powerState == 1 && speedState == 0 ? 1 : powerState == 1 && speedState == 1 ? 2 : 0;
+        utils.logAndPublishState("vent", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventValueTopic"), `${ventValue}`);
     };
 
     process() {
@@ -71,9 +67,9 @@ export default class Vent {
         if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
             this.lastPeriodicPublishedMs = Date.now();
             // ZoneN/vent_on_delta_secs
-            utils.logAndPublishState("processPeriodic", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
+            utils.logAndPublishState("ventPeriodic", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOnDeltaSecsTopic"), `${this.getOnMs() / 1000}`);
             // ZoneN/vent_off_delta_secs
-            utils.logAndPublishState("processPeriodic", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
+            utils.logAndPublishState("ventPeriodic", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.ventOffDeltaSecsTopic"), `${this.getOffMs() / 1000}`);
         }
     }
 
@@ -195,7 +191,7 @@ export default class Vent {
 
     getTelemetryData() {
         let telemetry = this.getTelemetryData();
-        logger.log("debug", `tele vent: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+        logger.log(logLevel, `tele vent: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
         return telemetry;
     }
 
@@ -221,7 +217,7 @@ export default class Vent {
                 logger.log("error", "==Vent IO undefined==");
             }
             if (this.emitIfStateChanged()) {
-                logger.log("debug", "==Vent on==");
+                logger.log(logLevel, "==Vent on==");
             }
         }
     }
@@ -250,7 +246,7 @@ export default class Vent {
                 logger.log("error", "==Vent IO undefined==");
             }
             if (this.emitIfStateChanged()) {
-                logger.log("debug", "==Vent off==");
+                logger.log(logLevel, "==Vent off==");
             }
         }
     }

@@ -71,17 +71,7 @@ class MqttAgent {
     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
-      utils.logAndPublishState("doTelemetry",cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), (data), this.client);
-      //publish wifi info
-      wifi.getCurrentConnections(
-        (error, currentConnections) => {
-          if (error) {
-            console.log(error);
-          } else {
-            utils.logAndPublishState("getCurrentConnections", cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`, this.client);
-          }
-        }
-      );
+      utils.logAndPublishState("mqttdoTelemetry", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), (data), this.client);
     }
   }
 
@@ -89,9 +79,20 @@ class MqttAgent {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       this.lastPeriodicPublishedMs = Date.now();
       // Zonen/vent_on_delta_secs
-      utils.logAndPublishState("PeriodicPublication", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${(cfg.get("zone.highSetpoint"))}`, this.client);
+      utils.logAndPublishState("mqttPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${(cfg.get("zone.highSetpoint"))}`);
       // Zonen/vent_off_delta_secs
-      utils.logAndPublishState("PeriodicPublication", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${(cfg.get("zone.lowSetpoint"))}`, this.client);
+      utils.logAndPublishState("mqttPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${(cfg.get("zone.lowSetpoint"))}`);
+
+      //publish wifi info
+      wifi.getCurrentConnections(
+        (error, currentConnections) => {
+          if (error) {
+            console.log(error);
+          } else {
+            utils.logAndPublishState("getCurrentConnections", cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
+          }
+        }
+      );
     }
   }
 
