@@ -82,7 +82,7 @@ class Heater {
             }
         }
         this.heatOffMs = cfg.get('heater.heatOffMs');
-        if (this.heatingCycleState === 'ON') {
+        if (this.heatingCycleState == 'ON') {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOnMs) {
                 this.heatingCycleState = 'OFF';
                 this.turnOff();
@@ -90,7 +90,7 @@ class Heater {
             }
         }
 
-        if (this.heatingCycleState === 'OFF') {
+        if (this.heatingCycleState == 'OFF') {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOffMs) {
                 this.heatingCycleState = 'INACTIVE';
                 logger.log('warn', "..currently OFF - MAKE HEATing cycle state INACTIVE");
