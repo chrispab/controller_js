@@ -5,18 +5,19 @@ import cfg from "./config.js";
 import { logAndPublishStateMqtt } from "../utils/utils.js";
 
 import mqtt from "mqtt";
+import secret from "../secret.js";
 // const client = mqtt.connect(config.mqtt.brokerUrl);
 // let transporter = nodemailer.createTransport(transport[, defaults])
 // var nodemailer = require('nodemailer');
 import nodemailer from 'nodemailer';
 // import { mod1Function } from "../utils/utils.js";
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
+  host: "smtp.gmail.com",
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: "maddison53@ethereal.email",
-    pass: "jn7jnAPss4f63QBp6D",
+    user: secret.user,
+    pass: secret.password,
   },
 });
 
@@ -43,6 +44,7 @@ class MqttAgent {
 
     this.periodicPublishIntervalMs = cfg.get("zone.periodicPublishIntervalMs");
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+    this.emailTest();
 
   }
 
@@ -53,14 +55,14 @@ class MqttAgent {
 
   emailTest() {
     transporter.sendMail({
-      from: "maddison53@ethereal.email",
-      to: "maddison53@ethereal.email",
+      from: secret.user,
+      to: secret.user,
       subject: "Hello ✔",
-      text: "Hello world?",
-      html: "<b>Hello world?</b>",
+      text: "is this body text",
+      html: "<b>is this body html?</b>",
     });
 
-    console.log("Message sent: %s", info.messageId);
+    console.log("Message sent: %s", "this is my message");
   }
   
   process(components) {
@@ -277,4 +279,5 @@ mqttAgent.client.on("message", (topic, message) => {
 
 
 import mqttPublishAndLogMixin from "../components/mixins/mqttPublishAndLogMixin.js";
+// import secret from "../secret.js";
 Object.assign(MqttAgent.prototype, mqttPublishAndLogMixin);
