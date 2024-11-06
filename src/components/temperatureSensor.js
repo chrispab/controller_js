@@ -15,22 +15,15 @@ export default class TemperatureSensor  {
     this.setName(name);
     this.dhtSensorType = cfg.get("hardware.dhtSensor.type");
     this.dhtSensorPin = dhtSensorPin;
-
-    // this.emitterManager = emitterManager;
-    // this.mqttAgent = mqttAgent;
-
     this.temperature = 0;
     this.humidity = 0;
-
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
     //force an initial sensor read
     this.readSensor();
-
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
-
     // this.emitterManager.on('temperatureStateChange', temperatureStateChangeHandler);
     this.on("temperatureStateChange", this.temperatureStateChangeHandler);
 
@@ -40,16 +33,14 @@ export default class TemperatureSensor  {
     }
   }
 
-  temperatureStateChangeHandler = function (temperatureState, humidityState, mqttAgent) {
+  temperatureStateChangeHandler = function (temperatureState, humidityState) {
     // logger.log('error', `HI FROM NEW HANDLER temperatureStateChangeHandler`);
     utils.logAndPublishState("temperatureState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), (temperatureState));
-
     utils.logAndPublishState("temperatureState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), (humidityState));
   };
 
   process() {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       this.lastStatePublishedMs = Date.now();
@@ -67,7 +58,6 @@ export default class TemperatureSensor  {
         this.lastStatePublishedMs = Date.now();
         // this.emitterManager.emit('temperatureStateChange', this.getTemperature(), this.getHumidity(), this.mqttAgent);
         this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity(), mqttAgent);
-
         this.setNewStateAvailable(false);
       }
     }
@@ -75,9 +65,7 @@ export default class TemperatureSensor  {
 
   getTelemetryData() {
     let superTelemetry = this.getBaseTelemetryData();
-
     logger.log("debug", `tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
-
     return superTelemetry;
   }
 
@@ -89,7 +77,6 @@ export default class TemperatureSensor  {
       this.dhtSensorPin,
       function (err, temperature, humidity) {
         let sensorData = { temperature: 0, humidity: 0 };
-
         if (!err) {
           //limit to 1 dp
           temperature = temperature.toFixed(1);
@@ -144,5 +131,3 @@ Object.assign(TemperatureSensor.prototype, eventMixin);
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(TemperatureSensor.prototype, IOPinAccessorsMixin);
 
-// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-// Object.assign(TemperatureSensor.prototype, mqttPublishAndLogMixin);

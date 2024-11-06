@@ -1,9 +1,8 @@
 // import { Gpio } from 'onoff';
-import logger from "../../services/logger.js";
+import logger from "../src/services/logger.js";
 // const logLevel = 'debug';
-import mqttAgent from "../../services/mqttAgent.js";
 
-let logAndPublishStateMixin = {
+let mqttPublishAndLogMixin = {
     /**
      * Publishes the state to the MQTT broker and logs the action.
      * @param {string} topic - the MQTT topic to publish to
@@ -11,9 +10,9 @@ let logAndPublishStateMixin = {
      */
     logAndPublishState(topic, state, client = null) {
         var logLevel = "info";
-        logger.log(logLevel, "MQ->" + this.getName() + `:${topic + ": " + state}`);
+        logger.log(logLevel, "MQTT->" + this.getName() + `:${topic + ": " + state}`);
         if (!client) {
-            mqttAgent.client.publish(topic, `${state}`);
+            this.mqttAgent.client.publish(topic, `${state}`);
         } else {
             client.publish(topic, `${state}`);
         }
@@ -26,4 +25,4 @@ let logAndPublishStateMixin = {
 
 };
 
-export default logAndPublishStateMixin;
+export default mqttPublishAndLogMixin;

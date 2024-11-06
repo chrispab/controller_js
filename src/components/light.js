@@ -17,11 +17,8 @@ export default class Light {
     this.setName(name);
     this.setState(false);
     this.setPrevStateChangeMs(Date.now());
-
     this.on('lightStateChange', this.lightStateEventHandler);
-
     this.RCLoopCount = 0;
-
     this.currentlySamplingLightSensor = false
     //set new reading available
     // this.setNewStateAvailable(true);
@@ -47,18 +44,14 @@ export default class Light {
       //if its a new value publish it
       if (this.hasNewStateAvailable()) {
         this.lastStatePublishedMs = Date.now();
-        // this.emitterManager.emit('lightStateChange', this.getState, this.mqttAgent);
         this.trigger('lightStateChange', this.getState(), mqttAgent);
-
         this.setNewStateAvailable(false);
       }
     }
-
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
       this.lastStatePublishedMs = Date.now();
-
       this.trigger('lightStateChange', this.getState(), mqttAgent);
     }
   }
@@ -66,16 +59,12 @@ export default class Light {
 
   getTelemetryData() {
     let superTelemetry = this.getBaseTelemetryData();
-
     logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
-
     return superTelemetry;
   }
 
   readLightSensorState() {
     logger.log(logLevel, `>>>readLightSensorState this.RCLoopCount: ${this.RCLoopCount}`);
-
-    // const lightState = (this.RCLoopCount > 1000) ? false : true;
     this.setState(this.RCLoopCount > 1000 ? false : true);
     logger.log(logLevel, `>>>.RCLoopCount: ${this.RCLoopCount}`);
 
@@ -150,7 +139,6 @@ export default class Light {
       self.writeIO(0);
 
       logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
-
       logger.log(logLevel, `>>>>>>>>>>>>>self.RCLoopCount: ${self.RCLoopCount}`);
 
       self.currentlySamplingLightSensor = false;
@@ -159,6 +147,8 @@ export default class Light {
     }
   }
 }
+
+
 // https://javascript.info/mixins
 import eventMixin from './mixins/eventMixin.js';
 // Add the mixin with event-related methods
@@ -167,5 +157,3 @@ Object.assign(Light.prototype, eventMixin);
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Light.prototype, IOPinAccessorsMixin);
 
-// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-// Object.assign(Light.prototype, mqttPublishAndLogMixin);

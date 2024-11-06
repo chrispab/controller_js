@@ -27,7 +27,6 @@
 // const wifi = require('node-wifi');
 import wifi from 'node-wifi';
 import logger from "../services/logger.js";
-import mqtt from 'mqtt';
 import mqttAgent from '../services/mqttAgent.js';
 // Initialize wifi module
 // Absolutely necessary even to set interface to null

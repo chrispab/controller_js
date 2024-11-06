@@ -13,7 +13,6 @@ class Heater {
         this.heater_sp_offset = cfg.get("heater.heater_sp_offset");
         this.heatingCycleState = 'INACTIVE';
         this.on("heaterStateChange", this.heaterStateEventHandler);
-
         // this.mqttAgent = mqttAgent;
         this.ExternalTDiffMs = cfg.get("heater.ExternalTDiffMs");
     }
@@ -21,7 +20,6 @@ class Heater {
     heaterStateEventHandler = function (state) {
         utils.logAndPublishState("heaterState", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.heaterStateTopic'), (state ? 1 : 0));
     }
-
 
     process() {
         this.processCount = this.processCount ? this.processCount + 1 : 1;
@@ -33,7 +31,6 @@ class Heater {
         // logger.log('warn', '==Heat ctl==');
         // Calculate new heater on time based on temperature gap
         // this.heatOnMs = ((setPointTemperature - currentTemp) * 20 * 1000) + cfg.getItemValueFromConfig('heatOnMs');
-
         if (lightState == true) {
             this.turnOff();
             return;
@@ -67,7 +64,6 @@ class Heater {
                 // let externalDiffT = Math.floor((setPointTemperature - outsideTemp) * this.ExternalTDiffMs);
                 let externalDiffT = (setPointTemperature - outsideTemp) * this.ExternalTDiffMs;
                 logger.log('warn', `setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
-
                 logger.log('error', `--EXTERNAL DIFF t delta on to add ms:${externalDiffT}`);
 
                 // this.heatOnMs = cfg.getItemValueFromConfig('heatOnMs') + internalDiffT + externalDiffT; // + (outsideTemp / 50);
@@ -107,7 +103,6 @@ class Heater {
             this.writeIO(1);
             this.emitIfStateChanged();
         }
-
     }
 
     turnOff() {
@@ -144,9 +139,5 @@ Object.assign(Heater.prototype, eventMixin);
 
 import IOPinAccessorsMixin from "./mixins/IOPinAccessorsMixin.js";
 Object.assign(Heater.prototype, IOPinAccessorsMixin);
-
-// import mqttPublishAndLogMixin from "./mixins/mqttPublishAndLogMixin.js";
-// Object.assign(Heater.prototype, mqttPublishAndLogMixin);
-
 
 export default Heater;
