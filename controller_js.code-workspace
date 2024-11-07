@@ -5,6 +5,5 @@
 		}
     ],
     "settings": {
-        "eslint.format.enable": true
     }
 }

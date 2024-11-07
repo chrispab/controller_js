@@ -152,7 +152,7 @@ class Vent(object):
         self.vent_pulse_active = OFF  # settings.ventPulseActive
         self.vent_pulse_delta = 0  # ventPulseDelta
         self.vent_pulse_on_delta = cfg.getItemValueFromConfig(
-            'ventPulseOnDelta')
+            'ventOverridePulseOnDelta')
         self.vent_loff_sp_offset = cfg.getItemValueFromConfig(
             'vent_loff_sp_offset')
         self.vent_lon_sp_offset = cfg.getItemValueFromConfig(

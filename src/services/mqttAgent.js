@@ -90,7 +90,7 @@ class MqttAgent {
           if (error) {
             console.log(error);
           } else {
-            utils.logAndPublishState("getCurrentConnections", cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
+            utils.logAndPublishState("wifi", cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
           }
         }
       );

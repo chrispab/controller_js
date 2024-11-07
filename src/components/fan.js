@@ -1,6 +1,6 @@
 import IOBase from "./IOBase.js";
 import { Gpio } from 'onoff';
-import mqttAgent from "../services/mqttAgent.js";
+// import mqttAgent from "../services/mqttAgent.js";
 import cfg from "../services/config.js";
 import logger from "../services/logger.js";
 const logLevel = 'debug';
@@ -19,8 +19,8 @@ export default class Fan {
         this.setPrevStateChangeMs(Date.now() - this.getOffMs());
         this.on("fanStateChange", this.fanStateEventHandler);
         //set new reading available
-        this.setNewStateAvailable(true);
-        this.processCount = 0;
+        this.setNewStateAvailable(true)
+
         this.periodicPublishIntervalMs = cfg.get("fan.periodicPublishIntervalMs");
         this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     }
@@ -31,17 +31,17 @@ export default class Fan {
 
     process() {
         this.manageFan();
-        this.processPeriodicPublication();
+        this.periodicPublication();
     }
 
-    processPeriodicPublication() {
+    periodicPublication() {
         // ensure regular publishing of additional properties
         // such as fanOnMs and fanOffMs
         if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
             this.lastPeriodicPublishedMs = Date.now();
-            // Zonen/fan_on_delta_secs
+            // Zone/fan_on_delta_secs
             utils.logAndPublishState("fanPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), (this.getOnMs() / 1000));
-            // Zonen/fan_off_delta_secs
+            // Zone/fan_off_delta_secs
             utils.logAndPublishState("fanPeriodic", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), (this.getOffMs() / 1000));
         }
     }

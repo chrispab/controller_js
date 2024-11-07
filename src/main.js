@@ -26,7 +26,6 @@ const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.ve
 
 setInterval(() => {
 
-
   cfg.process();
 
   temperatureSensor.process();

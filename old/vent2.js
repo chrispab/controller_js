@@ -9,7 +9,7 @@ class Vent {
         this.vent_off_delta = cfg.getItemValueFromConfig('ventOffDelta');  // vent off time
         this.vent_pulse_active = OFF;  // settings.ventPulseActive
         this.vent_pulse_delta = 0;  // ventPulseDelta
-        this.vent_pulse_on_delta = cfg.getItemValueFromConfig('ventPulseOnDelta');
+        this.vent_pulse_on_delta = cfg.getItemValueFromConfig('ventOverridePulseOnDelta');
         this.vent_loff_sp_offset = cfg.getItemValueFromConfig('vent_loff_sp_offset');
         this.vent_lon_sp_offset = cfg.getItemValueFromConfig('vent_lon_sp_offset');
         this.ventDisableTemp = cfg.getItemValueFromConfig('ventDisableTemp');

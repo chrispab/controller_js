@@ -5,13 +5,11 @@ import logger from "../services/logger.js";
 // import cfg from "config";
 import cfg from "../services/config.js";
 import * as utils from "../utils/utils.js";
-import mqttAgent from "../services/mqttAgent.js";
+// import mqttAgent from "../services/mqttAgent.js";
 
 export default class TemperatureSensor {
   constructor(name, dhtSensorPin) {
-    // super(cfg.get("hardware.dhtSensor.pin"), "in", 0);
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
-
     this.setName(name);
     this.dhtSensorType = cfg.get("hardware.dhtSensor.type");
     this.dhtSensorPin = dhtSensorPin;
@@ -20,8 +18,7 @@ export default class TemperatureSensor {
     this.sensorReadIntervalMs = cfg.get("temperatureSensor.sensorReadIntervalMs");
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
-    //force an initial sensor read
-    this.readSensor();
+    this.readSensor();//force an initial sensor read
     this.publishStateIntervalMs = cfg.get("temperatureSensor.publishStateIntervalMs");
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.on("temperatureStateChange", this.temperatureStateChangeHandler);

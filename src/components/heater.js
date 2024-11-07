@@ -4,7 +4,7 @@ import logger from "../services/logger.js";
 import { Gpio } from 'onoff';
 
 import * as utils from "../utils/utils.js";
-import mqttAgent from "../services/mqttAgent.js";
+// import mqttAgent from "../services/mqttAgent.js";
 
 // const logLevel = 'debug';
 const logLevel = 'warn';
