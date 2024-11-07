@@ -39,6 +39,7 @@ class MqttAgent {
     this.lowSetpoint = cfg.get("zone.lowSetpoint");
     this.periodicPublishIntervalMs = cfg.get("zone.periodicPublishIntervalMs");
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+    this.outsideTemperature = 7;
     this.emailTest();
   }
 
@@ -166,6 +167,7 @@ mqttAgent.client.on("connect", function () {
     "Zone1/low_setpoint/set",
     "Zone1/vent_on_delta_secs/set",
     "Zone1/vent_off_delta_secs/set",
+    "Outside_Sensor/tele/SENSOR"
   ]);
   //   Zone1/high_setpoint/set
   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", {
@@ -204,6 +206,19 @@ mqttAgent.client.on("message", (topic, message) => {
   logger.warn(`MQTT->Received: ${topic}: ${message}`);
 
   switch (topic) {
+    case ("Outside_Sensor/tele/SENSOR"):
+      if (message) {
+        const obj = JSON.parse(message.toString());
+        const temp = obj["DS18B20-1"]["Temperature"];
+        logger.log('warn', 'MQTT<-Outside_Sensor: ' + `${"Outside_Sensor/tele/SENSOR: " + (temp)}`);
+        // now set the global outside temperature variable
+        mqttAgent.outsideTemperature = temp
+      } else {
+        logger.log('error', 'MQTT->Outside_Sensor: NULL PAYLOAD RECEIVED');
+      }
+      break;
+
+
     case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
       if (Number(message.toString()) > 0) {
         // logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);

@@ -69,7 +69,7 @@ const mod1Function = () => wifi.getCurrentConnections((error, currentConnections
 
 const logAndPublishState = (comment, topic, state) => {
   var logLevel = "info";
-  logger.log(logLevel, "TT->" + comment + `:${topic + ": " + state}`);
+  logger.log(logLevel, "T->" + comment + `: ${topic + ": " + state}`);
   mqttAgent.client.publish(topic, `${state}`);
 }
 

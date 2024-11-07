@@ -73,13 +73,13 @@ export default class Vent {
         }
     }
 
-    control(currentTemp, currentHumi, setPointTemperature, lightState) {
+    control(currentTemp, setPointTemperature, lightState) {
         // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
         // loff vent/cooling
         const currentMs = Date.now();
         const elapsedMsSinceLastStateChange = currentMs - this.getPrevStateChangeMs();
         // if light off - do a minimal vent routine
-        if (lightState == false) {
+        if (lightState == 0) {
             this.speedPercent = 50;
             if (this.ventDarkStatus == "inactive") {
                 logger.log(logLevel, "VENT: lets start the vent dark ON period");
@@ -124,7 +124,7 @@ export default class Vent {
         // force hispeed if over temp and lon
         //!add some hysteresis here
         // only for upper lon control
-        if (lightState == true) {
+        if (lightState == 1) {
             // const lowerHys = setPointTemperature - 0.1;
             // const upperHys = setPointTemperature + 0.2;
             // maybe use a dead band?

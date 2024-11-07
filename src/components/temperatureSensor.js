@@ -7,7 +7,7 @@ import cfg from "../services/config.js";
 import * as utils from "../utils/utils.js";
 import mqttAgent from "../services/mqttAgent.js";
 
-export default class TemperatureSensor  {
+export default class TemperatureSensor {
   constructor(name, dhtSensorPin) {
     // super(cfg.get("hardware.dhtSensor.pin"), "in", 0);
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
@@ -33,7 +33,6 @@ export default class TemperatureSensor  {
   }
 
   temperatureStateChangeHandler = function (temperatureState, humidityState) {
-    // logger.log('error', `HI FROM NEW HANDLER temperatureStateChangeHandler`);
     utils.logAndPublishState("temperatureState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.temperatureStateTopic"), (temperatureState));
     utils.logAndPublishState("temperatureState", cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), (humidityState));
   };
@@ -43,18 +42,18 @@ export default class TemperatureSensor  {
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       this.lastStatePublishedMs = Date.now();
-      this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity(), mqttAgent);
+      this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity());
     }
 
     // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
       this.readSensor();
       this.lastSensorReadTimeMs = Date.now();
-      if (this.hasNewStateAvailable()) {
+      if (this.hasNewStateAvailable() && this.getTemperature() !== 0) {
         //get value from readSensor()
         // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
         this.lastStatePublishedMs = Date.now();
-        this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity(), mqttAgent);
+        this.trigger("temperatureStateChange", this.getTemperature(), this.getHumidity());
         this.setNewStateAvailable(false);
       }
     }

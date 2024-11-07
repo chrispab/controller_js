@@ -25,22 +25,33 @@ const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.ve
 
 
 setInterval(() => {
+
+
   cfg.process();
 
   temperatureSensor.process();
+  let temperature = temperatureSensor.getTemperature();
+  // temperature = 13;
+
+  light.process();
+  let lightState = light.getState();
+  // lightState = 0;
+
+  let setpoint = cfg.get("zone.highSetpoint");
+  if (lightState == 0) {
+    setpoint = cfg.get("zone.lowSetpoint");
+  }
+
+  vent.control(temperature, setpoint, lightState);
+  vent.process();
+
+  heater.control(temperature, setpoint, lightState, mqttAgent.outsideTemperature);
+  heater.process();
 
   fan.process();
 
-  heater.process();
-  heater.control(temperatureSensor.getTemperature(), cfg.get("zone.highSetpoint"), light.getState(), 10)
-
-  light.process();
-
-  let setpoint = cfg.get("zone.highSetpoint");
-  vent.control(temperatureSensor.getTemperature(), temperatureSensor.getHumidity(), setpoint, light.getState());
-  vent.process();
-
   mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
+
 }, 1000);
 
 

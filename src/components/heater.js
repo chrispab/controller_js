@@ -1,11 +1,13 @@
 import IOBase from "./IOBase.js";
 import cfg from "../services/config.js";
 import logger from "../services/logger.js";
-const logLevel = 'debug';
 import { Gpio } from 'onoff';
 
 import * as utils from "../utils/utils.js";
 import mqttAgent from "../services/mqttAgent.js";
+
+// const logLevel = 'debug';
+const logLevel = 'warn';
 
 class Heater {
     constructor(name, heaterPin) {
@@ -26,7 +28,7 @@ class Heater {
     }
 
     control(currentTemp, setPointTemperature, lightState, outsideTemp = 10) {
-        // logger.log('warn',`currentTemp:${currentTemp} setPointTemperature:${setPointTemperature} lightState:${lightState}`);
+        // logger.log('warn',`currentTemp:${currentTemp}, outsideTemp:${outsideTemp}, setPointTemperature:${setPointTemperature} lightState:${lightState}`);
         const currentMs = Date.now();
         // logger.log('warn', '==Heat ctl==');
         // Calculate new heater on time based on temperature gap
@@ -65,40 +67,43 @@ class Heater {
                 // Milliseconds per degree diff
                 // let externalDiffT = Math.floor((setPointTemperature - outsideTemp) * this.ExternalTDiffMs);
                 let externalDiffT = (setPointTemperature - outsideTemp) * this.ExternalTDiffMs;
-                logger.log('warn', `setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
-                logger.log('error', `--EXTERNAL DIFF t delta on to add ms:${externalDiffT}`);
+                logger.log(logLevel, `setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
+                logger.log(logLevel, `--EXTERNAL DIFF t delta on to add ms:${externalDiffT}`);
 
                 // this.heatOnMs = cfg.getItemValueFromConfig('heatOnMs') + internalDiffT + externalDiffT; // + (outsideTemp / 50);
                 this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT; // + (outsideTemp / 50);
                 this.heatOffMs = cfg.get('heater.heatOffMs');
-                logger.log('warn', `>>CALCULATED TOTAL delta ON ms:this.heatOnMs:${this.heatOnMs}`);
+                logger.log(logLevel, `>>CALCULATED TOTAL delta ON ms:this.heatOnMs:${this.heatOnMs}`);
 
                 // Start a cycle - ON first
                 this.heatingCycleState = 'ON';
                 // Init ON state timer
                 // this.turnOn();
                 this.toggleHeater(1);
-                logger.log('warn', "..temp low - currently INACTIVE - TURN HEATing cycle state ON");
+                logger.log(logLevel, "..temp low - currently INACTIVE - TURN HEATing cycle state ON");
             }
+        } else {
+            this.toggleHeater(0);
         }
-        this.heatOffMs = cfg.get('heater.heatOffMs');
         if (this.heatingCycleState == 'ON') {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOnMs) {
                 this.heatingCycleState = 'OFF';
                 // this.turnOff();
                 this.toggleHeater(0);
-                logger.log('warn', "..currently ON - TURN HEATing cycle state OFF");
+                logger.log(logLevel, "..currently ON - TURN HEATing cycle state OFF");
             }
         }
 
+        this.heatOffMs = cfg.get('heater.heatOffMs');
         if (this.heatingCycleState == 'OFF') {
             if ((currentMs - this.getPrevStateChangeMs()) >= this.heatOffMs) {
                 this.heatingCycleState = 'INACTIVE';
-                logger.log('warn', "..currently OFF - MAKE HEATing cycle state INACTIVE");
+                logger.log(logLevel, "..currently OFF - MAKE HEATing cycle state INACTIVE");
                 // this.turnOff();
                 this.toggleHeater(0);
             }
         }
+
         // }
     }
 
