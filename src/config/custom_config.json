@@ -63,7 +63,7 @@
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
     "lightOnSetpointOffset": 0,
-    "ventOverridePulseOnDelta": 10000
+    "ventOverridePulseOnDelta": 5000
   },
   "heater": {
     "onMs": 10000,
