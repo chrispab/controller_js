@@ -1,6 +1,7 @@
 {
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": "explicit"
     },
-    "prettier.printWidth": 160
+    "prettier.printWidth": 160,
+    "prettier.experimentalTernaries": true
 }
