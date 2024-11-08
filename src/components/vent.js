@@ -1,10 +1,8 @@
 import IOBase from './IOBase.js';
 import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
-
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
-// import mqttAgent from "../services/mqttAgent.js";
 
 const logLevel = 'debug';
 // const logLevel = 'warn';
@@ -27,17 +25,16 @@ export default class Vent {
     this.ventDarkOffDelta = 60000;
     this.ventDarkOnStartMs = 0;
     this.ventDarkOffStartMs = 0;
-    // from config
     this.speedPercent = cfg.get('vent.speedPercent');
     this.lightOnSetpointOffset = cfg.get('vent.lightOnSetpointOffset');
     this.ventOverride = false;
     this.ventDarkStatus = 'inactive';
-    //set new reading available
     this.setNewStateAvailable(true);
-    // this.ventIO = this.IO;
     this.ventOverridePulseOnDelta = cfg.get('vent.ventOverridePulseOnDelta');
+
     this.periodicPublishIntervalMs = cfg.get('vent.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+    
     this.publishStateIntervalMs = cfg.get('vent.publishStateIntervalMs');
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.on('ventStateChange', this.ventStateEventHandler);
@@ -46,7 +43,7 @@ export default class Vent {
   ventStateEventHandler = function (powerState, speedState) {
     //vent powerState
     utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventStateTopic'), powerState ? 1 : 0);
-    //vent speed powerState
+    //vent speed State
     utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventSpeedStateTopic'), speedState ? 1 : 0);
     //vent speed percent
     utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventSpeedPercentTopic'), `${speedState ? 100 : 50}`);
@@ -61,7 +58,6 @@ export default class Vent {
 
   processPeriodicPublication() {
     // ensure regular publishing of additional properties
-    // such as ventOnMs and ventOffMs
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // ZoneN/vent_on_delta_secs
@@ -244,11 +240,11 @@ export default class Vent {
   setSpeedPercent(percent) {
     this.speedPercent = percent;
   }
+
   getSpeedPercent() {
     return this.speedPercent;
   }
 
-  manageVent() {}
 
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
@@ -259,7 +255,7 @@ export default class Vent {
       }
       const speedState = this.speedPercent == 100 ? 1 : 0;
 
-      logger.log('warn', `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0}, speedState: ${speedState}`);
+      logger.log(logLevel, `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0}, speedState: ${speedState}`);
 
       this.trigger('ventStateChange', this.ventPowerPin.getState() ? 1 : 0, speedState);
       //indicate data read and used e.g MQTT pub

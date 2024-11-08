@@ -1,25 +1,23 @@
 import logger from './logger.js';
-
 import cfg from './config.js';
-
 import * as utils from '../utils/utils.js';
 import wifi from 'node-wifi';
-
 import mqtt from 'mqtt';
 import secret from '../secret.js';
 
 const logLevel = 'debug';
-// const client = mqtt.connect(config.mqtt.brokerUrl);
+
 import nodemailer from 'nodemailer';
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // true for port 465, false for other ports
-  auth: {
-    user: secret.user,
-    pass: secret.password,
-  },
-});
+
+// const transporter = nodemailer.createTransport({
+//   host: 'smtp.gmail.com',
+//   port: 587,
+//   secure: false, // true for port 465, false for other ports
+//   auth: {
+//     user: secret.user,
+//     pass: secret.password,
+//   },
+// });
 
 class MqttAgent {
   constructor() {
@@ -42,24 +40,25 @@ class MqttAgent {
     this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.outsideTemperature = 7;
-    this.emailTest();
+    // this.emailTest();
+    utils.sendEmail('test1','test2');
   }
 
   getName() {
     return this.name;
   }
 
-  emailTest() {
-    transporter.sendMail({
-      from: secret.user,
-      to: secret.user,
-      subject: 'controller_js',
-      text: 'controller_js',
-      html: '<b>controller_js</b>',
-    });
+  // emailTest() {
+  //   transporter.sendMail({
+  //     from: secret.user,
+  //     to: secret.user,
+  //     subject: 'controller_js',
+  //     text: 'controller_js',
+  //     html: '<b>controller_js</b>',
+  //   });
 
-    console.log('Message sent: %s', 'this is my message');
-  }
+  //   console.log('Message sent: %s', 'this is my message');
+  // }
 
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;

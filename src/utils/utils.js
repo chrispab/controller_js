@@ -1,9 +1,31 @@
-// import IOBase from "./IOBase.js";
-// import Logger from "../services/logger.js";
-// import config from '../config/config.json' assert { type: 'json' };
-// import cfg from "config";
-// const logLevel = 'debug';
-// const logLevel = 'info';
+import logger from '../services/logger.js';
+import mqttAgent from '../services/mqttAgent.js';
+import secret from '../secret.js';
+import nodemailer from 'nodemailer';
+
+function sendEmail(subject, body) {
+  const mailOptions = {
+    from: secret.user,
+    to: secret.user,
+    subject: subject,
+    text: body,
+    html: body,
+  };
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for port 465, false for other ports
+    auth: {
+      user: secret.user,
+      pass: secret.password,
+    },
+  });
+   transporter.sendMail(mailOptions, (error, info) => {
+     if (error) {
+       logger.log('error', error);
+     }
+   });
+}
 
 function getHMSStr() {
   const date = new Date(Date.now());
@@ -14,26 +36,22 @@ function getHMSStr() {
   return `${hh}:${mm}:${ss}`;
 }
 
-
 // const wifi = require('node-wifi');
-import wifi from 'node-wifi';
-import logger from "../services/logger.js";
-import mqttAgent from '../services/mqttAgent.js';
+
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
-wifi.init({
-  iface: null // network interface, choose a random wifi interface if set to null
-});
+// wifi.init({
+//   iface: null, // network interface, choose a random wifi interface if set to null
+// });
 // List the current wifi connections
 
 // export { mod1Function, mod1Function2 }
 
-
 const logAndPublishState = (comment, topic, state) => {
-  var logLevel = "info";
-  logger.log(logLevel, ">>" + comment + `: ${topic + ": " + state}`);
+  var logLevel = 'info';
+  logger.log(logLevel, '>>' + comment + `: ${topic + ': ' + state}`);
   mqttAgent.client.publish(topic, `${state}`);
-}
+};
 
 // export utils;
-export { logAndPublishState,getHMSStr }
+export { logAndPublishState, getHMSStr, sendEmail };

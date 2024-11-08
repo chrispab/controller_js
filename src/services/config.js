@@ -7,14 +7,14 @@ class ConfigHandler {
   constructor() {
     this.configHasChanged = false;
     this.configChangedTime = null;
-    this.configChangedTimeBeforeSave = 10000;
+    this.configChangedDelayBeforeSaveMs = 10000;
 
     this.config = this.load();
     logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
   }
 
   process() {
-    if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedTimeBeforeSave) {
+    if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedDelayBeforeSaveMs) {
       this.save();
       this.configHasChanged = false;
       this.configChangedTime = null;
@@ -50,16 +50,11 @@ class ConfigHandler {
   }
 
   set(key, valueObj) {
-
     var currentConfig = this.config
-
     const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj })
-
     this.config = mergedObj;
-
     this.configHasChanged = true;
     this.configChangedTime = new Date();
-
   }
 
   /**
@@ -103,7 +98,6 @@ function getValueByPath(obj, path) {
       return undefined;
     }
   }
-
   return value;
 }
 // export a single instance of ConfigHandler;

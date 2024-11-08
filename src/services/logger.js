@@ -4,7 +4,7 @@ import { createLogger } from 'winston';
 import { format } from 'winston';
 import { transports } from 'winston';
 
-
+import process from 'process';
 
 
 const logger = createLogger({
