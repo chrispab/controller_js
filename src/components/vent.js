@@ -221,15 +221,12 @@ export default class Vent {
     this.setState(ventValue);
     if (this.hasNewStateAvailable()) {
       if (Gpio.accessible) {
-        // this.writeIO(0);
         this.ventPowerPin.writeIO(0);
         this.ventPowerPin.setState(0);
         if (this.speedPercent == 100) {
-          //  this.writeIO(1)
           this.ventSpeedPin.writeIO(1);
           this.ventSpeedPin.setState(1);
         } else if (this.speedPercent == 50) {
-          // this.writeIO(0)
           this.ventSpeedPin.writeIO(0);
           this.ventSpeedPin.setState(0);
         } else {
