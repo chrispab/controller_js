@@ -103,8 +103,6 @@ class Heater {
         this.toggleHeater(0);
       }
     }
-
-    // }
   }
 
   getTelemetryData() {
@@ -112,22 +110,6 @@ class Heater {
     logger.log('debug', `Tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return telemetry;
   }
-
-  // turnOn() {
-  //     this.setState(1);
-  //     if (this.hasNewStateAvailable()) {
-  //         this.writeIO(1);
-  //         this.emitIfStateChanged();
-  //     }
-  // }
-
-  // turnOff() {
-  //     this.setState(0);
-  //     if (this.hasNewStateAvailable()) {
-  //         this.writeIO(0);
-  //         this.emitIfStateChanged();
-  //     }
-  // }
 
   toggleHeater(state) {
     this.setState(state);
@@ -143,16 +125,6 @@ class Heater {
       }
     }
   }
-  // emitIfStateChanged() {
-  //     if (this.hasNewStateAvailable()) {
-  //         if (this.getStateAndClearNewStateFlag() == true) {
-  //             logger.log(logLevel, "Heater is on");
-  //         } else {
-  //             logger.log(logLevel, "Heater is off");
-  //         }
-  //         this.trigger("heaterStateChange", this.getState(), mqttAgent);
-  //     }
-  // }
 }
 
 // https://javascript.info/mixins

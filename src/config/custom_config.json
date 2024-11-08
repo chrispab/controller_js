@@ -2,7 +2,7 @@
   "zone": {
     "lowSetpoint": 15,
     "highSetpoint": 21,
-    "periodicPublishIntervalMs": 120000,
+    "periodicPublishIntervalMs": 60000,
     "name": "zone_1",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
@@ -87,6 +87,8 @@
     "username": "pi",
     "password": "raspberry",
     "topicPrefix": "Zone1",
+    "LWTTopic": "/LWT",
+    "rssiTopic": "/rssi",
     "lightStateTopic": "/LightStatus",
     "temperatureStateTopic": "/TemperatureStatus",
     "humidityStateTopic": "/HumidityStatus",
@@ -104,6 +106,7 @@
     "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
     "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
     "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
-    "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
+    "fanOffDeltaSecsTopic": "/fan_off_delta_secs",
+    "outsideSensorTopic": "Outside_Sensor/tele/SENSOR"
   }
 }

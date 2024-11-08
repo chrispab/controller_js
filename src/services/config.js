@@ -42,6 +42,10 @@ class ConfigHandler {
 
   get(stringkey) {
     const name = getValueByPath(this.config, stringkey);
+    if (name === undefined) {
+      logger.log('error', 'config: ' + stringkey + ' does not exist');
+      throw new Error(stringkey + ' does not exist');
+    }
     return name;
   }
 

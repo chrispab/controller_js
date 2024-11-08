@@ -3,6 +3,7 @@ import logger from './logger.js';
 import cfg from './config.js';
 
 import * as utils from '../utils/utils.js';
+import wifi from 'node-wifi';
 
 import mqtt from 'mqtt';
 import secret from '../secret.js';
@@ -24,7 +25,7 @@ class MqttAgent {
   constructor() {
     const options = {
       will: {
-        topic: cfg.get('mqtt.topicPrefix') + '/LWT',
+        topic: cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.LWTTopic'),
         retain: true,
         qos: 2,
         payload: 'Offline',
@@ -72,16 +73,16 @@ class MqttAgent {
     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
-      utils.logAndPublishState('mqttdoTelemetry', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), data, this.client);
+      utils.logAndPublishState('mqttdoTelemetry', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), data);
     }
   }
 
   processPeriodicPublication() {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
-      // Zonen/vent_on_delta_secs
+      // highSetpoint
       utils.logAndPublishState('mqttPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
-      // Zonen/vent_off_delta_secs
+      // lowSetpoint
       utils.logAndPublishState('mqttPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
 
       //publish wifi info
@@ -89,7 +90,7 @@ class MqttAgent {
         if (error) {
           console.log(error);
         } else {
-          utils.logAndPublishState('wifi', cfg.get('mqtt.topicPrefix') + '/rssi', `${currentConnections[0].quality}`);
+          utils.logAndPublishState('wifiPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
       });
     }
@@ -107,7 +108,6 @@ class MqttAgent {
 }
 
 // const wifi = require('node-wifi');
-import wifi from 'node-wifi';
 // Initialize wifi module
 // Absolutely necessary even to set interface to null
 wifi.init({
@@ -141,7 +141,7 @@ mqttAgent.client.on('connect', function () {
     'Outside_Sensor/tele/SENSOR',
   ]);
   //   Zone1/high_setpoint/set
-  mqttAgent.client.publish(cfg.get('mqtt.topicPrefix') + '/LWT', 'Online', {
+  mqttAgent.client.publish(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.LWTTopic'), 'Online', {
     qos: 0,
     retain: true,
   });
@@ -161,11 +161,11 @@ mqttAgent.client.on('message', (topic, message) => {
   logger.warn(`MQTT->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
-    case 'Outside_Sensor/tele/SENSOR':
+    case cfg.get('mqtt.outsideSensorTopic'):
       if (message) {
         const obj = JSON.parse(message.toString());
         const temp = obj['DS18B20-1']['Temperature'];
-        logger.log(logLevel, 'MQTT<-Outside_Sensor: ' + `${'Outside_Sensor/tele/SENSOR: ' + temp}`);
+        logger.log(logLevel, 'MQTT<-Outside_Sensor: ' + `${cfg.get('mqtt.outsideSensorTopic') + temp}`);
         // now set the global outside temperature variable
         mqttAgent.outsideTemperature = temp;
       } else {
@@ -175,7 +175,7 @@ mqttAgent.client.on('message', (topic, message) => {
 
     case cfg.get('mqtt.topicPrefix') + '/high_setpoint/set':
       if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('highSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${message}`, mqttAgent.client);
+        utils.logAndPublishState('highSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointTopic'), `${message}`);
         //set the high setpoint in the config object
         const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
         cfg.set('zone.highSetpoint', obj1);
@@ -186,7 +186,7 @@ mqttAgent.client.on('message', (topic, message) => {
 
     case cfg.get('mqtt.topicPrefix') + '/low_setpoint/set':
       if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('lowSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${message}`, mqttAgent.client);
+        utils.logAndPublishState('lowSetpoint: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointTopic'), `${message}`);
         //set the low setpoint in the config object
         const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
         cfg.set('zone.lowSetpoint', obj2);
@@ -197,8 +197,8 @@ mqttAgent.client.on('message', (topic, message) => {
 
     case cfg.get('mqtt.topicPrefix') + '/vent_on_delta_secs/set':
       if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('vent_on_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOnDeltaSecsTopic'), `${message}`, mqttAgent.client);
-        //set the low setpoint in the config object
+        utils.logAndPublishState('vent_on_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOnDeltaSecsTopic'), `${message}`);
+        //set in the config object
         const obj3 = { vent: { onMs: Number(message.toString()) * 1000 } };
         cfg.set('vent.onMs', obj3);
       } else {
@@ -208,8 +208,8 @@ mqttAgent.client.on('message', (topic, message) => {
 
     case cfg.get('mqtt.topicPrefix') + '/vent_off_delta_secs/set':
       if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('vent_off_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOffDeltaSecsTopic'), `${message}`, mqttAgent.client);
-        //set the low setpoint in the config object
+        utils.logAndPublishState('vent_off_delta_secs: ', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOffDeltaSecsTopic'), `${message}`);
+        //set in the config object
         const obj4 = { vent: { offMs: Number(message.toString()) * 1000 } };
         cfg.set('vent.offMs', obj4);
       } else {
