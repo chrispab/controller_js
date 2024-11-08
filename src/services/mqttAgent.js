@@ -1,23 +1,14 @@
 import logger from './logger.js';
 import cfg from './config.js';
-import * as utils from '../utils/utils.js';
+
 import wifi from 'node-wifi';
 import mqtt from 'mqtt';
-import secret from '../secret.js';
 
 const logLevel = 'debug';
 
+import * as utils from '../utils/utils.js';
+import secret from '../secret.js';
 import nodemailer from 'nodemailer';
-
-// const transporter = nodemailer.createTransport({
-//   host: 'smtp.gmail.com',
-//   port: 587,
-//   secure: false, // true for port 465, false for other ports
-//   auth: {
-//     user: secret.user,
-//     pass: secret.password,
-//   },
-// });
 
 class MqttAgent {
   constructor() {
@@ -41,24 +32,12 @@ class MqttAgent {
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.outsideTemperature = 7;
     // this.emailTest();
-    utils.sendEmail('test1','test2');
+    utils.sendEmail('zone startup', 'zone startup');
   }
 
   getName() {
     return this.name;
   }
-
-  // emailTest() {
-  //   transporter.sendMail({
-  //     from: secret.user,
-  //     to: secret.user,
-  //     subject: 'controller_js',
-  //     text: 'controller_js',
-  //     html: '<b>controller_js</b>',
-  //   });
-
-  //   console.log('Message sent: %s', 'this is my message');
-  // }
 
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
@@ -113,7 +92,6 @@ wifi.init({
   iface: null, // network interface, choose a random wifi interface if set to null
 });
 
-
 //export an instance so single instance can be used
 export const mqttAgent = new MqttAgent();
 export default mqttAgent;
@@ -155,9 +133,9 @@ mqttAgent.client.on('packetsend', function () {
   // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
 });
 
-
 mqttAgent.client.on('message', (topic, message) => {
-  logger.warn(`MQTT->msg Received: ${topic}: ${message}`);
+  
+  // logger.warn(`MQTT->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
     case cfg.get('mqtt.outsideSensorTopic'):
