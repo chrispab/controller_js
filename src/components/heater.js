@@ -4,7 +4,6 @@ import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
 
 import * as utils from '../utils/utils.js';
-// import mqttAgent from "../services/mqttAgent.js";
 
 // const logLevel = 'debug';
 const logLevel = 'warn';
@@ -106,7 +105,7 @@ class Heater {
   }
 
   getTelemetryData() {
-    let telemetry = this.getBaseTelemetryData();
+    let telemetry = this.getTelemetryData();
     logger.log('debug', `Tele heater: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return telemetry;
   }

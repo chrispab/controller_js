@@ -57,7 +57,7 @@ export default class TemperatureSensor {
   }
 
   getTelemetryData() {
-    let superTelemetry = this.getBaseTelemetryData();
+    let superTelemetry = this.getTelemetryData();
     logger.log("debug", `tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return superTelemetry;
   }

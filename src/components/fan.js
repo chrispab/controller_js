@@ -1,12 +1,11 @@
 import IOBase from './IOBase.js';
 import { Gpio } from 'onoff';
-// import mqttAgent from "../services/mqttAgent.js";
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
+import * as utils from '../utils/utils.js';
+
 const logLevel = 'debug';
 // const logLevel = 'info';
-// import utils from "../utils/utils.js";
-import * as utils from '../utils/utils.js';
 
 export default class Fan {
   constructor(name, fanPin) {

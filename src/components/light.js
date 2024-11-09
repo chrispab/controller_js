@@ -2,11 +2,11 @@ import IOBase from './IOBase.js';
 import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
+import * as utils from "../utils/utils.js";
+
 // const logLevel = 'info';
 const logLevel = 'debug';
 // const logLevel = 'warn';
-import * as utils from "../utils/utils.js";
-// import mqttAgent from "../services/mqttAgent.js";
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -67,7 +67,7 @@ export default class Light {
   }
 
   getTelemetryData() {
-    let superTelemetry = this.getBaseTelemetryData();
+    let superTelemetry = this.getTelemetryData();
     logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return superTelemetry;
   }
