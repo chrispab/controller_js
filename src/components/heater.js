@@ -2,7 +2,7 @@ import IOBase from './IOBase.js';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
-import Event from './event.js';
+// import Event from './event.js';
 
 import * as utils from '../utils/utils.js';
 
@@ -20,7 +20,7 @@ class Heater {
   }
 
   heaterStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.heaterStateTopic'), evt.state ? 1 : 0);
+    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.heaterStateTopic'), evt.state);
   };
 
   process() {
@@ -122,7 +122,9 @@ class Heater {
       if (this.getStateAndClearNewStateFlag() == state) {
         logger.log(logLevel, state ? 'Heater is on' : 'Heater is off');
 
-        let evt = new Event('toggleHeater', this.getState(),'state');
+        // let evt = new Event('toggleHeater', this.getState(),'state');
+        let evt = { name: 'heaterState', state: state, description: 'heater State' };
+
         this.trigger('heaterStateChange', evt);
 
         // evt = new Event('toggleHeater', this.getS(), 'speed', this.getState());

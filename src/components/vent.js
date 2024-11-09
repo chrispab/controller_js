@@ -3,7 +3,8 @@ import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
-import Event from './event.js';
+// import Event from './event.js';
+import Event2 from './event2.js';
 
 const logLevel = 'debug';
 // const logLevel = 'warn';
@@ -35,24 +36,42 @@ export default class Vent {
 
     this.periodicPublishIntervalMs = cfg.get('vent.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
-    
+
     this.publishStateIntervalMs = cfg.get('vent.publishStateIntervalMs');
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.on('ventStateChange', this.ventStateEventHandler);
   }
 
-  ventStateEventHandler = function (powerState, speedState) {
+  ventStateEventHandler = function (evt) {
     //vent powerState
-    utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventStateTopic'), powerState ? 1 : 0);
-    //vent speed State
-    utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventSpeedStateTopic'), speedState ? 1 : 0);
-    //vent speed percent
-    utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventSpeedPercentTopic'), `${speedState ? 100 : 50}`);
-    //vent value, 0 is off, 1 is 50%, 2 is 100%
-    const ventValue = powerState == 1 && speedState == 0 ? 1 : powerState == 1 && speedState == 1 ? 2 : 0;
-    utils.logAndPublishState('vent', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventValueTopic'), `${ventValue}`);
-  };
+    // if (evt.name == 'state') {
+    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventStateTopic'), evt.state);
+    // } else if (evt.name == 'speedState') {
+    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventSpeedStateTopic'), evt.state);
+    // } else if (evt.name == 'speedPercent') {
+    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventSpeedPercentTopic'), evt.state);
+    // } else if (evt.name == 'value') {
+    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventValueTopic'), evt.state);
+    // }
 
+    let topic = null;
+    if (evt.name === 'state') {
+      topic = cfg.get('mqtt.ventStateTopic');
+    } else if (evt.name === 'speedState') {
+      topic = cfg.get('mqtt.ventSpeedStateTopic');
+    }else if (evt.name === 'speedPercent') {
+      topic = cfg.get('mqtt.ventSpeedPercentTopic');
+    } else if (evt.name === 'value') {
+      topic = cfg.get('mqtt.ventValueTopic');
+    }
+    if (topic) {
+      utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + topic, evt.state);
+    }else {
+      logger.warn(`ventStateEventHandler: unknown evt.name: ${evt.name}`);
+    }
+
+
+  };
   process() {
     this.processPeriodicPublication();
   }
@@ -62,9 +81,9 @@ export default class Vent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // ZoneN/vent_on_delta_secs
-      utils.logAndPublishState('ventPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
+      utils.logAndPublishState('vent Periodic', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
       // ZoneN/vent_off_delta_secs
-      utils.logAndPublishState('ventPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
+      utils.logAndPublishState('vent Periodic', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
     }
   }
 
@@ -246,7 +265,6 @@ export default class Vent {
     return this.speedPercent;
   }
 
-
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() > 0) {
@@ -254,11 +272,29 @@ export default class Vent {
       } else {
         logger.log(logLevel, 'Vent is off');
       }
-      const speedState = this.speedPercent == 100 ? 1 : 0;
 
-      logger.log(logLevel, `ventStateChange: ${this.ventPowerPin.getState() ? 1 : 0}, speedState: ${speedState}`);
+      const ventState = this.ventPowerPin.getState();
+      const speedState = this.ventSpeedPin.getState();
+      logger.log(logLevel, `ventStateChange: ${ventState}, speedState: ${speedState}`);
 
-      this.trigger('ventStateChange', this.ventPowerPin.getState() ? 1 : 0, speedState);
+      let evt = { name: 'state', state: ventState, description: 'vent State' };
+      // let evt = new Event2(item, 'toggleHeater', this.getState(), 'state');
+      this.trigger('ventStateChange', evt);
+
+      // const speedState = this.speedPercent == 100 ? 1 : 0;
+      evt = { name: 'speedState', state: speedState, description: 'vent SpeedState' };
+      this.trigger('ventStateChange', evt);
+
+      evt = { name: 'speedPercent', state: this.speedPercent, description: 'vent SpeedPercent' };
+      this.trigger('ventStateChange', evt);
+
+      const ventValue =
+        ventState == 1 && speedState == 0 ? 1
+        : ventState == 1 && speedState == 1 ? 2
+        : 0;
+      evt = { name: 'value', state: ventValue, description: 'vent value' };
+      this.trigger('ventStateChange', evt);
+
       //indicate data read and used e.g MQTT pub
       return true;
     }

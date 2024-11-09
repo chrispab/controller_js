@@ -3,7 +3,7 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from "../utils/utils.js";
-import Event from './event.js';
+// import Event from './event.js';
 
 // const logLevel = 'info';
 const logLevel = 'debug';
@@ -34,7 +34,7 @@ export default class Light {
   }
 
   lightStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), evt.state ? 1 : 0);
+    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.lightStateTopic'), evt.state);
   };
 
   process() {
@@ -51,7 +51,9 @@ export default class Light {
       //if its a new value publish it
       if (this.hasNewStateAvailable()) {
         this.lastStatePublishedMs = Date.now();
-        const evt = new Event('light sensor interval read', this.getState());
+        // const evt = new Event('light sensor interval read', this.getState());
+        let evt = { name: 'state', state: this.getState(), description: 'light sensor read' };
+
         this.trigger('lightStateChange', evt);
         this.setNewStateAvailable(false);
       }
@@ -62,7 +64,9 @@ export default class Light {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       // ensure regular state publishing
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
-      const evt = new Event('light periodic', this.getState());
+      // const evt = new Event('light periodic', this.getState());
+      let evt = { name: 'state', state: this.getState(), description: 'light periodic' };
+
       this.trigger('lightStateChange', evt);
       this.lastStatePublishedMs = Date.now();
       this.lastPeriodicPublishedMs = Date.now();
@@ -84,7 +88,7 @@ export default class Light {
    */
   readLightSensorState() {
     logger.log(logLevel, `>>>readLightSensorState this.RCLoopCount: ${this.RCLoopCount}`);
-    this.setState(this.RCLoopCount > 1000 ? false : true);
+    this.setState(this.RCLoopCount > 1000 ? 0 : 1);
     logger.log(logLevel, `>>>.RCLoopCount: ${this.RCLoopCount}`);
 
     const lightState = this.getState();

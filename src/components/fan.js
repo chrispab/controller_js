@@ -3,7 +3,6 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
-import Event from './event.js';
 const logLevel = 'debug';
 // const logLevel = 'info';
 
@@ -25,27 +24,26 @@ export default class Fan {
   }
 
   fanStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), evt.state ? 1 : 0);
+    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.fanStateTopic'), evt.state);
   };
 
   process() {
-    this.manageFan();
+    this.control();
     this.periodicPublication();
   }
 
   periodicPublication() {
     // ensure regular publishing of additional properties
-    // such as fanOnMs and fanOffMs
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // fan_on_delta_secs
-      utils.logAndPublishState('fanPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
+      utils.logAndPublishState('fan Periodic', cfg.getFull('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
       // fan_off_delta_secs
-      utils.logAndPublishState('fanPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
+      utils.logAndPublishState('fan Periodic', cfg.getFull('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
     }
   }
 
-  manageFan() {
+  control() {
     const currentState = this.getState();
     const currentMs = Date.now();
     const elapsedMs = currentMs - this.getPrevStateChangeMs();
@@ -69,12 +67,14 @@ export default class Fan {
       if (Gpio.accessible) {
         this.IOPin.writeIO(state);
       } else {
-        logger.error('==' + this.getName() + ' IO undefined==');
+        logger.error('==Fan IO undefined==');
       }
       if (this.getStateAndClearNewStateFlag() == state) {
         logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
-        const myevent = new Event('toggleFan', state, 'toggleFan', this.getName(), Date.now());
-        this.trigger('fanStateChange', myevent);
+        // const myevent = new Event('toggleFan', state, 'toggleFan', this.getName(), Date.now());
+        let evt = { name: 'fanState', state: state, description: 'fan State' };
+
+        this.trigger('fanStateChange', evt);
       }
     }
   }

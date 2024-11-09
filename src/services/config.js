@@ -48,7 +48,15 @@ class ConfigHandler {
     }
     return name;
   }
-
+  getFull(stringkey) {
+    const name = getValueByPath(this.config, stringkey);
+    const prefix =getValueByPath(this.config, 'mqtt.topicPrefix');
+    if (name === undefined) {
+      logger.log('error', 'config: ' + stringkey + ' does not exist');
+      throw new Error(stringkey + ' does not exist');
+    }
+    return prefix + name;
+  }
   set(key, valueObj) {
     var currentConfig = this.config
     const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj })
