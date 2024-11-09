@@ -71,11 +71,8 @@ let IOPinAccessorsMixin = {
 
 
   getTelemetryData() {
-
     let telemetry = this.IOPin.getBaseTelemetryData();
-
     logger.log('debug', `Telemetry for ${this.getName()}: ${JSON.stringify(telemetry)}`);
-
     return telemetry;
   }
 

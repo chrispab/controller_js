@@ -21,10 +21,11 @@ export default class Fan {
 
     this.periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+    this.event = {state: null, action: null, trigger: null, time: null};
   }
 
-  fanStateEventHandler = function (state) {
-    utils.logAndPublishState('fanState', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), state ? 1 : 0);
+  fanStateEventHandler = function (event) {
+    utils.logAndPublishState('fanState', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), event.state ? 1 : 0);
   };
 
   process() {
@@ -37,9 +38,9 @@ export default class Fan {
     // such as fanOnMs and fanOffMs
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
-      // Zone/fan_on_delta_secs
+      // fan_on_delta_secs
       utils.logAndPublishState('fanPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
-      // Zone/fan_off_delta_secs
+      // fan_off_delta_secs
       utils.logAndPublishState('fanPeriodic', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
     }
   }
@@ -49,17 +50,14 @@ export default class Fan {
     const currentMs = Date.now();
     const elapsedMs = currentMs - this.getPrevStateChangeMs();
 
-    if (currentState == true) {
+    if (currentState == 1) {
       // is it time to turn off?
       if (elapsedMs >= this.getOnMs()) {
-        // this.turnOff();
         this.toggleFan(0);
       }
     } else {
-      // 0
       // is it time to turn on?
       if (elapsedMs >= this.getOffMs()) {
-        // this.turnOn();
         this.toggleFan(1);
       }
     }
@@ -75,7 +73,12 @@ export default class Fan {
       }
       if (this.getStateAndClearNewStateFlag() == state) {
         logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
-        this.trigger('fanStateChange', this.getState());
+        this.event.action = 'toggleFan';
+        this.event.state = state;
+        this.event.trigger = this.getName();
+        this.event.time = Date.now();
+        // this.setPrevStateChangeMs(Date.now());
+        this.trigger('fanStateChange', this.event);
       }
     }
   }
