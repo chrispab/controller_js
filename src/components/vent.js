@@ -3,8 +3,6 @@ import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
-// import Event from './event.js';
-import Event2 from './event2.js';
 
 const logLevel = 'debug';
 // const logLevel = 'warn';
@@ -43,34 +41,21 @@ export default class Vent {
   }
 
   ventStateEventHandler = function (evt) {
-    //vent powerState
-    // if (evt.name == 'state') {
-    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventStateTopic'), evt.state);
-    // } else if (evt.name == 'speedState') {
-    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventSpeedStateTopic'), evt.state);
-    // } else if (evt.name == 'speedPercent') {
-    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventSpeedPercentTopic'), evt.state);
-    // } else if (evt.name == 'value') {
-    //   utils.logAndPublishState(evt.description, cfg.getFull('mqtt.ventValueTopic'), evt.state);
-    // }
-
     let topic = null;
     if (evt.name === 'state') {
-      topic = cfg.get('mqtt.ventStateTopic');
+      topic = cfg.getFull('mqtt.ventStateTopic');
     } else if (evt.name === 'speedState') {
-      topic = cfg.get('mqtt.ventSpeedStateTopic');
-    }else if (evt.name === 'speedPercent') {
-      topic = cfg.get('mqtt.ventSpeedPercentTopic');
+      topic = cfg.getFull('mqtt.ventSpeedStateTopic');
+    } else if (evt.name === 'speedPercent') {
+      topic = cfg.getFull('mqtt.ventSpeedPercentTopic');
     } else if (evt.name === 'value') {
-      topic = cfg.get('mqtt.ventValueTopic');
+      topic = cfg.getFull('mqtt.ventValueTopic');
     }
     if (topic) {
-      utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + topic, evt.state);
-    }else {
+      utils.logAndPublishState(evt.description, topic, evt.state);
+    } else {
       logger.warn(`ventStateEventHandler: unknown evt.name: ${evt.name}`);
     }
-
-
   };
   process() {
     this.processPeriodicPublication();

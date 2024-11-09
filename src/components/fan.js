@@ -20,7 +20,6 @@ export default class Fan {
 
     this.periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
-    // this.event = {state: null, action: null, trigger: null, time: null};
   }
 
   fanStateEventHandler = function (evt) {
@@ -73,7 +72,6 @@ export default class Fan {
         logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
         // const myevent = new Event('toggleFan', state, 'toggleFan', this.getName(), Date.now());
         let evt = { name: 'fanState', state: state, description: 'fan State' };
-
         this.trigger('fanStateChange', evt);
       }
     }
