@@ -1,10 +1,10 @@
 //object describing event and associated properties
 export default class Event {
-    constructor() {
-        this.description = null;
-        this.state = null;
-        this.action = null;
-        this.trigger = null;
-        this.time = null;
+    constructor(description=null, state=null, action=null, trigger=null, time=null) {
+        this.description = description;
+        this.state = state;
+        this.action = action;
+        this.trigger = trigger;
+        this.time = time;
     }
 }

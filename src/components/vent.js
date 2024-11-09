@@ -3,6 +3,7 @@ import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
+import Event from './event.js';
 
 const logLevel = 'debug';
 // const logLevel = 'warn';

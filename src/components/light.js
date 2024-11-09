@@ -3,6 +3,7 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from "../utils/utils.js";
+import Event from './event.js';
 
 // const logLevel = 'info';
 const logLevel = 'debug';
@@ -32,8 +33,8 @@ export default class Light {
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
   }
 
-  lightStateEventHandler = function (state) {
-    utils.logAndPublishState("lightStateEvent", cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), state ? 1 : 0);
+  lightStateEventHandler = function (evt) {
+    utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lightStateTopic'), evt.state ? 1 : 0);
   };
 
   process() {
@@ -50,7 +51,8 @@ export default class Light {
       //if its a new value publish it
       if (this.hasNewStateAvailable()) {
         this.lastStatePublishedMs = Date.now();
-        this.trigger('lightStateChange', this.getState());
+        const evt = new Event('light sensor interval read', this.getState());
+        this.trigger('lightStateChange', evt);
         this.setNewStateAvailable(false);
       }
     }
@@ -60,7 +62,8 @@ export default class Light {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
       // ensure regular state publishing
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
-      this.trigger('lightStateChange', this.getState());
+      const evt = new Event('light periodic', this.getState());
+      this.trigger('lightStateChange', evt);
       this.lastStatePublishedMs = Date.now();
       this.lastPeriodicPublishedMs = Date.now();
     }

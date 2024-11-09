@@ -3,7 +3,7 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
-
+import Event from './event.js';
 const logLevel = 'debug';
 // const logLevel = 'info';
 
@@ -21,11 +21,11 @@ export default class Fan {
 
     this.periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
-    this.event = {state: null, action: null, trigger: null, time: null};
+    // this.event = {state: null, action: null, trigger: null, time: null};
   }
 
-  fanStateEventHandler = function (event) {
-    utils.logAndPublishState('fanState', cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), event.state ? 1 : 0);
+  fanStateEventHandler = function (evt) {
+    utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.fanStateTopic'), evt.state ? 1 : 0);
   };
 
   process() {
@@ -73,12 +73,8 @@ export default class Fan {
       }
       if (this.getStateAndClearNewStateFlag() == state) {
         logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
-        this.event.action = 'toggleFan';
-        this.event.state = state;
-        this.event.trigger = this.getName();
-        this.event.time = Date.now();
-        // this.setPrevStateChangeMs(Date.now());
-        this.trigger('fanStateChange', this.event);
+        const myevent = new Event('toggleFan', state, 'toggleFan', this.getName(), Date.now());
+        this.trigger('fanStateChange', myevent);
       }
     }
   }
