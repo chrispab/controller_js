@@ -7,12 +7,23 @@ import mqtt from 'mqtt';
 const logLevel = 'debug';
 
 import * as utils from '../utils/utils.js';
+// eslint-disable-next-line no-unused-vars
 import secret from '../secret.js';
+// eslint-disable-next-line no-unused-vars
 import nodemailer from 'nodemailer';
+
+// const wifi = require('node-wifi');
+// Initialize wifi module
+// Absolutely necessary even to set interface to null
+wifi.init({
+  iface: null, // network interface, choose a random wifi interface if set to null
+});
+
 
 class MqttAgent {
   constructor() {
-    const options = {
+    this.name = 'mqttAgent';
+    this.options = {
       will: {
         topic: cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.LWTTopic'),
         retain: true,
@@ -20,8 +31,7 @@ class MqttAgent {
         payload: 'Offline',
       },
     };
-    this.name = 'mqttAgent';
-    this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), options);
+    this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);
     this.processCount = 0;
     this.telemetryIntervalMs = cfg.get('telemetry.interval');
     this.lastTelemetryMs = Date.now() - this.telemetryIntervalMs;
@@ -31,7 +41,6 @@ class MqttAgent {
     this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.outsideTemperature = 7;
-    // this.emailTest();
     utils.sendEmail('zone startup', 'zone startup');
   }
 
@@ -85,39 +94,27 @@ class MqttAgent {
   }
 }
 
-// const wifi = require('node-wifi');
-// Initialize wifi module
-// Absolutely necessary even to set interface to null
-wifi.init({
-  iface: null, // network interface, choose a random wifi interface if set to null
-});
+
 
 //export an instance so single instance can be used
 export const mqttAgent = new MqttAgent();
 export default mqttAgent;
 
-const options = {
-  will: {
-    topic: cfg.get('mqtt.topicPrefix') + '/LWT',
-    retain: true,
-    qos: 2,
-    payload: 'Offline',
-  },
-};
-
 mqttAgent.client.on('connect', function () {
-  logger.info('MQTT client connected:' + JSON.stringify(options));
+  logger.info('MQTT client connected:' + JSON.stringify(mqttAgent.options));
   // client.subscribe("/a", { qos: 0 });
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
   mqttAgent.client.subscribe([
-    'Zone1/high_setpoint/set',
-    'Zone1/low_setpoint/set',
-    'Zone1/vent_on_delta_secs/set',
-    'Zone1/vent_off_delta_secs/set',
-    'Outside_Sensor/tele/SENSOR',
+    cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.highSetpointSetTopic'),
+    cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.lowSetpointSetTopic'),
+
+    cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOnDeltaSecsSetTopic'),
+    cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.ventOffDeltaSecsSetTopic'),
+
+    cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.outsideSensorTopic'),
   ]);
-  //   Zone1/high_setpoint/set
+
   mqttAgent.client.publish(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.LWTTopic'), 'Online', {
     qos: 0,
     retain: true,
@@ -134,7 +131,6 @@ mqttAgent.client.on('packetsend', function () {
 });
 
 mqttAgent.client.on('message', (topic, message) => {
-  
   // logger.warn(`MQTT->msg Received: ${topic}: ${message}`);
 
   switch (topic) {

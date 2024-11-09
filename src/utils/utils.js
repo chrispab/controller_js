@@ -22,7 +22,7 @@ function sendEmail(subject, body) {
   });
    transporter.sendMail(mailOptions, (error, info) => {
      if (error) {
-       logger.log('error', error);
+       logger.log('error', error, { info: info });
      }
    });
 }
@@ -36,16 +36,7 @@ function getHMSStr() {
   return `${hh}:${mm}:${ss}`;
 }
 
-// const wifi = require('node-wifi');
 
-// Initialize wifi module
-// Absolutely necessary even to set interface to null
-// wifi.init({
-//   iface: null, // network interface, choose a random wifi interface if set to null
-// });
-// List the current wifi connections
-
-// export { mod1Function, mod1Function2 }
 
 const logAndPublishState = (comment, topic, state) => {
   var logLevel = 'info';
