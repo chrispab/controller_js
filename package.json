@@ -5,9 +5,9 @@
   "scripts": {
     "go": "cd src && nodemon main.js",
     "live": "cd src && systemctl stop zone_controller.service && nodemon main.js",
+    "start": "node server/index.js",
     "test": "npm run unit",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev",
-    "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "lint": "eslint --ext .js,.vue src test/unit",
     "build": "node build/build.js"
@@ -17,6 +17,7 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "express": "^4.21.1",
     "mqtt": "^5.10.1",
     "node-dht-sensor": "^0.4.3",
     "node-wifi": "^2.0.16",
