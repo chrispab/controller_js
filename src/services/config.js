@@ -1,5 +1,13 @@
 import logger from './logger.js';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+// const defaultPath = './config/default.json';
+// const customPath = './config/custom_config.json';
+const defaultPath = './src/config/default.json';
+const customPath = './src/config/custom_config.json';
+// const defaultPath = '../config/default.json';
+// const customPath = '../config/custom_config.json';
+import { dirname } from 'path';
 
 class ConfigHandler {
   constructor() {
@@ -21,12 +29,18 @@ class ConfigHandler {
 
   load() {
     // load default.json file as an object
+    const __filename = fileURLToPath(import.meta.url);
+    console.log(__filename);
+
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    console.log(__dirname);
+
     var file_content = null;
-    if (fs.existsSync('./config/custom_config.json')) {
+    if (fs.existsSync(customPath)) {
       logger.log('error', 'custom_config.json exists');
-      file_content = fs.readFileSync('./config/custom_config.json');
+      file_content = fs.readFileSync(customPath);
     } else {
-      file_content = fs.readFileSync('./config/default.json');
+      file_content = fs.readFileSync(defaultPath);
       logger.log('error', 'custom_config.json does not exist. Using default.json');
     }
     var content = JSON.parse(file_content);
@@ -68,7 +82,7 @@ class ConfigHandler {
    * @param {Object} configObj - The config object to save.
    * @param {String} [path] - The path to save the config to. Defaults to "./config/custom_config.json".
    */
-  saveConfig(configObj, path = './config/custom_config.json') {
+  saveConfig(configObj, path = customPath) {
     fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
   }
 }

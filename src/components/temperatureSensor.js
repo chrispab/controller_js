@@ -13,8 +13,8 @@ export default class TemperatureSensor {
     this.setName(name);
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
     this.dhtSensorPin = dhtSensorPin;
-    this.temperature = 0;
-    this.humidity = 0;
+    this.temperature = null;
+    this.humidity = null;
     this.sensorReadIntervalMs = cfg.get('temperatureSensor.sensorReadIntervalMs');
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
@@ -56,7 +56,7 @@ export default class TemperatureSensor {
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
       this.readSensor();
       this.lastSensorReadTimeMs = Date.now();
-      if (this.hasNewStateAvailable() && this.getTemperature() !== 0) {
+      if (this.hasNewStateAvailable() && this.getTemperature() !== null) {
         //get value from readSensor()
         // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
         this.lastStatePublishedMs = Date.now();
