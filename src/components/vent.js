@@ -161,8 +161,7 @@ export default class Vent {
     // if at end of ON period
     if (this.ventDarkStatus == true && currentMs > this.ventDarkOnStartMs + this.ventDarkOnDelta) {
       logger.log(logLevel, 'VENT now at end of ON cylce');
-      // now at end of ON cylce
-      // enable off period
+      // now at end of ON cylce, enable off period
       this.ventDarkStatus = false;
       this.turnOff();
       // set time it was switched ON
@@ -172,8 +171,7 @@ export default class Vent {
     // if at end of OFF period
     if (this.ventDarkStatus == false && currentMs > this.ventDarkOffStartMs + this.ventDarkOffDelta) {
       // logger.warn('VENT now at end of OFF cycle');
-      // now at end of OFF cycle
-      // so - enable ON period
+      // now at end of OFF cycle, so - enable ON period
       this.ventDarkStatus = true;
       this.turnOn();
       // set time it was switched ON
@@ -263,10 +261,8 @@ export default class Vent {
       logger.log(logLevel, `ventStateChange: ${ventState}, speedState: ${speedState}`);
 
       let evt = { name: 'state', state: ventState, description: 'vent State' };
-      // let evt = new Event2(item, 'toggleHeater', this.getState(), 'state');
       this.trigger('ventStateChange', evt);
 
-      // const speedState = this.speedPercent == 100 ? 1 : 0;
       evt = { name: 'speedState', state: speedState, description: 'vent SpeedState' };
       this.trigger('ventStateChange', evt);
 

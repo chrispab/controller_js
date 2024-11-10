@@ -1,4 +1,5 @@
 {
+  "version": "0.0.1",
   "zone": {
     "highSetpoint": 22.5,
     "lowSetpoint": 14,
@@ -112,6 +113,8 @@
     "highSetpointSetTopic": "/high_setpoint/set",
     "lowSetpointSetTopic": "/low_setpoint/set",
     "ventOnDeltaSecsSetTopic": "/vent_on_delta_secs/set",
-    "ventOffDeltaSecsSetTopic": "/vent_off_delta_secs/set"
+    "ventOffDeltaSecsSetTopic": "/vent_off_delta_secs/set",
+    "currentSetpointTopic": "/current_setpoint",
+    "versionTopic": "/version"
   }
 }

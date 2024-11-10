@@ -41,11 +41,16 @@ class MqttAgent {
     this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.outsideTemperature = 7;
+    this.currentSetpoint = 0;
+    this.version = cfg.get('version');
     utils.sendEmail('zone startup', 'zone startup');
   }
 
   getName() {
     return this.name;
+  }
+  setCurrentSetpoint(currentSetpoint) {
+    this.currentSetpoint = currentSetpoint;
   }
 
   process(components) {
@@ -71,6 +76,10 @@ class MqttAgent {
       utils.logAndPublishState('mqtt Periodic', cfg.getFull('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
       // lowSetpoint
       utils.logAndPublishState('mqtt Periodic', cfg.getFull('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
+      // currentSetpoint
+      utils.logAndPublishState("mqtt Periodic setpoint", cfg.getFull('mqtt.currentSetpointTopic'), this.currentSetpoint);
+      //version
+      utils.logAndPublishState('mqtt Periodic version', cfg.getFull('mqtt.versionTopic'), this.version);
 
       //publish wifi info
       wifi.getCurrentConnections((error, currentConnections) => {

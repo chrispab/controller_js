@@ -6,6 +6,7 @@ import TemperatureSensor from "./components/temperatureSensor.js";
 import Fan from "./components/fan.js";
 import Heater from "./components/heater.js";
 import Vent from "./components/vent.js";
+import * as utils from './utils/utils.js';
 
 //import services as single instances
 // import os from 'os';
@@ -40,6 +41,8 @@ setInterval(() => {
   if (lightState == 0) {
     setpoint = cfg.get("zone.lowSetpoint");
   }
+  // utils.logAndPublishState("current setpoint", cfg.getFull('mqtt.currentSetpointTopic'), setpoint);
+  mqttAgent.setCurrentSetpoint(setpoint);
 
   vent.control(temperature, setpoint, lightState);
   vent.process();
