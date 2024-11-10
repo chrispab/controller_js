@@ -73,20 +73,20 @@ class MqttAgent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // highSetpoint
-      utils.logAndPublishState('mqtt Periodic', cfg.getFull('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
+      utils.logAndPublishState('mqtt P highSetpoint', cfg.getFull('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
       // lowSetpoint
-      utils.logAndPublishState('mqtt Periodic', cfg.getFull('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
+      utils.logAndPublishState('mqtt P lowSetpoint', cfg.getFull('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
       // currentSetpoint
-      utils.logAndPublishState("mqtt Periodic setpoint", cfg.getFull('mqtt.currentSetpointTopic'), this.currentSetpoint);
+      utils.logAndPublishState("mqtt P currentSetpoint", cfg.getFull('mqtt.currentSetpointTopic'), this.currentSetpoint);
       //version
-      utils.logAndPublishState('mqtt Periodic version', cfg.getFull('mqtt.versionTopic'), this.version);
+      utils.logAndPublishState('mqtt P version', cfg.getFull('mqtt.versionTopic'), this.version);
 
       //publish wifi info
       wifi.getCurrentConnections((error, currentConnections) => {
         if (error) {
           console.log(error);
         } else {
-          utils.logAndPublishState('wifi Periodic', cfg.getFull('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
+          utils.logAndPublishState('rssi P', cfg.getFull('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
       });
     }

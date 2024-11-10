@@ -41,8 +41,7 @@ setInterval(() => {
   if (lightState == 0) {
     setpoint = cfg.get("zone.lowSetpoint");
   }
-  // utils.logAndPublishState("current setpoint", cfg.getFull('mqtt.currentSetpointTopic'), setpoint);
-  mqttAgent.setCurrentSetpoint(setpoint);
+
 
   vent.control(temperature, setpoint, lightState);
   vent.process();
@@ -51,7 +50,8 @@ setInterval(() => {
   heater.process();
 
   fan.process();
-
+  
+  mqttAgent.setCurrentSetpoint(setpoint);
   mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
 }, 1000);

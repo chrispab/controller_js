@@ -3,8 +3,8 @@
   "zone": {
     "highSetpoint": 22.5,
     "lowSetpoint": 14,
-    "periodicPublishIntervalMs": 60000,
-    "name": "zone_1",
+    "periodicPublishIntervalMs": 120000,
+    "name": "zone1",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
       "enabled": false,
