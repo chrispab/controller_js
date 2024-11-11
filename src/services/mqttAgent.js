@@ -138,7 +138,7 @@ mqttAgent.client.on('packetsend', function () {
 });
 
 mqttAgent.client.on('message', (topic, message) => {
-  // logger.warn(`MQTT->msg Received: ${topic}: ${message}`);
+  logger.info(`MQTT<->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
     case cfg.get('mqtt.outsideSensorTopic'):
