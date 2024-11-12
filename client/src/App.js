@@ -20,6 +20,7 @@ function App() {
     setInterval(() => {
       fetchUsers();
     }, 10000);
+    fetchUsers();
   }, []);
 
   return (

@@ -16,7 +16,9 @@ class ConfigHandler {
     this.configChangedDelayBeforeSaveMs = 10000;
 
     this.config = this.load();
-    logger.log('error', 'config: ' + JSON.stringify(this.config, null, 2));
+    // logger.log('warn', 'config: ' + JSON.stringify(this.config, null, 2));
+    logger.log('warn', 'config: loaded from file');
+
   }
 
   process() {
@@ -37,11 +39,11 @@ class ConfigHandler {
 
     var file_content = null;
     if (fs.existsSync(customPath)) {
-      logger.log('error', 'custom_config.json exists');
+      logger.log('warn', `${customPath} exists`);
       file_content = fs.readFileSync(customPath);
     } else {
       file_content = fs.readFileSync(defaultPath);
-      logger.log('error', 'custom_config.json does not exist. Using default.json');
+      logger.log('warn', `${customPath} does not exist. Using ${defaultPath}`);
     }
     var content = JSON.parse(file_content);
     return content;

@@ -33,7 +33,7 @@ class IOBase {
         } else if (direction === 'disabled') {
             logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
         } else {
-            logger.error(`Invalid IO direction value given. Direction: ${direction}`);
+            logger.warn(`Invalid IO direction value given. Direction: ${direction}`);
         }
 
     }
@@ -45,9 +45,6 @@ class IOBase {
     setName(name) {
         this.name = name;
     }
-    getIOPin() {
-        return this.IOPin;
-    }
 
     setIODirection(direction) {
         if (this.IO && typeof this.IO.setDirection === 'function') {
@@ -57,13 +54,16 @@ class IOBase {
         }
     }
 
-    setIOPin(IOPin) {
-        if (typeof IOPin === 'number' && IOPin >= 0) {
-            this.IOPin = IOPin;
-        } else {
-            logger.error("Invalid IOPin value.");
-        }
-    }
+    // setIOPin(IOPin) {
+    //     if (typeof IOPin === 'number' && IOPin >= 0) {
+    //         this.IOPin = IOPin;
+    //     } else {
+    //         logger.error("Invalid IOPin value.");
+    //     }
+    // }
+    // getIOPin() {
+    //     return this.IOPin;
+    // }
     readIO() {
         if (this.IO && typeof this.IO.readSync === 'function') {
             return this.IO.readSync();
