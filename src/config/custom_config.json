@@ -50,13 +50,13 @@
     }
   },
   "temperatureSensor": {
-    "sensorReadIntervalMs": 30000,
+    "sensorReadIntervalMs": 15000,
     "publishStateIntervalMs": 60000
   },
   "light": {
     "sensorReadIntervalMs": 60000,
     "publishStateIntervalMs": 60000,
-    "periodicPublishIntervalMs": 30000
+    "periodicPublishIntervalMs": 120000
   },
   "vent": {
     "onMs": 60000,

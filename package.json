@@ -6,6 +6,7 @@
     "go": "cd src && nodemon main.js",
     "live": "cd src && systemctl stop zone_controller.service && nodemon main.js",
     "start": "systemctl stop zone_controller.service && nodemon server/index.js",
+    "all": "systemctl stop zone_controller.service && nodemon server/index.js",
     "test": "npm run unit",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
