@@ -21,8 +21,8 @@ export default class Vent {
     this.setOnMs(cfg.get('vent.onMs'));
     this.setOffMs(cfg.get('vent.offMs'));
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-    this.ventDarkOnDelta = 10000; // vent on time
-    this.ventDarkOffDelta = 60000;
+    this.ventDarkOnDelta = cfg.get('vent.ventDarkOnDelta'); // vent on time
+    this.ventDarkOffDelta = cfg.get('vent.ventDarkOffDelta'); // vent off time
     this.ventDarkOnStartMs = 0;
     this.ventDarkOffStartMs = 0;
     this.speedPercent = cfg.get('vent.speedPercent');
@@ -110,7 +110,7 @@ export default class Vent {
       logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse');
     } else if (this.ventOverride == true && elapsedMsSinceLastStateChange >= this.ventOverridePulseOnDelta) {
       // temp below target, change state to OFF after pulse delay
-      this.speedPercent = 50;
+      this.speedPercent = 0;
       this.turnOff();
       this.ventOverride = false;
       logger.log(logLevel, 'VENT OFF - temp ok, OVERRIDE - OFF');
@@ -125,6 +125,7 @@ export default class Vent {
         // if the vent is off, we must wait for the interval to expire before turning it on
         // if time is up, so change the state to ON
         if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
+          this.speedPercent = 50;
           this.turnOn();
           logger.log(logLevel, 'VENT ON cycle start');
         } else {
@@ -148,11 +149,12 @@ export default class Vent {
     // if light off - do a minimal vent routine
     const currentMs = Date.now();
 
-    this.speedPercent = 50;
+    
     if (this.ventDarkStatus == 'inactive') {
       logger.log(logLevel, 'VENT: lets start the vent dark ON period');
       // lets start the vent dark ON period
       this.ventDarkStatus = true;
+      this.speedPercent = 50;
       this.turnOn();
       // set time it was switched ON
       this.ventDarkOnStartMs = currentMs;
@@ -163,6 +165,7 @@ export default class Vent {
       logger.log(logLevel, 'VENT now at end of ON cylce');
       // now at end of ON cylce, enable off period
       this.ventDarkStatus = false;
+      // this.speedPercent = 0;
       this.turnOff();
       // set time it was switched ON
       this.ventDarkOffStartMs = currentMs;
@@ -173,7 +176,9 @@ export default class Vent {
       // logger.warn('VENT now at end of OFF cycle');
       // now at end of OFF cycle, so - enable ON period
       this.ventDarkStatus = true;
+      this.speedPercent = 50;
       this.turnOn();
+
       // set time it was switched ON
       this.ventDarkOnStartMs = currentMs;
       return;
@@ -196,6 +201,7 @@ export default class Vent {
         // console.log("Turning on vent");
         this.ventPowerPin.writeIO(1);
         this.ventPowerPin.setState(1);
+
         if (this.speedPercent == 100) {
           this.ventSpeedPin.writeIO(1);
           this.ventSpeedPin.setState(1);
@@ -222,15 +228,10 @@ export default class Vent {
       if (Gpio.accessible) {
         this.ventPowerPin.writeIO(0);
         this.ventPowerPin.setState(0);
-        if (this.speedPercent == 100) {
-          this.ventSpeedPin.writeIO(1);
-          this.ventSpeedPin.setState(1);
-        } else if (this.speedPercent == 50) {
-          this.ventSpeedPin.writeIO(0);
-          this.ventSpeedPin.setState(0);
-        } else {
-          logger.log('error', '==Vent speed invalid==');
-        }
+        this.speedPercent = 0;
+
+        this.ventSpeedPin.writeIO(0);
+        this.ventSpeedPin.setState(0);
       } else {
         logger.log('error', '==Vent IO undefined==');
       }

@@ -1,8 +1,8 @@
 {
   "version": "0.0.1",
   "zone": {
+    "lowSetpoint": 14.5,
     "highSetpoint": 22.5,
-    "lowSetpoint": 14,
     "periodicPublishIntervalMs": 120000,
     "name": "zone1",
     "customConfigFilename": "customConfig.json",
@@ -65,7 +65,9 @@
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
     "lightOnSetpointOffset": 0,
-    "ventOverridePulseOnDelta": 5000
+    "ventOverridePulseOnDelta": 5000,
+    "ventDarkOnDelta": 9000,
+    "ventDarkOffDelta": 50000
   },
   "heater": {
     "onMs": 10000,
