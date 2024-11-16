@@ -59,15 +59,17 @@
     "periodicPublishIntervalMs": 120000
   },
   "vent": {
+    "offMs": 115000,
     "onMs": 60000,
-    "offMs": 160000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
     "ventDarkOnDelta": 9000,
-    "ventDarkOffDelta": 50000
+    "ventDarkOffDelta": 50000,
+    "ventOnDarkMs": 18000,
+    "ventOffDarkMs": 99000
   },
   "heater": {
     "onMs": 10000,
@@ -100,22 +102,29 @@
     "ventSpeedStateTopic": "/VentSpeedStatus",
     "ventSpeedPercentTopic": "/VentPercent",
     "ventValueTopic": "/VentValue",
-    "fanStateTopic": "/FanStatus",
-    "heaterStateTopic": "/HeaterStatus",
     "ventOnSecsTopic": "/vent_on_delta_secs",
     "ventOffSecsTopic": "/vent_off_delta_secs",
+    "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
+    "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
+    "ventOnDeltaSecsSetTopic": "/vent_on_delta_secs/set",
+    "ventOffDeltaSecsSetTopic": "/vent_off_delta_secs/set",
+    "ventOnDarkSecsTopic": "/vent_on_dark_delta_secs",
+    "ventOffDarkSecsTopic": "/vent_off_dark_delta_secs",
+    "ventOnDarkSecsSetTopic": "/vent_on_dark_delta_secs/set",
+    "ventOffDarkSecsSetTopic": "/vent_off_dark_delta_secs/set", 
+    "fanStateTopic": "/FanStatus",
+    "heaterStateTopic": "/HeaterStatus",
+
     "highSetpointTopic": "/high_setpoint",
     "lowSetpointTopic": "/low_setpoint",
     "telemetryTopic": "/telemetry",
-    "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
-    "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
+
     "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
     "fanOffDeltaSecsTopic": "/fan_off_delta_secs",
     "outsideSensorTopic": "Outside_Sensor/tele/SENSOR",
     "highSetpointSetTopic": "/high_setpoint/set",
     "lowSetpointSetTopic": "/low_setpoint/set",
-    "ventOnDeltaSecsSetTopic": "/vent_on_delta_secs/set",
-    "ventOffDeltaSecsSetTopic": "/vent_off_delta_secs/set",
+
     "currentSetpointTopic": "/current_setpoint",
     "versionTopic": "/version"
   }

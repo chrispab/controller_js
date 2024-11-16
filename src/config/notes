@@ -39,3 +39,6 @@ fs.writeFileSync("development.json", JSON.stringify(content));
 src: http://192.168.0.100:3000/d/_RJUJfWgz/zone-1-and-2?refresh=1m&orgId=1
 
 http://192.168.0.100:3000/d/edwbpy1r73o5ca/zone-1-new?refresh=1m?orgId=1
+
+
+http://192.168.0.100:3000/d/de443mc5uiosgf/zone-3-new?refresh=1m?orgId=1

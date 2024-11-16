@@ -10,7 +10,7 @@ const logLevel = 'debug';
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
     this.IOPin = new IOBase(ventPowerPin, 'dummy vent', 0);
-    this.setState(false); // this.state = false;
+    this.setState(false); //0, 1 or 2. 0%, 50%, 100%. off,medium,full
     this.setName(name);
     // two Pins, on/off and speed 50-100%
     this.ventPowerPin = new IOBase(ventPowerPin, 'out', 0);
@@ -21,8 +21,8 @@ export default class Vent {
     this.setOnMs(cfg.get('vent.onMs'));
     this.setOffMs(cfg.get('vent.offMs'));
     this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-    this.ventDarkOnDelta = cfg.get('vent.ventDarkOnDelta'); // vent on time
-    this.ventDarkOffDelta = cfg.get('vent.ventDarkOffDelta'); // vent off time
+    this.ventOnDarkMs = cfg.get('vent.ventOnDarkMs'); // vent on time
+    this.ventOffDarkMs = cfg.get('vent.ventOffDarkMs'); // vent off time
     this.ventDarkOnStartMs = 0;
     this.ventDarkOffStartMs = 0;
     this.speedPercent = cfg.get('vent.speedPercent');
@@ -66,9 +66,11 @@ export default class Vent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // ZoneN/vent_on_delta_secs
-      utils.logAndPublishState('vent Periodic', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
       // ZoneN/vent_off_delta_secs
-      utils.logAndPublishState('vent Periodic', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
     }
   }
 
@@ -76,13 +78,13 @@ export default class Vent {
     // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
 
     if (lightState == 1) {
-      this.lightVentStateControl(currentTemp, setPointTemperature);
+      this.darkVentControl(currentTemp, setPointTemperature);
     } else {
-      this.darkVentStateControl();
+      this.lightVentControl();
     }
   }
 
-  lightVentStateControl(currentTemp, setPointTemperature) {
+  darkVentControl(currentTemp, setPointTemperature) {
     const currentMs = Date.now();
     const elapsedMsSinceLastStateChange = currentMs - this.getPrevStateChangeMs();
     // const lowerHys = setPointTemperature - 0.1;
@@ -105,8 +107,8 @@ export default class Vent {
     // temp above target, change state to ON, full speed
     if (currentTemp > setPointTemperature + this.lightOnSetpointOffset) {
       this.ventOverride = true;
-      this.speedPercent = 100;
-      this.turnOn();
+      // this.speedPercent = 100;
+      this.turnOn(100);
       logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse');
     } else if (this.ventOverride == true && elapsedMsSinceLastStateChange >= this.ventOverridePulseOnDelta) {
       // temp below target, change state to OFF after pulse delay
@@ -125,8 +127,8 @@ export default class Vent {
         // if the vent is off, we must wait for the interval to expire before turning it on
         // if time is up, so change the state to ON
         if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
-          this.speedPercent = 50;
-          this.turnOn();
+          // this.speedPercent = 50;
+          this.turnOn(50);
           logger.log(logLevel, 'VENT ON cycle start');
         } else {
           logger.log(logLevel, 'Vent OFF - during cycle OFF period');
@@ -145,23 +147,22 @@ export default class Vent {
     }
   }
 
-  darkVentStateControl() {
+  lightVentControl() {
     // if light off - do a minimal vent routine
     const currentMs = Date.now();
 
-    
     if (this.ventDarkStatus == 'inactive') {
       logger.log(logLevel, 'VENT: lets start the vent dark ON period');
       // lets start the vent dark ON period
       this.ventDarkStatus = true;
-      this.speedPercent = 50;
-      this.turnOn();
+      // this.speedPercent = 50;
+      this.turnOn(50);
       // set time it was switched ON
       this.ventDarkOnStartMs = currentMs;
       return;
     }
     // if at end of ON period
-    if (this.ventDarkStatus == true && currentMs > this.ventDarkOnStartMs + this.ventDarkOnDelta) {
+    if (this.ventDarkStatus == true && currentMs > this.ventDarkOnStartMs + this.ventOnNightMs) {
       logger.log(logLevel, 'VENT now at end of ON cylce');
       // now at end of ON cylce, enable off period
       this.ventDarkStatus = false;
@@ -172,12 +173,12 @@ export default class Vent {
       return;
     }
     // if at end of OFF period
-    if (this.ventDarkStatus == false && currentMs > this.ventDarkOffStartMs + this.ventDarkOffDelta) {
+    if (this.ventDarkStatus == false && currentMs > this.ventDarkOffStartMs + this.ventOffNightMs) {
       // logger.warn('VENT now at end of OFF cycle');
       // now at end of OFF cycle, so - enable ON period
       this.ventDarkStatus = true;
-      this.speedPercent = 50;
-      this.turnOn();
+      // this.speedPercent = 50;
+      this.turnOn(50);
 
       // set time it was switched ON
       this.ventDarkOnStartMs = currentMs;
@@ -192,10 +193,16 @@ export default class Vent {
     return telemetry;
   }
 
-  turnOn() {
-    const ventValue = 1 + (this.speedPercent == 100 ? 1 : 0);
-
+  turnOn(powerLevel = 50) {
+    this.speedPercent = powerLevel;
+    if (powerLevel <= 0) {
+      this.turnOff();
+      return;
+    }
+    // const ventValue = 1 + (this.speedPercent == 100 ? 1 : 0);
+    const ventValue = 1 + (powerLevel == 100 ? 1 : 0);
     this.setState(ventValue);
+
     if (this.hasNewStateAvailable()) {
       if (Gpio.accessible) {
         // console.log("Turning on vent");
@@ -222,13 +229,15 @@ export default class Vent {
 
   turnOff() {
     // do not write to pin port if the state is the same as previous
+
+    this.speedPercent = 0;
     const ventValue = 0;
     this.setState(ventValue);
+
     if (this.hasNewStateAvailable()) {
       if (Gpio.accessible) {
         this.ventPowerPin.writeIO(0);
         this.ventPowerPin.setState(0);
-        this.speedPercent = 0;
 
         this.ventSpeedPin.writeIO(0);
         this.ventSpeedPin.setState(0);
