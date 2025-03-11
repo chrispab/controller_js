@@ -1,42 +1,27 @@
-import logger from "./logger.js";
+import logger from './logger.js';
+import cfg from './config.js';
+import mqtt from 'mqtt';
+import wifi from 'node-wifi';
 
-// import cfg from "config";
-import cfg from "./config.js";
-
-// import utils from "../utils/utils.js";
-// import {wifi} from "../utils/utils.js";
-
-//Assign the event handler to an event:
-// eventEmitter.on('scream', ventEvent);
-// import mqtt from 'mqtt';
-// import { log } from "console";
-// const client = mqtt.connect(config.mqtt.brokerUrl);
-
-import mqtt from "mqtt";
-// const client = mqtt.connect(config.mqtt.brokerUrl);
-
-import { mod1Function } from "../utils/utils.js";
+// Initialize wifi module (important even if iface is null)
+wifi.init({ iface: null });
 
 class MqttAgent {
   constructor() {
     const options = {
       will: {
-        topic: cfg.get("mqtt.topicPrefix") + "/LWT",
+        topic: cfg.get('mqtt.topicPrefix') + '/LWT',
         retain: true,
         qos: 2,
-        payload: "Offline",
+        payload: 'Offline',
       },
     };
-    this.client = mqtt.connect(cfg.get("mqtt.brokerUrl"), options);
-    // this.brokerUrl = brokerUrl;
-    this.processCount = 0;
-    // this.mqttClient = mqtt.connect(this.brokerUrl);
-    this.telemetryIntervalMs = cfg.get("telemetry.interval");
+    this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), options);
+    this.telemetryIntervalMs = cfg.get('telemetry.interval');
     this.lastTelemetryMs = Date.now() - this.telemetryIntervalMs;
-    this.logLevel = "info";
-
-    this.highSetpoint = cfg.get("zone.highSetpoint");
-    this.lowSetpoint = cfg.get("zone.lowSetpoint");
+    this.logLevel = 'info';
+    this.highSetpoint = cfg.get('zone.highSetpoint');
+    this.lowSetpoint = cfg.get('zone.lowSetpoint');
   }
 
   publishAndLog(topic, payload) {
@@ -44,186 +29,125 @@ class MqttAgent {
     logger.log(this.logLevel, `MQTT->${topic}: ${payload}`);
   }
 
-  process(components) {
+  async getWifiSignalStrength() {
+    try {
+      const connections = await this.getCurrentConnectionsPromise();
+      if (connections && connections.length > 0) {
+        return connections[0].quality;
+      } else {
+        logger.warn('No WiFi connections found.');
+        return null; // Or a default value like -1
+      }
+    } catch (error) {
+      logger.error('Error getting WiFi signal strength:', error);
+      return null;
+    }
+  }
+
+  getCurrentConnectionsPromise() {
+    return new Promise((resolve, reject) => {
+      wifi.getCurrentConnections((error, connections) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(connections);
+        }
+      });
+    });
+  }
+
+  async process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
-    // logger.info(`components: ${(components)}`); //JSON.stringify(components}`);
-    // this.telemetry(components);
+
     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
-      this.client.publish(
-        cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic"),
-        `${data}`
-      );
-      //   logger.log(this.logLevel, `MQTT->Telemetry: ${data}`);
-      logger.log('info', 'MQTT->Telemetry: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.telemetryTopic") + ": " + (data)}`);
+      this.publishAndLog(cfg.get('mqtt.topicPrefix') + cfg.get('mqtt.telemetryTopic'), data);
 
-      //publish wifi info
-      const wifiInfo = wifi.getCurrentConnections(
-        (error, currentConnections) => {
-          if (error) {
-            console.log(error);
-          } else {
-            // console.log(currentConnections);
-            // return currentConnections;
-            this.client.publish(
-              cfg.get("mqtt.topicPrefix") + "/rssi",
-              `${currentConnections[0].quality}`
-            );
-          }
-        }
-      );
-      // logger.error("client connected:" + (mod1Function()));
-      // console.log("xx=============:" + wifiInfo);
+      const rssi = await this.getWifiSignalStrength();
+      let rssiData; // Declare rssiData outside the if block
 
-      // this.client.publish(cfg.get("mqtt.topicPrefix") + "/rssi", `${myfunc()[0].quality}`);
+      // if (rssi !== null) {
+      console.log(`/rssi ${rssi}`);
+      if (rssi !== null) {
+        rssiData = { state: rssi }; // Assign to rssiData inside the if block
+      } else {
+        rssiData = { state: null, error: 'Could not get rssi' }; //handle null values
+      }
+      this.publishAndLog(cfg.get('mqtt.topicPrefix') + '/rssi', JSON.stringify(rssiData));
+      // }
     }
   }
 
+  // getTelemetryData(components) {
+  //   try {
+  //     const telemetryData = components.map((component, index) => {
+  //       const componentData = component.getTelemetryData();
+  //       console.log(`Telemetry data from component ${index} (${component.getName()}):`, componentData, typeof componentData); // Added logging
+  //       return componentData;
+  //     });
+  //     return JSON.stringify(telemetryData);
+  //   } catch (error) {
+  //     logger.error("Error creating telemetry data:", error);
+  //     return JSON.stringify({ error: "Failed to create telemetry data" });
+  //   }
+  // }
 
   getTelemetryData(components) {
-    const componentData = [];
-    // let componentData = [];
+    try {
+      const telemetryData = components.map((component, index) => {
+        const componentData = component.getTelemetryData();
+        const type = typeof componentData;
+        console.log(
+          `Component ${index} (${component.getName()}): Data = ${JSON.stringify(componentData)}, Type = ${type}`
+        );
 
-    for (const component of components) {
-      var teledata = component.getTelemetryData();
-      var jsoncomponent = {};
-      jsoncomponent = JSON.stringify(teledata);
+        if (type !== 'object' && type !== 'string') {
+          console.error(`Component ${index} (${component.getName()}) returned invalid data type: ${type}`);
+        }
 
-      const obj1 = JSON.parse(JSON.stringify(teledata));
-
-      componentData.push(JSON.stringify(obj1));
-
+        return componentData; // Still return the data even if it's not an object, to see the effect on the final JSON string
+      });
+      const jsonData = JSON.stringify(telemetryData);
+      console.log('Final Telemetry JSON:', jsonData);
+      return jsonData;
+    } catch (error) {
+      logger.error('Error creating telemetry data:', error);
+      return JSON.stringify({ error: 'Failed to create telemetry data' });
     }
-
-    var $stringData = JSON.stringify(componentData);
-    var $arrStringData = componentData.toString();
-    // logger.info("2======> " + componentData.toString());
-
-    return (componentData.toString());
   }
 }
 
-// const wifi = require('node-wifi');
-import wifi from "node-wifi";
-// Initialize wifi module
-// Absolutely necessary even to set interface to null
-wifi.init({
-  iface: null, // network interface, choose a random wifi interface if set to null
-});
-// List the current wifi connections
-const myfunc = () =>
-  wifi.getCurrentConnections((error, currentConnections) => {
-    if (error) {
-      console.log(error);
-    } else {
-      // console.log(currentConnections);
-      return currentConnections;
-    }
-  });
-
-function getwifiinfo() {
-  let mycurrentConnections = [];
-
-  wifi.getCurrentConnections((error, currentConnections) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("function getwifiinfo()");
-      // console.log(currentConnections);
-      mycurrentConnections = currentConnections;
-      // return currentConnections;
-    }
-  });
-  return mycurrentConnections;
-}
-
-//export an instance so single instance can be used
+// Export an instance for singleton behavior
 export const mqttAgent = new MqttAgent();
 export default mqttAgent;
 
-const options = {
-  will: {
-    topic: cfg.get("mqtt.topicPrefix") + "/LWT",
-    retain: true,
-    qos: 2,
-    payload: "Offline",
-  },
-};
-
-
-mqttAgent.client.on("connect", function () {
-  logger.info("MQTT client connected:" + JSON.stringify(options));
-  // client.subscribe("/a", { qos: 0 });
-  // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
-  // client.end();
-  mqttAgent.client.subscribe(["Zone1/high_setpoint/set", "Zone1/low_setpoint/set"]);
-  //   Zone1/high_setpoint/set
-  mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", {
+mqttAgent.client.on('connect', () => {
+  logger.info('MQTT client connected:', JSON.stringify(mqttAgent.client.options));
+  mqttAgent.client.subscribe([
+    cfg.get('mqtt.topicPrefix') + '/high_setpoint/set',
+    cfg.get('mqtt.topicPrefix') + '/low_setpoint/set',
+  ]);
+  mqttAgent.publishAndLog(cfg.get('mqtt.topicPrefix') + '/LWT', 'Online', {
     qos: 0,
     retain: true,
   });
 });
 
-mqttAgent.client.on("packetsend", function () {
-  // logger.warn(".........published:" + JSON.stringify(options));
-  // client.subscribe("/a", { qos: 0 });
-  // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
-  // client.end();
-  // mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
-  // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
-});
-// # publish(topic, payload=None, qos=0, retain=False)
-// MQTTClient.publish(zoneName + "/LWT", "Online", 0, True)
-
-mqttAgent.client.on("message", (topic, message) => {
-  // console.log(`Received message on topic ${topic}: ${message}`);
+mqttAgent.client.on('message', (topic, message) => {
   logger.warn(`Received message on topic ${topic}: ${message}`);
-
-  // const expr = 'Papayas';
+  //Simplified message handling - moved to a switch case
+  const topicPrefix = cfg.get('mqtt.topicPrefix');
   switch (topic) {
-    case (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set"):
-      logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (message)}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${message}`);
-      //set the high setpoint in the config object
-      const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
-
-      // const obj1 = { highSetpoint: Number(message.toString())  };
-      // const obj1 = Number(message.toString());
-      // const mergedObj = { ...obj1, ...obj2 };
-      //   cfg.set("zone.highSetpoint", Number(message.toString()));
-      // const sym2 = Symbol("zone.highSetpoint");
-      cfg.set("zone", obj1);
-
-
-      // cfg.set("zone.highSetpoint", obj1);
+    case `${topicPrefix}/high_setpoint/set`:
+      cfg.set('zone.highSetpoint', Number(message.toString()));
+      mqttAgent.publishAndLog(`${topicPrefix}/high_setpoint`, cfg.get('zone.highSetpoint'));
       break;
-    case (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set"):
-      logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (message)}`);
-      mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${message}`);
-      //set the low setpoint in the config object
-      cfg.set("zone.lowSetpoint", message);
+    case `${topicPrefix}/low_setpoint/set`:
+      cfg.set('zone.lowSetpoint', Number(message.toString()));
+      mqttAgent.publishAndLog(`${topicPrefix}/low_setpoint`, cfg.get('zone.lowSetpoint'));
       break;
     default:
-      logger.error(`Topic- ${topic} - is not recognised.`);
+      logger.error(`Topic "${topic}" not recognized.`);
   }
-
-  //   Zone1/high_setpoint/set
-  // if (topic == (cfg.get("mqtt.topicPrefix") + "/high_setpoint/set")) {
-  //   //get the payload
-  //   const payload = message;
-  //   //set the high setpoint in the config object
-  //   // cfg.set("zone.highSetpoint", payload);
-  //   logger.log('info', 'MQTT->highSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic") + ": " + (payload)}`);
-  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.highSetpointTopic"), `${payload}`);
-
-  //   mqttAgent.highSetpoint = payload;
-
-  // } else if (topic == (cfg.get("mqtt.topicPrefix") + "/low_setpoint/set")) {
-  //   const payload = message;
-  //   // cfg.set("zone.lowSetpoint", payload);
-  //   logger.log('info', 'MQTT->lowSetpoint: ' + `${cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic") + ": " + (payload)}`);
-  //   mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.lowSetpointTopic"), `${payload}`);
-  //   mqttAgent.lowSetpoint = payload;
-  // }
 });
