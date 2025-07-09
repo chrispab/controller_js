@@ -27,7 +27,7 @@ export default class Fan {
   };
 
   process() {
-    this.control();
+    // this.control();
     this.periodicPublication();
   }
 

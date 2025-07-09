@@ -11,37 +11,55 @@ const customPath = resolve(__dirname, '../config/custom_config.json');
 
 class ConfigHandler {
   constructor() {
+    this.config = this.load();
     this.configHasChanged = false;
     this.configChangedTime = null;
-    this.configChangedDelayBeforeSaveMs = 10000;
-
-    this.config = this.load();
-    // logger.log('warn', 'config: ' + JSON.stringify(this.config, null, 2));
-    logger.log('warn', 'config: loaded from file');
-
+    this.delayBeforeConfigSaveMs = this.get('config.delayBeforeConfigSaveMs');
   }
 
+  /**
+   * Processes the configuration, checking if it has changed and saving it if enough time has passed.
+   * This method is typically called periodically to ensure configuration changes are persisted.
+   * @returns {void}
+   */
   process() {
-    if (this.configHasChanged && Date.now() - this.configChangedTime > this.configChangedDelayBeforeSaveMs) {
+    // Check if config has changed and if enough time has passed to save it
+    if (this.configHasChanged && Date.now() - this.configChangedTime > this.delayBeforeConfigSaveMs) {
       this.save();
       this.configHasChanged = false;
       this.configChangedTime = null;
     }
   }
 
+  /**
+   * Loads the configuration from either the custom configuration file if it exists,
+   * or falls back to the default configuration file.
+   * @returns {object} The parsed configuration object.
+   */
   load() {
+    // Initialize file_content to null
     var file_content = null;
+    // Check if the custom configuration file exists
     if (fs.existsSync(customPath)) {
-      logger.log('warn', `${customPath} exists`);
+      logger.log('warn', `custom configuration file ${customPath} exists`);
+      // If it exists, read its content
       file_content = fs.readFileSync(customPath);
     } else {
+      // If not, read the content of the default configuration file
       file_content = fs.readFileSync(defaultPath);
-      logger.log('warn', `${customPath} does not exist. Using ${defaultPath}`);
+      logger.log('warn', `custom configuration file ${customPath} does not exist. Using default configuration file ${defaultPath}`);
     }
+    // Parse the JSON content and return the resulting object
     var content = JSON.parse(file_content);
+    logger.log('warn',  `custom configuration file ${customPath} loaded`);
+
     return content;
   }
 
+  /**
+   * Saves the current configuration to the custom configuration file.
+   * @returns {void}
+   */
   save() {
     this.saveConfig(this.config);
   }
@@ -58,11 +76,16 @@ class ConfigHandler {
       logger.log('error', 'config: ' + stringkey + ' does not exist');
       throw new Error(stringkey + ' does not exist');
     }
-    // logger.log('info', 'config get stringkey: ' + stringkey + ' value: ' + value); 
+    // logger.log('info', 'config get stringkey: ' + stringkey + ' value: ' + value);
     return value;
   }
 
-
+  /**
+   * Retrieves a value from the configuration using a dot-notation path and prepends the MQTT topic prefix.
+   * @param {string} stringkey - The dot-notation path to the configuration property (e.g., 'mqtt.fanStateTopic').
+   * @returns {string} The value of the configuration property with the MQTT topic prefix.
+   * @throws {Error} If the key or the MQTT topic prefix does not exist in the configuration.
+   */
   getWithMQTTPrefix(stringkey) {
     const value = getValueByPath(this.config, stringkey);
     const prefix = getValueByPath(this.config, 'mqtt.topicPrefix');
@@ -72,6 +95,7 @@ class ConfigHandler {
     }
     return prefix + value;
   }
+  
   /**
    * Sets a value in the configuration using a dot-notation path.
    * @param {string} path - The path to the property (e.g., 'zone.highSetpoint').

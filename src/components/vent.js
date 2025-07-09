@@ -4,8 +4,8 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
 
-const logLevel = 'debug';
-// const logLevel = 'warn';
+// const logLevel = 'debug';
+const logLevel = 'warn';
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
@@ -40,6 +40,11 @@ export default class Vent {
     this.on('ventStateChange', this.ventStateEventHandler);
   }
 
+  /**
+   * Handles the 'ventStateChange' event by logging and publishing the vent's state to the appropriate MQTT topic.
+   *
+   * @param {object} evt - The event object containing the name, state, and description of the vent's state change.
+   */
   ventStateEventHandler = function (evt) {
     let topic = null;
     if (evt.name === 'state') {
@@ -51,16 +56,25 @@ export default class Vent {
     } else if (evt.name === 'value') {
       topic = cfg.getWithMQTTPrefix('mqtt.ventValueTopic');
     }
+    logger.log(logLevel, "ventStateEventHandler: evt.name  " + evt.name );
+
     if (topic) {
       utils.logAndPublishState(evt.description, topic, evt.state);
     } else {
       logger.warn(`ventStateEventHandler: unknown evt.name: ${evt.name}`);
     }
+    logger.log(logLevel,"topic: " + topic + " evt.state: "+ evt.state);
   };
+
+
   process() {
     this.processPeriodicPublication();
   }
 
+  /**
+   * Publishes periodic telemetry data for the vent, including on/off delta times for both light and dark conditions.
+   * This ensures that the vent's configuration parameters are regularly updated to the MQTT broker.
+   */
   processPeriodicPublication() {
     // ensure regular publishing of additional properties
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
@@ -187,12 +201,22 @@ export default class Vent {
     return;
   }
 
+  /**
+   * Retrieves telemetry data for the vent.
+   *
+   * @returns {object} The telemetry data for the vent.
+   */
   getTelemetryData() {
     let telemetry = this.getTelemetryData();
     logger.log(logLevel, `tele vent: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return telemetry;
   }
 
+  /**
+   * Turns on the vent at a specified power level.
+   *
+   * @param {number} powerLevel - The desired power level for the vent (0, 50, or 100). Defaults to 50.
+   */
   turnOn(powerLevel = 50) {
     this.speedPercent = powerLevel;
     if (powerLevel <= 0) {
@@ -258,6 +282,11 @@ export default class Vent {
     return this.speedPercent;
   }
 
+  /**
+   * Emits state change events for the vent if its state has changed.
+   * This includes the vent's power state, speed state, speed percentage, and a combined vent value.
+   * @returns {boolean} True if a new state was available and events were emitted, false otherwise.
+   */
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
       if (this.getStateAndClearNewStateFlag() > 0) {

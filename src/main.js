@@ -49,6 +49,7 @@ setInterval(() => {
   heater.control(temperature, setpoint, lightState, mqttAgent.outsideTemperature);
   heater.process();
 
+  fan.control();
   fan.process();
   
   mqttAgent.setactiveSetpoint(setpoint);

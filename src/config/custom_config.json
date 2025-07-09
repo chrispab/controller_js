@@ -9,8 +9,10 @@
     "telemetry": {
       "enabled": false,
       "interval": 300000
-    },
-    "configChangedDelayBeforeSaveMs": 10000
+    }
+  },
+  "config": {
+    "delayBeforeConfigSaveMs": 10000
   },
   "system": {
     "name": "system_1"
@@ -24,7 +26,6 @@
     "enabled": true,
     "level": "info"
   },
-  "log_level": "info",
   "hardware": {
     "dhtSensor": {
       "pin": 3,
@@ -60,7 +61,7 @@
   },
   "vent": {
     "offMs": 30000,
-    "onMs": 60000,
+    "onMs": 175000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,

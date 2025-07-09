@@ -139,7 +139,7 @@ mqttAgent.client.on('packetsend', function () {
 });
 
 mqttAgent.client.on('message', (topic, message) => {
-  logger.log('error', `MQTT<->msg Received: ${topic}: ${message}`);
+  // logger.log('error', `MQTT<->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
     case cfg.get('mqtt.outsideSensorTopic'): {
@@ -154,7 +154,7 @@ mqttAgent.client.on('message', (topic, message) => {
         const temperature = obj?.[sensorName]?.['Temperature'];
 
         if (typeof temperature !== 'undefined') {
-          logger.log('error', `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
+          // logger.log('error', `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
           mqttAgent.outsideTemperature = temperature;
         } else {
           logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);

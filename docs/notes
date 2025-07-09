@@ -4,11 +4,17 @@ ssh pi@192.168.0.151
 
 - stop python prog if running
 sudo systemctl stop zone_controller.service
+sudo systemctl disable zone_controller.service
+sudo systemctl daemon-reload
 
 - run js prog
 cd controller_js
 npm run live
 
+sudo systemctl enable controller_js.service
+sudo systemctl start controller_js.service
+sudo systemctl status controller_js.service
+journalctl -u controller_js.service -f
 
 
 7.1. Restart the application automatically
