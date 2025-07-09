@@ -63,12 +63,15 @@ class ConfigHandler {
     }
     return prefix + name;
   }
-  set(key, valueObj) {
-    var currentConfig = this.config;
-    const mergedObj = fullMerge({ ...currentConfig }, { ...valueObj });
-    this.config = mergedObj;
+  /**
+   * Sets a value in the configuration using a dot-notation path.
+   * @param {string} path - The path to the property (e.g., 'zone.highSetpoint').
+   * @param {*} value - The value to set.
+   */
+  set(path, value) {
+    setValueByPath(this.config, path, value);
     this.configHasChanged = true;
-    this.configChangedTime = new Date();
+    this.configChangedTime = Date.now();
   }
 
   /**
@@ -81,23 +84,6 @@ class ConfigHandler {
     fs.writeFileSync(path, JSON.stringify(configObj, null, 2));
   }
 }
-
-/**
- * Merges two objects, if the value is an object, merge the two objects.
- * https://stackoverflow.com/questions/65817636/update-nested-js-objects-without-overwriting-missing-properties
- * @param {Object} target - The target object to merge into.
- * @param {Object} source - The source object to merge from.
- * @returns The merged object.
- */
-const fullMerge = (target, source) => {
-  // Iterate through `source` properties and if an `Object` set property to merge of `target` and `source` properties
-  for (const key of Object.keys(source)) {
-    if (source[key] instanceof Object) Object.assign(source[key], fullMerge(target[key], source[key]));
-  }
-  // Join `target` and modified `source`
-  Object.assign(target || {}, source);
-  return target;
-};
 
 // Helper function to access nested objects and arrays
 function getValueByPath(obj, path) {
@@ -114,5 +100,25 @@ function getValueByPath(obj, path) {
   return value;
 }
 // export a single instance of ConfigHandler;
+
+/**
+ * Sets a value in a nested object using a dot-notation path.
+ * @param {Object} obj - The object to modify.
+ * @param {String} path - The path to the property (e.g., 'a.b.c').
+ * @param {*} value - The value to set.
+ */
+function setValueByPath(obj, path, value) {
+  const keys = path.split('.');
+  let current = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
+    // Create a new object if it doesn't exist or is not an object
+    if (typeof current[key] !== 'object' || current[key] === null) {
+      current[key] = {};
+    }
+    current = current[key];
+  }
+  current[keys[keys.length - 1]] = value;
+}
 export const cfg = new ConfigHandler();
 export default cfg;

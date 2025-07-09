@@ -123,6 +123,7 @@
     "highSetpointSetTopic": "/high_setpoint/set",
     "lowSetpointSetTopic": "/low_setpoint/set",
     "activeSetpointTopic": "/active_setpoint",
-    "versionTopic": "/version"
+    "versionTopic": "/version",
+    "outsideSensorName": "DS18B20-1"
   }
 }

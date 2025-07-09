@@ -140,62 +140,68 @@ mqttAgent.client.on('message', (topic, message) => {
   logger.info(`MQTT<->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
-    case cfg.get('mqtt.outsideSensorTopic'):
-      if (message) {
+    case cfg.get('mqtt.outsideSensorTopic'): {
+      if (!message || message.length === 0) {
+        logger.error('MQTT->Outside_Sensor: NULL OR EMPTY PAYLOAD RECEIVED');
+        break;
+      }
+      try {
         const obj = JSON.parse(message.toString());
-        const temp = obj['DS18B20-1']['Temperature'];
-        logger.log(logLevel, 'MQTT<-Outside_Sensor: ' + `${cfg.get('mqtt.outsideSensorTopic') + temp}`);
-        // now set the global outside temperature variable
-        mqttAgent.outsideTemperature = temp;
-      } else {
-        logger.log('error', 'MQTT->Outside_Sensor: NULL PAYLOAD RECEIVED');
+        // Use optional chaining for safer property access. The sensor name could be from config.
+        const sensorName = cfg.get('mqtt.outsideSensorName') || 'DS18B20-1';
+        const temp = obj?.[sensorName]?.['Temperature'];
+
+        if (typeof temp !== 'undefined') {
+          logger.log(logLevel, `MQTT<-Outside_Sensor: ${topic} temp: ${temp}`);
+          mqttAgent.outsideTemperature = temp;
+        } else {
+          logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
+        }
+      } catch (e) {
+        logger.error(`MQTT->Outside_Sensor: Failed to parse JSON payload: ${message.toString()}`, e);
       }
       break;
-
-    case cfg.getFull('mqtt.highSetpointSetTopic'):
-      if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('highSetpoint: ', cfg.getFull('mqtt.highSetpointTopic'), `${message}`);
-        //set the high setpoint in the config object
-        const obj1 = { zone: { highSetpoint: Number(message.toString()) } };
-        cfg.set('zone.highSetpoint', obj1);
+    }
+    case cfg.getFull('mqtt.highSetpointSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('highSetpoint: ', cfg.getFull('mqtt.highSetpointTopic'), `${value}`);
+        cfg.set('zone.highSetpoint', value);
       } else {
-        logger.log('error', 'MQTT->highSetpoint/set: NULL PAYLOAD RECEIVED');
+        logger.error(`MQTT->highSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
-
-    case cfg.getFull('mqtt.lowSetpointSetTopic'):
-      if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('lowSetpoint: ', cfg.getFull('mqtt.lowSetpointTopic'), `${message}`);
-        //set the low setpoint in the config object
-        const obj2 = { zone: { lowSetpoint: Number(message.toString()) } };
-        cfg.set('zone.lowSetpoint', obj2);
+    }
+    case cfg.getFull('mqtt.lowSetpointSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('lowSetpoint: ', cfg.getFull('mqtt.lowSetpointTopic'), `${value}`);
+        cfg.set('zone.lowSetpoint', value);
       } else {
-        logger.log('error', 'MQTT->lowSetpoint/set: NULL PAYLOAD RECEIVED');
+        logger.error(`MQTT->lowSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
-
-    case cfg.getFull('mqtt.ventOnDeltaSecsSetTopic'):
-      if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('vent_on_delta_secs: ', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${message}`);
-        //set in the config object
-        const obj3 = { vent: { onMs: Number(message.toString()) * 1000 } };
-        cfg.set('vent.onMs', obj3);
+    }
+    case cfg.getFull('mqtt.ventOnDeltaSecsSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('vent_on_delta_secs: ', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${value}`);
+        cfg.set('vent.onMs', value * 1000);
       } else {
-        logger.log('error', 'MQTT->vent_on_delta_secs/set: NULL PAYLOAD RECEIVED');
+        logger.error(`MQTT->vent_on_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
-
-    case cfg.getFull('mqtt.ventOffDeltaSecsSetTopic'):
-      if (Number(message.toString()) > 0) {
-        utils.logAndPublishState('vent_off_delta_secs: ', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${message}`);
-        //set in the config object
-        const obj4 = { vent: { offMs: Number(message.toString()) * 1000 } };
-        cfg.set('vent.offMs', obj4);
+    }
+    case cfg.getFull('mqtt.ventOffDeltaSecsSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('vent_off_delta_secs: ', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${value}`);
+        cfg.set('vent.offMs', value * 1000);
       } else {
-        logger.log('error', 'MQTT->vent_off_delta_secs/set: NULL PAYLOAD RECEIVED');
+        logger.error(`MQTT->vent_off_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
-
+    }
     default:
       logger.error(`Topic- ${topic} - is not recognised.`);
   }
