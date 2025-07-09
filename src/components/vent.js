@@ -4,8 +4,8 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
 
-// const logLevel = 'debug';
-const logLevel = 'warn';
+const logLevel = 'debug';
+// const logLevel = 'warn';
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {

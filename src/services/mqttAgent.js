@@ -11,6 +11,7 @@ import * as utils from '../utils/utils.js';
 import secret from '../secret.js';
 // eslint-disable-next-line no-unused-vars
 import nodemailer from 'nodemailer';
+// import { warn } from 'winston';
 
 // const wifi = require('node-wifi');
 // Initialize wifi module
@@ -50,6 +51,7 @@ class MqttAgent {
   getName() {
     return this.name;
   }
+
   setactiveSetpoint(activeSetpoint) {
     this.activeSetpoint = activeSetpoint;
   }
@@ -58,6 +60,8 @@ class MqttAgent {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
     if (cfg.get('zone.telemetry.enabled') == true) {
       this.doTelemetry(components);
+    }else{
+      logger.log(logLevel, "globally disabled telemetry")
     }
     this.processPeriodicPublication();
   }
