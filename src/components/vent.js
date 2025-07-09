@@ -75,7 +75,7 @@ export default class Vent {
   }
 
   control(currentTemp, setPointTemperature, lightState) {
-    // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
+    // logger.warn(`temperature: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
 
     if (lightState == 1) {
       this.darkVentControl(currentTemp, setPointTemperature);
@@ -103,19 +103,19 @@ export default class Vent {
     //     this.speedPercent == 100  // lo speed
     //   }
     // }
-    // logger.warn(`temp: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
-    // temp above target, change state to ON, full speed
+    // logger.warn(`temperature: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}, millis: ${currentMs}`);
+    // temperature above target, change state to ON, full speed
     if (currentTemp > setPointTemperature + this.lightOnSetpointOffset) {
       this.ventOverride = true;
       // this.speedPercent = 100;
       this.turnOn(100);
       logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse');
     } else if (this.ventOverride == true && elapsedMsSinceLastStateChange >= this.ventOverridePulseOnDelta) {
-      // temp below target, change state to OFF after pulse delay
+      // temperature below target, change state to OFF after pulse delay
       this.speedPercent = 0;
       this.turnOff();
       this.ventOverride = false;
-      logger.log(logLevel, 'VENT OFF - temp ok, OVERRIDE - OFF');
+      logger.log(logLevel, 'VENT OFF - temperature ok, OVERRIDE - OFF');
     } else if (this.ventOverride == true) {
       logger.log(logLevel, 'VENT ON - override in progress');
     }

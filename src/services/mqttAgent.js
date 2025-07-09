@@ -149,11 +149,11 @@ mqttAgent.client.on('message', (topic, message) => {
         const obj = JSON.parse(message.toString());
         // Use optional chaining for safer property access. The sensor name could be from config.
         const sensorName = cfg.get('mqtt.outsideSensorName') || 'DS18B20-1';
-        const temp = obj?.[sensorName]?.['Temperature'];
+        const temperature = obj?.[sensorName]?.['Temperature'];
 
-        if (typeof temp !== 'undefined') {
-          logger.log(logLevel, `MQTT<-Outside_Sensor: ${topic} temp: ${temp}`);
-          mqttAgent.outsideTemperature = temp;
+        if (typeof temperature !== 'undefined') {
+          logger.log(logLevel, `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
+          mqttAgent.outsideTemperature = temperature;
         } else {
           logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
         }

@@ -53,12 +53,12 @@ class Heater {
     // Is an on or off pulse active?
     if (currentTemp < setPointTemperature + this.heater_sp_offset) {
       if (this.heatingCycleState === 'INACTIVE') {
-        //! Look at on period based on external temp
+        //! Look at on period based on external temperature
         // Extra heater time based on difference from set point per 0.1 degree difference
         // let internalDiffT = Math.floor(((setPointTemperature - currentTemp) * 10 * this.InternalTDiffMs));
         // logger.log('warning', '--INTERNAL DIFF extra time to add ms:', internalDiffT);
 
-        // Extra heater time based on external temp difference
+        // Extra heater time based on external temperature difference
         // Do if external diff is >2 deg C
         if (outsideTemp === null) {
           outsideTemp = 10;
@@ -80,7 +80,7 @@ class Heater {
         // Init ON state timer
         // this.turnOn();
         this.toggleHeater(1);
-        logger.log(logLevel, '..temp low - currently INACTIVE - TURN HEATing cycle state ON');
+        logger.log(logLevel, '..temperature low - currently INACTIVE - TURN HEATing cycle state ON');
       }
     } else {
       this.toggleHeater(0);

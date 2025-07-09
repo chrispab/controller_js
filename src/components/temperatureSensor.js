@@ -50,7 +50,7 @@ export default class TemperatureSensor {
     // ensure regular state publishing, at least every publishStateIntervalMs
     if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
       this.lastStatePublishedMs = Date.now();
-      let evt = { name: 'temperature', state: this.getTemperature(), description: 'temp periodic' };
+      let evt = { name: 'temperature', state: this.getTemperature(), description: 'temperature periodic' };
       this.trigger('temperatureStateChange', evt);
 
       evt = { name: 'humidity', state: this.getHumidity(), description: 'humi periodic' };
@@ -73,7 +73,7 @@ export default class TemperatureSensor {
               this.lastStatePublishedMs = Date.now();
               // this.lastStatePublishedMs = Date.now();
 
-              let evt = { name: 'temperature', state: this.getTemperature(), description: 'temp read' };
+              let evt = { name: 'temperature', state: this.getTemperature(), description: 'temperature read' };
       
               this.trigger('temperatureStateChange', evt);
               this.setNewStateAvailable(false);
@@ -90,7 +90,7 @@ export default class TemperatureSensor {
 
   getTelemetryData() {
     let superTelemetry = this.getTelemetryData();
-    logger.log(logLevel, `tele temp: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log(logLevel, `tele temperature: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
     return superTelemetry;
   }
 
@@ -105,7 +105,7 @@ export default class TemperatureSensor {
         //limit to 1 dp
         temperature = temperature.toFixed(1);
         humidity = humidity.toFixed(1);
-        // if new temp, save it
+        // if new temperature, save it
         // if (temperature !== self.getTemperature()) {
         // self.setNewStateAvailable(true);
         //stored values are to 1 decimal
@@ -146,7 +146,7 @@ export default class TemperatureSensor {
     this.humidity = humidity; //this.humidity = humidity;
   }
   getSensorStr() {
-    return `temp: ${this.getTemperature()}°C, ` + `humidity: ${this.getHumidity()}%`;
+    return `temperature: ${this.getTemperature()}°C, ` + `humidity: ${this.getHumidity()}%`;
   }
 }
 
