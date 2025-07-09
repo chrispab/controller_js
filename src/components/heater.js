@@ -20,7 +20,7 @@ class Heater {
   }
 
   heaterStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.heaterStateTopic'), evt.state);
+    utils.logAndPublishState(evt.description, cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), evt.state);
   };
 
   process() {

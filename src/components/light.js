@@ -34,7 +34,7 @@ export default class Light {
   }
 
   lightStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.lightStateTopic'), evt.state);
+    utils.logAndPublishState(evt.description, cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), evt.state);
   };
 
   process() {

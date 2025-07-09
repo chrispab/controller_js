@@ -24,7 +24,7 @@ class MqttAgent {
     this.name = 'mqttAgent';
     this.options = {
       will: {
-        topic: cfg.getFull('mqtt.LWTTopic'),
+        topic: cfg.getWithMQTTPrefix('mqtt.LWTTopic'),
         retain: true,
         qos: 2,
         payload: 'Offline',
@@ -66,7 +66,7 @@ class MqttAgent {
     if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
       this.lastTelemetryMs = Date.now();
       const data = this.getTelemetryData(components);
-      utils.logAndPublishState('mqttdoTelemetry', cfg.getFull('mqtt.telemetryTopic'), data);
+      utils.logAndPublishState('mqttdoTelemetry', cfg.getWithMQTTPrefix('mqtt.telemetryTopic'), data);
     }
   }
 
@@ -74,20 +74,20 @@ class MqttAgent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // highSetpoint
-      utils.logAndPublishState('mqtt P highSetpoint', cfg.getFull('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
+      utils.logAndPublishState('mqtt P highSetpoint', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
       // lowSetpoint
-      utils.logAndPublishState('mqtt P lowSetpoint', cfg.getFull('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
+      utils.logAndPublishState('mqtt P lowSetpoint', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
       // activeSetpoint
-      utils.logAndPublishState('mqtt P activeSetpoint', cfg.getFull('mqtt.activeSetpointTopic'), this.activeSetpoint);
+      utils.logAndPublishState('mqtt P activeSetpoint', cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'), this.activeSetpoint);
       //version
-      utils.logAndPublishState('mqtt P version', cfg.getFull('mqtt.versionTopic'), this.version);
+      utils.logAndPublishState('mqtt P version', cfg.getWithMQTTPrefix('mqtt.versionTopic'), this.version);
 
       //publish wifi info
       wifi.getCurrentConnections((error, currentConnections) => {
         if (error) {
           console.log(error);
         } else {
-          utils.logAndPublishState('rssi P', cfg.getFull('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
+          utils.logAndPublishState('rssi P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
       });
     }
@@ -114,14 +114,16 @@ mqttAgent.client.on('connect', function () {
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
   mqttAgent.client.subscribe([
-    cfg.getFull('mqtt.highSetpointSetTopic'),
-    cfg.getFull('mqtt.lowSetpointSetTopic'),
-    cfg.getFull('mqtt.ventOnDeltaSecsSetTopic'),
-    cfg.getFull('mqtt.ventOffDeltaSecsSetTopic'),
-    cfg.getFull('mqtt.outsideSensorTopic'),
+    cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic'),
+    cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
+    cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'),
   ]);
 
-  mqttAgent.client.publish(cfg.getFull('mqtt.LWTTopic'), 'Online', {
+  mqttAgent.client.publish(cfg.getWithMQTTPrefix('mqtt.LWTTopic'), 'Online', {
     qos: 0,
     retain: true,
   });
@@ -137,7 +139,7 @@ mqttAgent.client.on('packetsend', function () {
 });
 
 mqttAgent.client.on('message', (topic, message) => {
-  logger.info(`MQTT<->msg Received: ${topic}: ${message}`);
+  logger.log('error', `MQTT<->msg Received: ${topic}: ${message}`);
 
   switch (topic) {
     case cfg.get('mqtt.outsideSensorTopic'): {
@@ -152,7 +154,7 @@ mqttAgent.client.on('message', (topic, message) => {
         const temperature = obj?.[sensorName]?.['Temperature'];
 
         if (typeof temperature !== 'undefined') {
-          logger.log(logLevel, `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
+          logger.log('error', `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
           mqttAgent.outsideTemperature = temperature;
         } else {
           logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
@@ -162,46 +164,70 @@ mqttAgent.client.on('message', (topic, message) => {
       }
       break;
     }
-    case cfg.getFull('mqtt.highSetpointSetTopic'): {
+    case cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'): {
       const value = Number(message.toString());
       if (value > 0) {
-        utils.logAndPublishState('highSetpoint: ', cfg.getFull('mqtt.highSetpointTopic'), `${value}`);
+        utils.logAndPublishState('highSetpoint: ', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${value}`);
         cfg.set('zone.highSetpoint', value);
       } else {
         logger.error(`MQTT->highSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
     }
-    case cfg.getFull('mqtt.lowSetpointSetTopic'): {
+    case cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'): {
       const value = Number(message.toString());
       if (value > 0) {
-        utils.logAndPublishState('lowSetpoint: ', cfg.getFull('mqtt.lowSetpointTopic'), `${value}`);
+        utils.logAndPublishState('lowSetpoint: ', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${value}`);
         cfg.set('zone.lowSetpoint', value);
       } else {
         logger.error(`MQTT->lowSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
     }
-    case cfg.getFull('mqtt.ventOnDeltaSecsSetTopic'): {
+    case cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic'): {
       const value = Number(message.toString());
       if (value > 0) {
-        utils.logAndPublishState('vent_on_delta_secs: ', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${value}`);
+        utils.logAndPublishState('vent_on_delta_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${value}`);
         cfg.set('vent.onMs', value * 1000);
       } else {
         logger.error(`MQTT->vent_on_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
     }
-    case cfg.getFull('mqtt.ventOffDeltaSecsSetTopic'): {
+    case cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic'): {
       const value = Number(message.toString());
       if (value > 0) {
-        utils.logAndPublishState('vent_off_delta_secs: ', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${value}`);
+        utils.logAndPublishState('vent_off_delta_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${value}`);
         cfg.set('vent.offMs', value * 1000);
       } else {
         logger.error(`MQTT->vent_off_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
       }
       break;
     }
+    // add cases for ventDarkOnDelta and ventDarkOffDelta
+    case cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('vent_on_dark_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${value}`);
+        cfg.set('vent.ventOnDarkMs', value * 1000);
+      } else {
+        logger.error(`MQTT->vent_on_dark_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
+      }
+      break;
+    }
+    case cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'): {
+      const value = Number(message.toString());
+      if (value > 0) {
+        utils.logAndPublishState('vent_off_dark_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${value}`);
+        cfg.set('vent.ventOffDarkMs', value * 1000);
+      } else {
+        logger.error(`MQTT->vent_off_dark_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
+      }
+      break;
+    }
+    
+
+    
     default:
       logger.error(`Topic- ${topic} - is not recognised.`);
   }

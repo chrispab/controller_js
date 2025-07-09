@@ -43,13 +43,13 @@ export default class Vent {
   ventStateEventHandler = function (evt) {
     let topic = null;
     if (evt.name === 'state') {
-      topic = cfg.getFull('mqtt.ventStateTopic');
+      topic = cfg.getWithMQTTPrefix('mqtt.ventStateTopic');
     } else if (evt.name === 'speedState') {
-      topic = cfg.getFull('mqtt.ventSpeedStateTopic');
+      topic = cfg.getWithMQTTPrefix('mqtt.ventSpeedStateTopic');
     } else if (evt.name === 'speedPercent') {
-      topic = cfg.getFull('mqtt.ventSpeedPercentTopic');
+      topic = cfg.getWithMQTTPrefix('mqtt.ventSpeedPercentTopic');
     } else if (evt.name === 'value') {
-      topic = cfg.getFull('mqtt.ventValueTopic');
+      topic = cfg.getWithMQTTPrefix('mqtt.ventValueTopic');
     }
     if (topic) {
       utils.logAndPublishState(evt.description, topic, evt.state);
@@ -66,11 +66,11 @@ export default class Vent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // ZoneN/vent_on_delta_secs
-      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
       // ZoneN/vent_off_delta_secs
-      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
-      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
-      utils.logAndPublishState('vent P ', cfg.getFull('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
+      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
     }
   }
 

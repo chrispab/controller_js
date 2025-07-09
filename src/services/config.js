@@ -46,22 +46,31 @@ class ConfigHandler {
     this.saveConfig(this.config);
   }
 
+  /**
+   * Retrieves a value from the configuration using a dot-notation path.
+   * @param {string} stringkey - The dot-notation path to the configuration property (e.g., 'zone.highSetpoint').
+   * @returns {*} The value of the configuration property.
+   * @throws {Error} If the key does not exist in the configuration.
+   */
   get(stringkey) {
-    const name = getValueByPath(this.config, stringkey);
-    if (name === undefined) {
+    const value = getValueByPath(this.config, stringkey);
+    if (value === undefined) {
       logger.log('error', 'config: ' + stringkey + ' does not exist');
       throw new Error(stringkey + ' does not exist');
     }
-    return name;
+    // logger.log('info', 'config get stringkey: ' + stringkey + ' value: ' + value); 
+    return value;
   }
-  getFull(stringkey) {
-    const name = getValueByPath(this.config, stringkey);
+
+
+  getWithMQTTPrefix(stringkey) {
+    const value = getValueByPath(this.config, stringkey);
     const prefix = getValueByPath(this.config, 'mqtt.topicPrefix');
-    if (name === undefined || prefix === undefined) {
+    if (value === undefined || prefix === undefined) {
       logger.log('error', 'config: ' + stringkey + ' does not exist');
       throw new Error(stringkey + ' does not exist');
     }
-    return prefix + name;
+    return prefix + value;
   }
   /**
    * Sets a value in the configuration using a dot-notation path.
@@ -85,7 +94,12 @@ class ConfigHandler {
   }
 }
 
-// Helper function to access nested objects and arrays
+/**
+ * Retrieves a value from a nested object using a dot-notation path.
+ * @param {object} obj - The object to query.
+ * @param {string} path - The dot-notation path to the property.
+ * @returns {*|undefined} The value at the specified path, or undefined if the path does not exist.
+ */
 function getValueByPath(obj, path) {
   const keys = path.split('.');
   let value = obj;
@@ -99,7 +113,6 @@ function getValueByPath(obj, path) {
   }
   return value;
 }
-// export a single instance of ConfigHandler;
 
 /**
  * Sets a value in a nested object using a dot-notation path.
@@ -120,5 +133,7 @@ function setValueByPath(obj, path, value) {
   }
   current[keys[keys.length - 1]] = value;
 }
+
+// export a single instance of ConfigHandler;
 export const cfg = new ConfigHandler();
 export default cfg;

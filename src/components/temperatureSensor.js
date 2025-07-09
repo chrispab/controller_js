@@ -42,7 +42,6 @@ export default class TemperatureSensor {
       topic = cfg.get('mqtt.humidityStateTopic');
     }
     utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + topic, evt.state);
-    // utils.logAndPublishState(evt.description,  cfg.get("mqtt.topicPrefix") + cfg.get("mqtt.humidityStateTopic"), (evt.state));
   };
 
   process() {

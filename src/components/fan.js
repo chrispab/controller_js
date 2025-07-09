@@ -23,7 +23,7 @@ export default class Fan {
   }
 
   fanStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.getFull('mqtt.fanStateTopic'), evt.state);
+    utils.logAndPublishState(evt.description, cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), evt.state);
   };
 
   process() {
@@ -36,9 +36,9 @@ export default class Fan {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // fan_on_delta_secs
-      utils.logAndPublishState('fan Periodic', cfg.getFull('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
+      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
       // fan_off_delta_secs
-      utils.logAndPublishState('fan Periodic', cfg.getFull('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
+      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
     }
   }
 
