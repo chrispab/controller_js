@@ -1,8 +1,15 @@
 https://nodejs.org/en/download/package-manager
 
 ssh pi@192.168.0.151
+
+- stop python prog if running
+sudo systemctl stop zone_controller.service
+
+- run js prog
 cd controller_js
 npm run live
+
+
 
 7.1. Restart the application automatically
 The node command has to be re-executed in bash whenever there is a

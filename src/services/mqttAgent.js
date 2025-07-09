@@ -19,7 +19,6 @@ wifi.init({
   iface: null, // network interface, choose a random wifi interface if set to null
 });
 
-
 class MqttAgent {
   constructor() {
     this.name = 'mqttAgent';
@@ -41,16 +40,18 @@ class MqttAgent {
     this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.outsideTemperature = 7;
-    this.currentSetpoint = 0;
+    this.activeSetpoint = 0;
     this.version = cfg.get('version');
-    utils.sendEmail('zone startup', 'zone startup');
+    this.zoneName = cfg.get('zone.name');
+
+    utils.sendEmail(this.zoneName + ' startup', 'zone startup');
   }
 
   getName() {
     return this.name;
   }
-  setCurrentSetpoint(currentSetpoint) {
-    this.currentSetpoint = currentSetpoint;
+  setactiveSetpoint(activeSetpoint) {
+    this.activeSetpoint = activeSetpoint;
   }
 
   process(components) {
@@ -76,8 +77,8 @@ class MqttAgent {
       utils.logAndPublishState('mqtt P highSetpoint', cfg.getFull('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
       // lowSetpoint
       utils.logAndPublishState('mqtt P lowSetpoint', cfg.getFull('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
-      // currentSetpoint
-      utils.logAndPublishState("mqtt P currentSetpoint", cfg.getFull('mqtt.currentSetpointTopic'), this.currentSetpoint);
+      // activeSetpoint
+      utils.logAndPublishState('mqtt P activeSetpoint', cfg.getFull('mqtt.activeSetpointTopic'), this.activeSetpoint);
       //version
       utils.logAndPublishState('mqtt P version', cfg.getFull('mqtt.versionTopic'), this.version);
 
@@ -102,8 +103,6 @@ class MqttAgent {
     return componentData.toString();
   }
 }
-
-
 
 //export an instance so single instance can be used
 export const mqttAgent = new MqttAgent();

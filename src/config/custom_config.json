@@ -59,7 +59,7 @@
     "periodicPublishIntervalMs": 120000
   },
   "vent": {
-    "offMs": 115000,
+    "offMs": 110000,
     "onMs": 60000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
@@ -83,8 +83,8 @@
   },
   "fan": {
     "speedPercent": 50,
-    "onMs": 10000,
-    "offMs": 60000,
+    "onMs": 60000,
+    "offMs": 20000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
   },
@@ -111,21 +111,18 @@
     "ventOnDarkSecsTopic": "/vent_on_dark_delta_secs",
     "ventOffDarkSecsTopic": "/vent_off_dark_delta_secs",
     "ventOnDarkSecsSetTopic": "/vent_on_dark_delta_secs/set",
-    "ventOffDarkSecsSetTopic": "/vent_off_dark_delta_secs/set", 
+    "ventOffDarkSecsSetTopic": "/vent_off_dark_delta_secs/set",
     "fanStateTopic": "/FanStatus",
     "heaterStateTopic": "/HeaterStatus",
-
     "highSetpointTopic": "/high_setpoint",
     "lowSetpointTopic": "/low_setpoint",
     "telemetryTopic": "/telemetry",
-
     "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
     "fanOffDeltaSecsTopic": "/fan_off_delta_secs",
     "outsideSensorTopic": "Outside_Sensor/tele/SENSOR",
     "highSetpointSetTopic": "/high_setpoint/set",
     "lowSetpointSetTopic": "/low_setpoint/set",
-
-    "currentSetpointTopic": "/current_setpoint",
+    "activeSetpointTopic": "/active_setpoint",
     "versionTopic": "/version"
   }
 }

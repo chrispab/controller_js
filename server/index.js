@@ -52,7 +52,7 @@ setInterval(() => {
 
   fan.process();
   
-  mqttAgent.setCurrentSetpoint(setpoint);
+  mqttAgent.setactiveSetpoint(setpoint);
   mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
 }, 1000);

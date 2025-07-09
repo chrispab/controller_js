@@ -1,13 +1,13 @@
 import logger from './logger.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-// const defaultPath = './config/default.json';
-// const customPath = './config/custom_config.json';
-const defaultPath = './src/config/default.json';
-const customPath = './src/config/custom_config.json';
-// const defaultPath = '../config/default.json';
-// const customPath = '../config/custom_config.json';
-import { dirname } from 'path';
+import { dirname, resolve } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Construct absolute paths to the configuration files to avoid issues with the current working directory.
+const defaultPath = resolve(__dirname, '../config/default.json');
+const customPath = resolve(__dirname, '../config/custom_config.json');
 
 class ConfigHandler {
   constructor() {
@@ -30,13 +30,6 @@ class ConfigHandler {
   }
 
   load() {
-    // load default.json file as an object
-    const __filename = fileURLToPath(import.meta.url);
-    console.log(__filename);
-
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    console.log(__dirname);
-
     var file_content = null;
     if (fs.existsSync(customPath)) {
       logger.log('warn', `${customPath} exists`);
