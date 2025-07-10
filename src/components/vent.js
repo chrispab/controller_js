@@ -35,8 +35,8 @@ export default class Vent {
     this.periodicPublishIntervalMs = cfg.get('vent.periodicPublishIntervalMs');
     this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
 
-    this.publishStateIntervalMs = cfg.get('vent.publishStateIntervalMs');
-    this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
+    // this.publishStateIntervalMs = cfg.get('vent.publishStateIntervalMs');
+    // this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
     this.on('ventStateChange', this.ventStateEventHandler);
   }
 
@@ -76,12 +76,10 @@ export default class Vent {
    * This ensures that the vent's configuration parameters are regularly updated to the MQTT broker.
    */
   processPeriodicPublication() {
-    // ensure regular publishing of additional properties
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
-      // ZoneN/vent_on_delta_secs
+
       utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
-      // ZoneN/vent_off_delta_secs
       utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
       utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
       utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
@@ -90,11 +88,10 @@ export default class Vent {
 
   control(currentTemp, setPointTemperature, lightState) {
     // logger.warn(`temperature: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}, light: ${lightState}`);
-
-    if (lightState == 1) {
-      this.darkVentControl(currentTemp, setPointTemperature);
+    if (lightState == true){
+      this.lightVentControl(currentTemp, setPointTemperature);
     } else {
-      this.lightVentControl();
+      this.darkVentControl();
     }
   }
 

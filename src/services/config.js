@@ -13,8 +13,8 @@ class ConfigHandler {
   constructor() {
     this.config = this.load();
     this.configHasChanged = false;
-    this.configChangedTime = null;
     this.delayBeforeConfigSaveMs = this.get('config.delayBeforeConfigSaveMs');
+    this.configChangedTime = Date.now() - this.delayBeforeConfigSaveMs;
   }
 
   /**

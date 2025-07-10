@@ -208,7 +208,7 @@ mqttAgent.client.on('message', (topic, message) => {
       }
       break;
     }
-    // add cases for ventDarkOnDelta and ventDarkOffDelta
+    // cases for ventOnDarkMs and ventOffDarkMs
     case cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'): {
       const value = Number(message.toString());
       if (value > 0) {

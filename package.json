@@ -4,7 +4,8 @@
   "main": "src/main.js",
   "scripts": {
     "go": "cd src && nodemon main.js",
-    "live": "cd src && systemctl stop zone_controller.service && nodemon main.js",
+    "live-old": "cd src && systemctl stop zone_controller.service && nodemon main.js",
+    "live": "cd src && nodemon main.js",
     "start": "systemctl stop zone_controller.service && nodemon server/index.js",
     "all": "systemctl stop zone_controller.service && nodemon server/index.js",
     "test": "npm run unit",

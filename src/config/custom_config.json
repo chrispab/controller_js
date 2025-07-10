@@ -1,8 +1,8 @@
 {
   "version": "0.0.1",
   "zone": {
-    "lowSetpoint": 14.5,
-    "highSetpoint": 22.5,
+    "lowSetpoint": 14.799999999999999,
+    "highSetpoint": 20.400000000000006,
     "periodicPublishIntervalMs": 120000,
     "name": "zone1",
     "customConfigFilename": "customConfig.json",
@@ -12,7 +12,7 @@
     }
   },
   "config": {
-    "delayBeforeConfigSaveMs": 10000
+    "delayBeforeConfigSaveMs": 5000
   },
   "system": {
     "name": "system_1"
@@ -60,17 +60,14 @@
     "periodicPublishIntervalMs": 120000
   },
   "vent": {
-    "offMs": 30000,
-    "onMs": 175000,
+    "offMs": 5000,
+    "onMs": 305000,
     "speedPercent": 50,
-    "periodicPublishIntervalMs": 300000,
-    "publishStateIntervalMs": 60000,
+    "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
-    "ventDarkOnDelta": 9000,
-    "ventDarkOffDelta": 50000,
-    "ventOnDarkMs": 18000,
-    "ventOffDarkMs": 99000
+    "ventOnDarkMs": 170000,
+    "ventOffDarkMs": 5000
   },
   "heater": {
     "onMs": 10000,
@@ -109,10 +106,10 @@
     "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
     "ventOnDeltaSecsSetTopic": "/vent_on_delta_secs/set",
     "ventOffDeltaSecsSetTopic": "/vent_off_delta_secs/set",
-    "ventOnDarkSecsTopic": "/vent_on_dark_delta_secs",
-    "ventOffDarkSecsTopic": "/vent_off_dark_delta_secs",
-    "ventOnDarkSecsSetTopic": "/vent_on_dark_delta_secs/set",
-    "ventOffDarkSecsSetTopic": "/vent_off_dark_delta_secs/set",
+    "ventOnDarkSecsTopic": "/vent_on_delta_dark_secs",
+    "ventOffDarkSecsTopic": "/vent_off_delta_dark_secs",
+    "ventOnDarkSecsSetTopic": "/vent_on_delta_dark_secs/set",
+    "ventOffDarkSecsSetTopic": "/vent_off_delta_dark_secs/set",
     "fanStateTopic": "/FanStatus",
     "heaterStateTopic": "/HeaterStatus",
     "highSetpointTopic": "/high_setpoint",
