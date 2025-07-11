@@ -204,8 +204,16 @@ export default class Vent {
    * @returns {object} The telemetry data for the vent.
    */
   getTelemetryData() {
-    let telemetry = this.getTelemetryData();
-    logger.log(logLevel, `tele vent: ${JSON.stringify(telemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    const telemetry = {
+      [this.name]: {
+        state: this.getState(),
+        speedPercent: this.getSpeedPercent(),
+        onMs: this.getOnMs(),
+        offMs: this.getOffMs(),
+        time: Date.now(),
+      },
+    };
+    logger.log(logLevel, `tele vent: ${JSON.stringify(telemetry)}`);
     return telemetry;
   }
 

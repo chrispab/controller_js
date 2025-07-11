@@ -37,11 +37,7 @@ setInterval(() => {
   let lightState = light.getState();
   // lightState = 0;
 
-  let setpoint = cfg.get("zone.highSetpoint");
-  if (lightState == 0) {
-    setpoint = cfg.get("zone.lowSetpoint");
-  }
-
+  const setpoint = lightState == false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
 
   vent.control(temperature, setpoint, lightState);
   vent.process();
@@ -56,5 +52,3 @@ setInterval(() => {
   mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
 }, 1000);
-
-

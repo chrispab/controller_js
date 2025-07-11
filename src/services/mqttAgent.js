@@ -7,9 +7,9 @@ import mqtt from 'mqtt';
 const logLevel = 'debug';
 
 import * as utils from '../utils/utils.js';
-// eslint-disable-next-line no-unused-vars
+ 
 import secret from '../secret.js';
-// eslint-disable-next-line no-unused-vars
+ 
 import nodemailer from 'nodemailer';
 // import { warn } from 'winston';
 
@@ -142,97 +142,23 @@ mqttAgent.client.on('packetsend', function () {
   // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
 });
 
+import * as handlers from './mqttHandlers/index.js';
+
+const topicHandlers = {
+  [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
+  [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpoint,
+  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpoint,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic')]: handlers.handleVentOnDeltaSecs,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic')]: handlers.handleVentOffDeltaSecs,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecs,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecs,
+};
+
 mqttAgent.client.on('message', (topic, message) => {
-  // logger.log('error', `MQTT<->msg Received: ${topic}: ${message}`);
-
-  switch (topic) {
-    case cfg.get('mqtt.outsideSensorTopic'): {
-      if (!message || message.length === 0) {
-        logger.error('MQTT->Outside_Sensor: NULL OR EMPTY PAYLOAD RECEIVED');
-        break;
-      }
-      try {
-        const obj = JSON.parse(message.toString());
-        // Use optional chaining for safer property access. The sensor name could be from config.
-        const sensorName = cfg.get('mqtt.outsideSensorName') || 'DS18B20-1';
-        const temperature = obj?.[sensorName]?.['Temperature'];
-
-        if (typeof temperature !== 'undefined') {
-          // logger.log('error', `MQTT<-Outside_Sensor: ${topic} temperature: ${temperature}`);
-          mqttAgent.outsideTemperature = temperature;
-        } else {
-          logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
-        }
-      } catch (e) {
-        logger.error(`MQTT->Outside_Sensor: Failed to parse JSON payload: ${message.toString()}`, e);
-      }
-      break;
-    }
-    case cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('highSetpoint: ', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${value}`);
-        cfg.set('zone.highSetpoint', value);
-      } else {
-        logger.error(`MQTT->highSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    case cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('lowSetpoint: ', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${value}`);
-        cfg.set('zone.lowSetpoint', value);
-      } else {
-        logger.error(`MQTT->lowSetpoint/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    case cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('vent_on_delta_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${value}`);
-        cfg.set('vent.onMs', value * 1000);
-      } else {
-        logger.error(`MQTT->vent_on_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    case cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('vent_off_delta_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${value}`);
-        cfg.set('vent.offMs', value * 1000);
-      } else {
-        logger.error(`MQTT->vent_off_delta_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    // cases for ventOnDarkMs and ventOffDarkMs
-    case cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('vent_on_dark_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${value}`);
-        cfg.set('vent.ventOnDarkMs', value * 1000);
-      } else {
-        logger.error(`MQTT->vent_on_dark_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    case cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'): {
-      const value = Number(message.toString());
-      if (value > 0) {
-        utils.logAndPublishState('vent_off_dark_secs: ', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${value}`);
-        cfg.set('vent.ventOffDarkMs', value * 1000);
-      } else {
-        logger.error(`MQTT->vent_off_dark_secs/set: INVALID PAYLOAD RECEIVED: ${message}`);
-      }
-      break;
-    }
-    
-
-    
-    default:
-      logger.error(`Topic- ${topic} - is not recognised.`);
+  const handler = topicHandlers[topic];
+  if (handler) {
+    handler(topic, message);
+  } else {
+    logger.error(`Topic- ${topic} - is not recognised.`);
   }
 });
