@@ -31,10 +31,15 @@ export default class Fan {
     this.periodicPublication();
   }
 
+  /**
+   * Publishes periodic telemetry data for the fan, including its current state,
+   * and the configured on/off delta times in seconds.
+   */
   periodicPublication() {
     // ensure regular publishing of additional properties
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
+      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
       // fan_on_delta_secs
       utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
       // fan_off_delta_secs
@@ -42,6 +47,12 @@ export default class Fan {
     }
   }
 
+  /**
+   * Controls the fan's on/off state based on configured on and off durations.
+   * If the fan is currently on and its 'on' duration has elapsed, it turns off.
+   * If the fan is currently off and its 'off' duration has elapsed, it turns on.
+   * The state changes are managed by `toggleFan`.
+   */
   control() {
     const currentState = this.getState();
     const currentMs = Date.now();
@@ -60,6 +71,11 @@ export default class Fan {
     }
   }
 
+  /**
+   * Toggles the fan's state (on/off) and emits a 'fanStateChange' event if the state has actually changed.
+   *
+   * @param {number} state - The desired state for the fan (0 for off, 1 for on).
+   */
   toggleFan(state) {
     this.setState(state);
     if (this.hasNewStateAvailable()) {
@@ -70,8 +86,7 @@ export default class Fan {
       }
       if (this.getStateAndClearNewStateFlag() == state) {
         logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
-        // const myevent = new Event('toggleFan', state, 'toggleFan', this.getName(), Date.now());
-        let evt = { name: 'fanState', state: state, description: 'fan State' };
+        let evt = { name: 'fanState', state: state, description: 'fan State change: ' };
         this.trigger('fanStateChange', evt);
       }
     }

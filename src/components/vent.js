@@ -304,20 +304,20 @@ export default class Vent {
       const speedState = this.ventSpeedPin.getState();
       logger.log(logLevel, `ventStateChange: ${ventState}, speedState: ${speedState}`);
 
-      let evt = { name: 'state', state: ventState, description: 'vent State' };
+      let evt = { name: 'state', state: ventState, description: 'vent State change: ' };
       this.trigger('ventStateChange', evt);
 
-      evt = { name: 'speedState', state: speedState, description: 'vent SpeedState' };
+      evt = { name: 'speedState', state: speedState, description: 'vent SpeedState change: ' };
       this.trigger('ventStateChange', evt);
 
-      evt = { name: 'speedPercent', state: this.speedPercent, description: 'vent SpeedPercent' };
+      evt = { name: 'speedPercent', state: this.speedPercent, description: 'vent SpeedPercent change: ' };
       this.trigger('ventStateChange', evt);
 
       const ventValue =
         ventState == 1 && speedState == 0 ? 1
         : ventState == 1 && speedState == 1 ? 2
         : 0;
-      evt = { name: 'value', state: ventValue, description: 'vent value' };
+      evt = { name: 'value', state: ventValue, description: 'vent value change: ' };
       this.trigger('ventStateChange', evt);
 
       //indicate data read and used e.g MQTT pub
@@ -334,5 +334,6 @@ export default class Vent {
 import eventMixin from './mixins/eventMixin.js';
 Object.assign(Vent.prototype, eventMixin);
 
+// add IOPinAccessorsMixin
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Vent.prototype, IOPinAccessorsMixin);

@@ -20,11 +20,11 @@ function sendEmail(subject, body) {
       pass: secret.password,
     },
   });
-   transporter.sendMail(mailOptions, (error, info) => {
-     if (error) {
-       logger.log('error', error, { info: info });
-     }
-   });
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      logger.log('error', error, { info: info });
+    }
+  });
 }
 
 function getHMSStr() {
@@ -35,8 +35,6 @@ function getHMSStr() {
   // console.log(`${hh}:${mm}:${ss}`);
   return `${hh}:${mm}:${ss}`;
 }
-
-
 
 const logAndPublishState = (comment, topic, state) => {
   var logLevel = 'info';

@@ -6,7 +6,7 @@ import TemperatureSensor from "./components/temperatureSensor.js";
 import Fan from "./components/fan.js";
 import Heater from "./components/heater.js";
 import Vent from "./components/vent.js";
-import * as utils from './utils/utils.js';
+// import * as utils from './utils/utils.js';
 
 //import services as single instances
 // import os from 'os';
