@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f0f0; color: #333; }
+        #root { max-width: 600px; margin: 2em auto; padding: 2em; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #1a1a1a; }
+        #status { padding: 1em; border: 1px solid #ddd; border-radius: 4px; background-color: #fafafa; }
+        .label { font-weight: bold; }
+        .state { display: inline-block; padding: 0.2em 0.5em; border-radius: 4px; color: #fff; }
+        .on { background-color: #28a745; }
+        .off { background-color: #dc3545; }
+        .connecting { background-color: #ffc107; color: #333;}
+    </style>
+</head>
+<body>
+    <div id="root">
+        <h1>Zone Controller WebSocket Test</h1>
+        <div id="status"><div class="state connecting">Connecting...</div></div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+
+        // Use the same hostname as the page, but with the ws:// protocol and correct port.
+        const socket = new WebSocket(`ws://${window.location.hostname}:${window.location.port}`);
+
+        // --- Event Listeners ---
+
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket connection opened:', event);
+            statusDiv.innerHTML = '<div class="state on">Connected. Waiting for data...</div>';
+        });
+
+        socket.addEventListener('message', (event) => {
+            console.log('Message from server:', event.data);
+            try {
+                const data = JSON.parse(event.data);
+                updateStatus(data);
+            } catch (e) {
+                console.error("Failed to parse JSON:", e);
+                statusDiv.innerHTML = 'Received invalid data from server.';
+            }
+        });
+
+        socket.addEventListener('error', (event) => {
+            console.error('WebSocket error:', event);
+            statusDiv.innerHTML = '<div class="state off">Error connecting to WebSocket. Is the server running?</div>';
+        });
+
+        socket.addEventListener('close', (event) => {
+            console.log('WebSocket connection closed:', event);
+            statusDiv.innerHTML = '<div class="state off">Connection closed.</div>';
+        });
+
+        // --- Helper Functions ---
+
+        function formatState(state) {
+            if (state) {
+                return '<span class="state on">ON</span>';
+            }
+            return '<span class="state off">OFF</span>';
+        }
+
+        function updateStatus(data) {
+            statusDiv.innerHTML = `
+                <p><span class="label">Fan:</span> ${formatState(data.fan)}</p>
+                <p><span class="label">Vent:</span> ${formatState(data.vent)}</p>
+                <p><small>Last updated: ${new Date().toLocaleTimeString()}</small></p>
+            `;
+        }
+    </script>
+</body>
+</html>

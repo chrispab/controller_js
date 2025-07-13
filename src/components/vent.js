@@ -91,11 +91,14 @@ export default class Vent {
     if (lightState == true){
       this.lightVentControl(currentTemp, setPointTemperature);
     } else {
-      this.darkVentControl();
+      this.darkVentControl(currentTemp, setPointTemperature);
     }
   }
 
-  darkVentControl(currentTemp, setPointTemperature) {
+  lightVentControl(currentTemp, setPointTemperature) {
+    // logger.warn("---lightVentControl");
+    // logger.warn(`temperature: ${(Math.round(currentTemp * 100) / 100).toFixed(1)}, target: ${setPointTemperature}`);
+
     const currentMs = Date.now();
     const elapsedMsSinceLastStateChange = currentMs - this.getPrevStateChangeMs();
     // const lowerHys = setPointTemperature - 0.1;
@@ -120,7 +123,7 @@ export default class Vent {
       this.ventOverride = true;
       // this.speedPercent = 100;
       this.turnOn(100);
-      logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering cooling pulse');
+      logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering vent cooling pulse');
     } else if (this.ventOverride == true && elapsedMsSinceLastStateChange >= this.ventOverridePulseOnDelta) {
       // temperature below target, change state to OFF after pulse delay
       this.speedPercent = 0;
@@ -158,7 +161,7 @@ export default class Vent {
     }
   }
 
-  lightVentControl() {
+  darkVentControl(currentTemp, setPointTemperature) {
     // if light off - do a minimal vent routine
     const currentMs = Date.now();
 
