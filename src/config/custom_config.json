@@ -28,25 +28,28 @@
   },
   "hardware": {
     "dhtSensor": {
-      "pin": 3,
+      "pin": 515,
       "type": "22"
     },
     "fan": {
-      "pin": 13,
+      "pin": 525,
       "physicalPin": 33
     },
     "heater": {
-      "pin": 5,
+      "pin": 517,
       "physicalPin": 29
     },
+    "powerPin": {
+      "pin": 514
+    },
     "vent": {
-      "pin": 26,
+      "pin": 538,
       "physicalPin": 37,
-      "speedPin": 6,
+      "speedPin": 518,
       "speedPhysicalPin": 31
     },
     "RC": {
-      "pin": 27,
+      "pin": 539,
       "physicalPin": 13
     }
   },
@@ -66,7 +69,7 @@
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
-    "ventOnDarkMs": 15000,
+    "ventOnDarkMs": 10000,
     "ventOffDarkMs": 5000
   },
   "heater": {

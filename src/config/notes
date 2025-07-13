@@ -1,4 +1,16 @@
+https://nodejs.org/en/download
+
+https://www.googlecloudcommunity.com/gc/Gemini-Code-Assist/A-code-sample-in-this-response-was-truncated-because-it-exceeded/td-p/925551#:~:text=A%20code%20sample%20in%20this%20response%20was,*%20General%20Gemini%20Code%20Assist.%20*%20Troubleshooting.
+
+
+onoff issue
 https://stackoverflow.com/questions/64781386/config-file-in-nodejs-using-npm-config
+
+https://stackoverflow.com/questions/78173749/use-raspberry-pi-4-gpio-with-node-js/78184108#78184108
+
+https://forums.raspberrypi.com/viewtopic.php?t=380705
+
+https://github.com/fivdi/onoff/issues/200
 
 
 
@@ -42,3 +54,12 @@ http://192.168.0.100:3000/d/edwbpy1r73o5ca/zone-1-new?refresh=1m?orgId=1
 
 
 http://192.168.0.100:3000/d/de443mc5uiosgf/zone-3-new?refresh=1m?orgId=1
+
+git setup
+https://docs.github.com/en/get-started/git-basics/setting-your-username-in-git
+git config --global user.name "Mona Lisa"
+
+
+https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address
+
+git config --global user.email "YOUR_EMAIL"

@@ -14,6 +14,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class TemperatureSensor {
   constructor(name, dhtSensorPin) {
+    this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);;
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
@@ -32,6 +33,7 @@ export default class TemperatureSensor {
     if (os.hostname() !== 'zone3' && os.hostname() !== 'zone1') {
       sensor.initialize({ test: { fake: { temperature: 21, humidity: 60 } } });
     }
+
   }
 
   temperatureStateChangeHandler = function (evt) {
