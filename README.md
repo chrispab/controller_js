@@ -112,7 +112,15 @@ To ensure the application starts automatically on boot and runs reliably in the 
     sudo systemctl start zone_controller.service
     ```
 
-5.  **Check the service status:**
+5.  **Stop the service:**
+
+    Start the service immediately:
+
+    ```bash
+    sudo systemctl stop zone_controller.service
+    ```
+
+6.  **Check the service status:**
 
     To verify that the service is running correctly, check its status:
 
