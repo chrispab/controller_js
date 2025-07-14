@@ -14,7 +14,7 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class TemperatureSensor {
   constructor(name, dhtSensorPin) {
-    this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);;
+    this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
@@ -25,15 +25,14 @@ export default class TemperatureSensor {
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
     this.processCount = 0;
     this.readSensor(); //force an initial sensor read
-    this.publishStateIntervalMs = cfg.get('temperatureSensor.publishStateIntervalMs');
-    this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
+    this.periodicPublishIntervalMs = cfg.get('temperatureSensor.periodicPublishIntervalMs');
+    this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
     this.on('temperatureStateChange', this.temperatureStateChangeHandler);
 
     logger.info(`HostName: ${os.hostname()}`);
     if (os.hostname() !== 'zone3' && os.hostname() !== 'zone1') {
       sensor.initialize({ test: { fake: { temperature: 21, humidity: 60 } } });
     }
-
   }
 
   temperatureStateChangeHandler = function (evt) {
@@ -46,19 +45,24 @@ export default class TemperatureSensor {
     utils.logAndPublishState(evt.description, cfg.get('mqtt.topicPrefix') + topic, evt.state);
   };
 
+  periodicPublication() {
+    if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
+      this.lastPeriodicPublishedMs = Date.now();
+      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
+      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
+    }
+  }
+
   process() {
     // this.processCount = this.processCount ? this.processCount + 1 : 1;
     // ensure regular state publishing, at least every publishStateIntervalMs
-    if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
-      this.lastStatePublishedMs = Date.now();
-      // let evt = { name: 'temperature', state: this.getTemperature(), description: 'sensor P' };
-      // this.trigger('temperatureStateChange', evt);
-      utils.logAndPublishState('sensor P: ', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
+    this.periodicPublication();
 
-      // evt = { name: 'humidity', state: this.getHumidity(), description: 'sensor P' };
-      // this.trigger('temperatureStateChange', evt);
-      utils.logAndPublishState('sensor P: ', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
-    }
+    // if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
+    //   this.lastStatePublishedMs = Date.now();
+    //   utils.logAndPublishState('sensor P', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
+    //   utils.logAndPublishState('sensor P', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
+    // }
 
     // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
@@ -68,24 +72,23 @@ export default class TemperatureSensor {
 
       this.lastSensorReadTimeMs = Date.now();
       wait(1000)
-        .then(
-          () => {
-            if (this.hasNewStateAvailable()) {
-              //get value from readSensor()
-              // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
-              this.lastStatePublishedMs = Date.now();
+        .then(() => {
+          if (this.hasNewStateAvailable()) {
+            //get value from readSensor()
+            // Logger.info(`${this.processCount}->NEW temperature: ${this.getSensorStr()}`);
+            this.lastStatePublishedMs = Date.now();
 
-              let evt = { name: 'temperature', state: this.getTemperature(), description: 'temperature read' };
-              this.trigger('temperatureStateChange', evt);
-              this.setNewStateAvailable(false);
-            }
-            
-            logger.log(logLevel, '4 500ms after READING Temperature SENSOR STATE: ' + this.getState())
+            let evt = { name: 'temperature', state: this.getTemperature(), description: 'temperature read' };
+            this.trigger('temperatureStateChange', evt);
+            this.setNewStateAvailable(false);
           }
-        )
-        .catch(console.error);
 
+          logger.log(logLevel, '4 500ms after READING Temperature SENSOR STATE: ' + this.getState());
+        })
+        .catch(console.error);
     }
+    // ensure regular state publishing, at least every publishStateIntervalMs
+    this.periodicPublication();
   }
 
   getTelemetryData() {
@@ -125,7 +128,6 @@ export default class TemperatureSensor {
     // wait(500)
     // .then(() => logger.log('error', '3. 500ms after READING Temperature SENSOR STATE: ' + this.getState()))
     // .catch(console.error);
-
   }
 
   // create setters

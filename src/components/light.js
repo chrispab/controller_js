@@ -65,7 +65,7 @@ export default class Light {
       // ensure regular state publishing
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
       // const evt = new Event('light periodic', this.getState());
-      let evt = { name: 'state', state: this.getState(), description: 'light periodic' };
+      let evt = { name: 'state', state: this.getState(), description: 'light P' };
 
       this.trigger('lightStateChange', evt);
       this.lastStatePublishedMs = Date.now();

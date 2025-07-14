@@ -1,22 +1,20 @@
 // const { createLogger, format, transports } = require('../');
 
-import { createLogger } from 'winston';
-import { format } from 'winston';
-import { transports } from 'winston';
+import winston from 'winston';
 
 import process from 'process';
 
 
-const logger = createLogger({
+const logger = winston.createLogger({
   // level: 'debug',
   level: 'info',
-  format: format.combine(
-    format.timestamp({
+  format: winston.format.combine(
+    winston.format.timestamp({
       format: 'HH:mm:ss'
     }),
-    format.errors({ stack: true }),
-    format.splat(),
-    format.json()
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
   ),
   // defaultMeta: { service: 'controller_js' },
   transports: [
@@ -24,8 +22,8 @@ const logger = createLogger({
     // - Write to all logs with level `info` and below to `quick-start-combined.log`.
     // - Write all logs error (and below) to `quick-start-error.log`.
     //
-    new transports.File({ filename: 'logs/controller_js-error.log', level: 'error' }),
-    new transports.File({ filename: 'logs/controller_js-combined.log' })
+    new winston.transports.File({ filename: 'logs/controller_js-error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'logs/controller_js-combined.log' })
   ]
 });
 
@@ -36,10 +34,10 @@ export default logger
 // with the colorized simple format.
 //
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new transports.Console({
-    format: format.combine(
-      format.colorize(),
-      format.simple()
+  logger.add(new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
     )
   }));
 }

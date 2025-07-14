@@ -68,14 +68,14 @@ export default class Vent {
 
 
   process() {
-    this.processPeriodicPublication();
+    this.periodicPublication();
   }
 
   /**
    * Publishes periodic telemetry data for the vent, including on/off delta times for both light and dark conditions.
    * This ensures that the vent's configuration parameters are regularly updated to the MQTT broker.
    */
-  processPeriodicPublication() {
+  periodicPublication() {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
 

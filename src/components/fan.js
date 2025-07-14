@@ -39,11 +39,11 @@ export default class Fan {
     // ensure regular publishing of additional properties
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
-      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
+      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
       // fan_on_delta_secs
-      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
+      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
       // fan_off_delta_secs
-      utils.logAndPublishState('fan Periodic', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
+      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
     }
   }
 

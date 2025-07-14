@@ -5,6 +5,10 @@ import * as utils from '../../utils/utils.js';
 
 function handleVent(topic, message, configKey, topicKey) {
   const value = Number(message.toString());
+
+  //insert lerrogging statement
+  logger.error("test error message");
+  
   if (value > 0) {
     utils.logAndPublishState(`${configKey}: `, cfg.getWithMQTTPrefix(topicKey), `${value}`);
     cfg.set(configKey, value * 1000);

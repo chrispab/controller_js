@@ -12,7 +12,7 @@
     }
   },
   "config": {
-    "delayBeforeConfigSaveMs": 5000
+    "delayBeforeConfigSaveMs": 10000
   },
   "system": {
     "name": "system_1"
@@ -55,7 +55,7 @@
   },
   "temperatureSensor": {
     "sensorReadIntervalMs": 15000,
-    "publishStateIntervalMs": 60000
+    "periodicPublishIntervalMs": 30000
   },
   "light": {
     "sensorReadIntervalMs": 60000,
@@ -64,12 +64,12 @@
   },
   "vent": {
     "offMs": 5000,
-    "onMs": 10000,
+    "onMs": 335000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
-    "ventOnDarkMs": 10000,
+    "ventOnDarkMs": 80000,
     "ventOffDarkMs": 5000
   },
   "heater": {
@@ -85,7 +85,7 @@
   "fan": {
     "speedPercent": 50,
     "onMs": 60000,
-    "offMs": 20000,
+    "offMs": 6000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
   },

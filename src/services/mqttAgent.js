@@ -63,7 +63,7 @@ class MqttAgent {
     }else{
       logger.log(logLevel, "globally disabled telemetry")
     }
-    this.processPeriodicPublication();
+    this.periodicPublication();
   }
 
   doTelemetry(components) {
@@ -74,17 +74,17 @@ class MqttAgent {
     }
   }
 
-  processPeriodicPublication() {
+  periodicPublication() {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
       // highSetpoint
-      utils.logAndPublishState('mqtt P: ', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
+      utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
       // lowSetpoint
-      utils.logAndPublishState('mqtt P: ', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
+      utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
       // activeSetpoint
-      utils.logAndPublishState('mqtt P: ', cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'), this.activeSetpoint);
+      utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'), this.activeSetpoint);
       //version
-      utils.logAndPublishState('mqtt P: ', cfg.getWithMQTTPrefix('mqtt.versionTopic'), this.version);
+      utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.versionTopic'), this.version);
 
       //publish wifi info
       wifi.getCurrentConnections((error, currentConnections) => {
