@@ -2,13 +2,12 @@ import logger from './logger.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import process from 'process';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Construct absolute paths to the configuration files to avoid issues with the current working directory.
 const defaultPath = resolve(__dirname, '../config/default.json');
-const customPath = resolve(process.cwd(), 'src/config/custom_config.json');
+const customPath = resolve(__dirname, '../config/custom_config.json');
 
 class ConfigHandler {
   constructor() {
