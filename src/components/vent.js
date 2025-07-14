@@ -79,10 +79,10 @@ export default class Vent {
     if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       this.lastPeriodicPublishedMs = Date.now();
 
-      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
-      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
-      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
-      utils.logAndPublishState('vent P ', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
+      utils.logAndPublishState('vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`);
+      utils.logAndPublishState('vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`);
+      utils.logAndPublishState('vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`);
+      utils.logAndPublishState('vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`);
     }
   }
 
