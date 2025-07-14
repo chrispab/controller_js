@@ -36,7 +36,7 @@ function getHMSStr() {
   return `${hh}:${mm}:${ss}`;
 }
 
-const logAndPublishState = (comment, topic, state) => {
+const logAndPublishState = (mqttAgent, comment, topic, state) => {
   var logLevel = 'info';
   logger.log(logLevel, '>' + comment + `: ${topic + ': ' + state}`);
   mqttAgent.client.publish(topic, `${state}`);

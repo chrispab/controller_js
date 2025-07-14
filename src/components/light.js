@@ -3,22 +3,20 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from "../utils/utils.js";
-// import Event from './event.js';
 
-// const logLevel = 'info';
 const logLevel = 'debug';
-// const logLevel = 'warn';
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
 
-  constructor(name, LDRPin) {
+  constructor(name, LDRPin, mqttAgent) {
+    this.mqttAgent = mqttAgent;
     this.IOPin = new IOBase(LDRPin, 'out', 0);
     this.setName(name);
     this.setState(false);
     this.setPrevStateChangeMs(Date.now());
-        this.RCLoopCount = 0;
+    this.RCLoopCount = 0;
     this.currentlySamplingLightSensor = false
     this.readLightSensorState();
     this.on('lightStateChange', this.lightStateEventHandler);
@@ -34,7 +32,7 @@ export default class Light {
   }
 
   lightStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), evt.state);
+    utils.logAndPublishState(this.mqttAgent, evt.description, cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), evt.state);
   };
 
   process() {
@@ -43,15 +41,12 @@ export default class Light {
   }
 
   readSensorAtInterval() {
-    // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
       logger.log(logLevel, 'READING Light SENSOR STATE: ' + this.getState());
       this.readLightSensorState();
       this.lastSensorReadTimeMs = Date.now();
-      //if its a new value publish it
       if (this.hasNewStateAvailable()) {
         this.lastStatePublishedMs = Date.now();
-        // const evt = new Event('light sensor interval read', this.getState());
         let evt = { name: 'state', state: this.getState(), description: 'light sensor read' };
 
         this.trigger('lightStateChange', evt);
@@ -62,9 +57,7 @@ export default class Light {
 
   periodicPublication() {
     if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
-      // ensure regular state publishing
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
-      // const evt = new Event('light periodic', this.getState());
       let evt = { name: 'state', state: this.getState(), description: 'light P' };
 
       this.trigger('lightStateChange', evt);
@@ -75,17 +68,10 @@ export default class Light {
 
   getTelemetryData() {
     let superTelemetry = this.getTelemetryData();
-    logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`); // logger.error(JSON.stringify(superTelemetry));
+    logger.log('debug', `tele light: ${JSON.stringify(superTelemetry)}`);
     return superTelemetry;
   }
 
-  /**
-   * Reads the current light sensor state by checking the RCLoopCount.
-   * Logs the RCLoopCount and the derived light state.
-   * Updates the light state based on the RCLoopCount threshold.
-   * Initiates the process to measure the RC charge loop count using GPIO.
-   * @returns {void}
-   */
   readLightSensorState() {
     logger.log(logLevel, `>>>readLightSensorState this.RCLoopCount: ${this.RCLoopCount}`);
     this.setState(this.RCLoopCount > 1000 ? 0 : 1);
@@ -93,24 +79,13 @@ export default class Light {
 
     const lightState = this.getState();
     logger.log(logLevel, `>>>lightState: ${lightState}`);
-    // new ldr based routine test
-    this.initiateGetRCChargeLoopCount(); // Measure timing using GPIO4
-    // this.state = lightState
+    this.initiateGetRCChargeLoopCount();
     return this.setState(lightState);
   }
 
-  /**
-   * Triggers a read of the light sensor using a capacitor charge method.
-   * This method discharges the capacitor, waits 50ms, and then reads the GPIO pin state.
-   * The method returns the loop count required for the voltage across the capacitor to be read as high by the GPIO.
-   * If the GPIO is not accessible, the method logs an error and returns a default value of 111.
-   * @return {number} The loop count required for the voltage across the capacitor to be read as high by the GPIO.
-   */
   initiateGetRCChargeLoopCount() {
-    // logger.log(logLevel, '==initiateGetRCChargeLoopCount');
     this.RCLoopCount = 0;
     if (Gpio.accessible) {
-      // Discharge capacitor
       var self = this;
 
       wait(50)
@@ -123,27 +98,16 @@ export default class Light {
     return this.RCLoopCount;
   }
 
-  /**
-   * Read the light sensor value by counting the number of loops until the GPIO reads high.
-   * The capacitor is charged and then discharged after the measurement is taken.
-   * If the sensor is currently being sampled, do nothing.
-   * @param {object} self - The context object, 'this'.
-   * @returns {undefined}
-   */
   readLDRChargeLoopCount(self) {
-    // Count loops until voltage across capacitor reads high on GPIO
-    // if not currently sampling then start counting
     if (self.currentlySamplingLightSensor == false) {
       self.currentlySamplingLightSensor = true;
 
-      // charge capacitor
       self.setIODirection('in');
 
       while (self.readIO() == 0 && self.RCLoopCount < 999999) {
         self.RCLoopCount += 1;
       }
 
-      // discharge capacitor
       self.setIODirection('out');
       self.writeIO(0);
 
@@ -157,13 +121,8 @@ export default class Light {
   }
 }
 
-
-// https://javascript.info/mixins
-
-// Add the mixin with event-related methods
 import eventMixin from './mixins/eventMixin.js';
 Object.assign(Light.prototype, eventMixin);
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Light.prototype, IOPinAccessorsMixin);
-

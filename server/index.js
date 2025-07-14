@@ -22,4 +22,4 @@ server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-startControlLoop(broadcast);
+await startControlLoop(broadcast);

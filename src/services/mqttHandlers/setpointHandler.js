@@ -1,22 +1,21 @@
-
 import logger from '../logger.js';
 import cfg from '../config.js';
 import * as utils from '../../utils/utils.js';
 
-function handleSetpoint(topic, message, configKey, topicKey) {
+function handleSetpoint(mqttAgent, topic, message, configKey, topicKey) {
   const value = Number(message.toString());
   if (value > 0) {
-    utils.logAndPublishState(`${configKey}: `, cfg.getWithMQTTPrefix(topicKey), `${value}`);
+    utils.logAndPublishState(mqttAgent, `${configKey}: `, cfg.getWithMQTTPrefix(topicKey), `${value}`);
     cfg.set(configKey, value);
   } else {
     logger.error(`MQTT->${configKey}/set: INVALID PAYLOAD RECEIVED: ${message}`);
   }
 }
 
-export function handleHighSetpoint(topic, message) {
-  handleSetpoint(topic, message, 'zone.highSetpoint', 'mqtt.highSetpointTopic');
+export function handleHighSetpoint(mqttAgent, topic, message) {
+  handleSetpoint(mqttAgent, topic, message, 'zone.highSetpoint', 'mqtt.highSetpointTopic');
 }
 
-export function handleLowSetpoint(topic, message) {
-  handleSetpoint(topic, message, 'zone.lowSetpoint', 'mqtt.lowSetpointTopic');
+export function handleLowSetpoint(mqttAgent, topic, message) {
+  handleSetpoint(mqttAgent, topic, message, 'zone.lowSetpoint', 'mqtt.lowSetpointTopic');
 }

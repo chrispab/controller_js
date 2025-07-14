@@ -12,7 +12,7 @@
     }
   },
   "config": {
-    "delayBeforeConfigSaveMs": 10000
+    "delayBeforeConfigSaveMs": 3000
   },
   "system": {
     "name": "system_1"
@@ -64,12 +64,12 @@
   },
   "vent": {
     "offMs": 5000,
-    "onMs": 335000,
+    "onMs": 415000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
-    "ventOnDarkMs": 80000,
+    "ventOnDarkMs": 415000,
     "ventOffDarkMs": 5000
   },
   "heater": {
@@ -126,5 +126,6 @@
     "activeSetpointTopic": "/active_setpoint",
     "versionTopic": "/version",
     "outsideSensorName": "DS18B20-1"
-  }
+  },
+  "vent ventOnDeltaSecs Set": 410000
 }

@@ -24,8 +24,14 @@ class ConfigHandler {
    */
   process() {
     // Check if config has changed and if enough time has passed to save it
-    if (this.configHasChanged && Date.now() - this.configChangedTime > this.delayBeforeConfigSaveMs) {
+    // if (this.configHasChanged && Date.now() - this.configChangedTime > this.delayBeforeConfigSaveMs) {
+    if (this.configHasChanged ) {
+
       this.save();
+
+      this.config = this.load();
+// we must now either update the component values in them or make sure components self update if config was loaded
+
       this.configHasChanged = false;
       this.configChangedTime = null;
     }
@@ -51,8 +57,8 @@ class ConfigHandler {
     }
     // Parse the JSON content and return the resulting object
     var content = JSON.parse(file_content);
-    logger.log('warn',  `configuration file ${customPath} loaded`);
-
+    logger.log('warn', `configuration file ${customPath} loaded`);
+    logger.log('error', '............config loaded');
     return content;
   }
 
@@ -62,6 +68,7 @@ class ConfigHandler {
    */
   save() {
     this.saveConfig(this.config);
+    logger.log('error', '............config saved');
   }
 
   /**
@@ -95,7 +102,7 @@ class ConfigHandler {
     }
     return prefix + value;
   }
-  
+
   /**
    * Sets a value in the configuration using a dot-notation path.
    * @param {string} path - The path to the property (e.g., 'zone.highSetpoint').

@@ -10,15 +10,17 @@ import Vent from "./components/vent.js";
 
 //import services as single instances
 import cfg from "./services/config.js";
-import mqttAgent from "./services/mqttAgent.js";
+import MqttAgent from './services/mqttAgent.js';
 
-function startControlLoop(broadcast) {
+async function startControlLoop(broadcast) {
+  const mqttAgent = new MqttAgent();
+  await mqttAgent.initialize();
   //create components
-  const fan = new Fan("fan", cfg.get("hardware.fan.pin"));
-  const heater = new Heater("heater", cfg.get("hardware.heater.pin"));
-  const light = new Light("light", cfg.get("hardware.RC.pin"));
-  const temperatureSensor = new TemperatureSensor("temperature_sensor", cfg.get("hardware.dhtSensor.pin"));
-  const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.vent.speedPin"));
+  const fan = new Fan("fan", cfg.get("hardware.fan.pin"), mqttAgent);
+  const heater = new Heater("heater", cfg.get("hardware.heater.pin"), mqttAgent);
+  const light = new Light("light", cfg.get("hardware.RC.pin"), mqttAgent);
+  const temperatureSensor = new TemperatureSensor("temperature_sensor", cfg.get("hardware.dhtSensor.pin"), mqttAgent);
+  const vent = new Vent("vent", cfg.get("hardware.vent.pin"), cfg.get("hardware.vent.speedPin"), mqttAgent);
 
   setInterval(() => {
     cfg.process();
