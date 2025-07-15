@@ -73,6 +73,11 @@ export default class Vent {
 
   }
 
+  /**
+   * Reloads vent settings from the configuration if they have changed.
+   * This includes `ventOnDarkMs`, `ventOffDarkMs`, `onMs`, and `offMs`.
+   * Logs a debug message if a setting is reloaded.
+   */
   reloadSettingsIfChanged() {
     //  
     if (this.ventOnDarkMs != cfg.get('vent.ventOnDarkMs')) {
