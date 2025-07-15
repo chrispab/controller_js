@@ -27,6 +27,12 @@ function sendEmail(subject, body) {
   });
 }
 
+
+/**
+ * Returns the current time in HH:MM:SS format.
+ *
+ * @returns {string} The current time formatted as HH:MM:SS.
+ */
 function getHMSStr() {
   const date = new Date(Date.now());
   const hh = `0${date.getHours()}`.slice(-2);
@@ -36,10 +42,16 @@ function getHMSStr() {
   return `${hh}:${mm}:${ss}`;
 }
 
+
+/**
+ * Logs a message and publishes a state to an MQTT topic.
+ * @param {string} comment - A descriptive comment for the log.
+ * @param {string} topic - The MQTT topic to publish to.
+ * @param {*} state - The state value to publish. It will be converted to a string.
+ */
 const logAndPublishState = (comment, topic, state) => {
-  var logLevel = 'info';
-  logger.log(logLevel, '>' + comment + `: ${topic + ': ' + state}`);
-  mqttAgent.client.publish(topic, `${state}`);
+  logger.info(`> ${comment}: ${topic}: ${state}`);
+  mqttAgent.client.publish(topic, String(state));
 };
 
 // export utils;

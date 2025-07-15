@@ -100,31 +100,35 @@ export default class TemperatureSensor {
   readSensor() {
     logger.log(logLevel, '1 pre READING Temperature SENSOR STATE: ' + this.getState());
 
-    var self = this;
-    // logger.info("Trying to Read from DHT sensor...");
-    sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
-      // let sensorData = { temperature: 0, humidity: 0 };
-      if (!err) {
-        //limit to 1 dp
-        temperature = temperature.toFixed(1);
-        humidity = humidity.toFixed(1);
-        // if new temperature, save it
-        // if (temperature !== self.getTemperature()) {
-        // self.setNewStateAvailable(true);
-        //stored values are to 1 decimal
-        self.setTemperature(temperature);
-        self.setHumidity(humidity);
-        // }
+    try {
+      var self = this;
+      // logger.info("Trying to Read from DHT sensor...");
+      sensor.read(this.dhtSensorType, this.dhtSensorPin, function (err, temperature, humidity) {
+        // let sensorData = { temperature: 0, humidity: 0 };
+        if (!err) {
+          //limit to 1 dp
+          temperature = temperature.toFixed(1);
+          humidity = humidity.toFixed(1);
+          // if new temperature, save it
+          // if (temperature !== self.getTemperature()) {
+          // self.setNewStateAvailable(true);
+          //stored values are to 1 decimal
+          self.setTemperature(temperature);
+          self.setHumidity(humidity);
+          // }
 
-        // sensorData.temperature = self.getTemperature();
-        // sensorData.humidity = self.getHumidity();
+          // sensorData.temperature = self.getTemperature();
+          // sensorData.humidity = self.getHumidity();
 
-        logger.log(logLevel, '2 in callback read from DHT sensor: ' + self.getState());
-        // return sensorData;
-      } else {
-        logger.error('Failed to read from DHT sensor: ' + err);
-      }
-    });
+          logger.log(logLevel, '2 in callback read from DHT sensor: ' + self.getState());
+          // return sensorData;
+        } else {
+          logger.error('Failed to read from DHT sensor: ' + err);
+        }
+      });
+    } catch (error) {
+      logger.error(`Error in readSensor: ${error}`);
+    }
     // wait(500)
     // .then(() => logger.log('error', '3. 500ms after READING Temperature SENSOR STATE: ' + this.getState()))
     // .catch(console.error);
