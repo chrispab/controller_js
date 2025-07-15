@@ -322,7 +322,7 @@ export default class Vent {
         : 0;
       evt = { name: 'value', state: ventValue, description: 'vent value change: ' };
       this.trigger('ventStateChange', evt);
-
+ 
       //indicate data read and used e.g MQTT pub
       return true;
     }

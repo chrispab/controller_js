@@ -12,7 +12,7 @@
     }
   },
   "config": {
-    "delayBeforeConfigSaveMs": 3000
+    "delayBeforeConfigSaveMs": 5000
   },
   "system": {
     "name": "system_1"

@@ -36,14 +36,14 @@ export function handleVentOnDeltaSecsSet(topic, message) {
   handleVent(topic, message, 'vent.onMs', 'mqtt.ventOnDeltaSecsTopic');
 }
 
-export function handleVentOffDeltaSecs(topic, message) {
+export function handleVentOffDeltaSecsSet(topic, message) {
   handleVent(topic, message, 'vent.offMs', 'mqtt.ventOffDeltaSecsTopic');
 }
 
-export function handleVentOnDarkSecs(topic, message) {
+export function handleVentOnDarkSecsSet(topic, message) {
   handleVent(topic, message, 'vent.ventOnDarkMs', 'mqtt.ventOnDarkSecsTopic');
 }
 
-export function handleVentOffDarkSecs(topic, message) {
+export function handleVentOffDarkSecsSet(topic, message) {
   handleVent(topic, message, 'vent.ventOffDarkMs', 'mqtt.ventOffDarkSecsTopic');
 }

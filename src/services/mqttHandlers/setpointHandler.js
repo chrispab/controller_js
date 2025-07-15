@@ -13,10 +13,10 @@ function handleSetpoint(topic, message, configKey, topicKey) {
   }
 }
 
-export function handleHighSetpoint(topic, message) {
+export function handleHighSetpointSet(topic, message) {
   handleSetpoint(topic, message, 'zone.highSetpoint', 'mqtt.highSetpointTopic');
 }
 
-export function handleLowSetpoint(topic, message) {
+export function handleLowSetpointSet(topic, message) {
   handleSetpoint(topic, message, 'zone.lowSetpoint', 'mqtt.lowSetpointTopic');
 }

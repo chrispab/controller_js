@@ -1,5 +1,5 @@
 
 export { default as handleOutsideSensor } from './outsideSensorHandler.js';
-export { handleHighSetpoint, handleLowSetpoint } from './setpointHandler.js';
+export { handleHighSetpointSet, handleLowSetpointSet } from './setpointHandler.js';
 // Export vent-related MQTT message handlers
-export { handleVentOnDeltaSecsSet, handleVentOffDeltaSecs, handleVentOnDarkSecs, handleVentOffDarkSecs } from './ventHandler.js';
+export { handleVentOnDeltaSecsSet, handleVentOffDeltaSecsSet, handleVentOnDarkSecsSet, handleVentOffDarkSecsSet } from './ventHandler.js';
