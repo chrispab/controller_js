@@ -41,17 +41,17 @@ class ConfigHandler {
     var file_content = null;
     // Check if the custom configuration file exists
     if (fs.existsSync(customPath)) {
-      logger.log('warn', `custom configuration file ${customPath} exists`);
+      logger.log('info', `custom configuration file ${customPath} exists`);
       // If it exists, read its content
       file_content = fs.readFileSync(customPath);
     } else {
       // If not, read the content of the default configuration file
       file_content = fs.readFileSync(defaultPath);
-      logger.log('warn', `custom configuration file ${customPath} does not exist. Using default configuration file ${defaultPath}`);
+      logger.log('info', `custom configuration file ${customPath} does not exist. Using default configuration file ${defaultPath}`);
     }
     // Parse the JSON content and return the resulting object
     var content = JSON.parse(file_content);
-    logger.log('warn',  `configuration file ${customPath} loaded`);
+    logger.log('info',  `configuration file ${customPath} loaded`);
 
     return content;
   }

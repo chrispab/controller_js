@@ -89,9 +89,10 @@ class MqttAgent {
       //publish wifi info
       wifi.getCurrentConnections((error, currentConnections) => {
         if (error) {
-          console.log(error);
+          // console.log(error);
+          logger.log(logLevel,"getCurrentConnections error: " + error)
         } else {
-          utils.logAndPublishState('mqtt P: ', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
+          utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
       });
     }
@@ -144,16 +145,28 @@ mqttAgent.client.on('packetsend', function () {
 
 import * as handlers from './mqttHandlers/index.js';
 
+/**
+ * Maps MQTT topics to their respective handler functions.
+ * When a message is received on a subscribed topic, the corresponding handler function is called.
+ * The topic keys are dynamically generated using configuration values to ensure flexibility.
+ * @type {Object.<string, Function>}
+ */
 const topicHandlers = {
   [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpoint,
   [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpoint,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic')]: handlers.handleVentOnDeltaSecs,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic')]: handlers.handleVentOnDeltaSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic')]: handlers.handleVentOffDeltaSecs,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecs,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecs,
 };
 
+/**
+ * Event listener for incoming MQTT messages.
+ * It dispatches the message to the appropriate handler function based on the topic.
+ * @param {string} topic - The MQTT topic the message was received on.
+ * @param {Buffer} message - The payload of the MQTT message.
+ */
 mqttAgent.client.on('message', (topic, message) => {
   const handler = topicHandlers[topic];
   if (handler) {

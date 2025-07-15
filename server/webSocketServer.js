@@ -1,4 +1,5 @@
 import { WebSocketServer } from 'ws';
+import logger from '../src/services/logger.js';
 
 let wss;
 
@@ -13,7 +14,9 @@ function startWebSocketServer(httpServer) {
     ws.on('error', console.error);
   });
 
-  console.log('WebSocket server is set up and running.');
+  // console.log('WebSocket server is set up and running.');
+  //use logger
+  logger.info('WebSocket server is set up and running.');
 }
 
 function broadcast(data) {

@@ -6,11 +6,10 @@ import process from 'process';
 
 
 const logger = winston.createLogger({
-  // level: 'debug',
   level: 'info',
+  // level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp({
-      format: 'HH:mm:ss'
     }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
@@ -42,7 +41,7 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-// ***************
+  // ***************
 // Allows for JSON logging
 // ***************
 
@@ -99,6 +98,7 @@ if (process.env.NODE_ENV !== 'production') {
 // // ***************
 
 // Logger.warn(new Error('Error passed as info'));
+
 // Logger.log('error', new Error('Error passed as message'));
 
 // Logger.warn('Maybe important error: ', new Error('Error passed as meta'));

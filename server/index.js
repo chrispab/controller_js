@@ -4,6 +4,8 @@ import http from 'http';
 import process from 'process';
 import { startWebSocketServer, broadcast } from './webSocketServer.js';
 import { startControlLoop } from '../src/controlLoop.js';
+import logger from '../src/services/logger.js';
+const logLevel = 'debug';
 
 // const PORT = process.env.PORT || 3001;
 const PORT = process.env.PORT || 8081;
@@ -19,7 +21,8 @@ app.get('/api', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+  // console.log(`Server listening on ${PORT}`);
+  logger.log(logLevel,"Server listening on: " + PORT);
 });
 
 startControlLoop(broadcast);

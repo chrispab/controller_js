@@ -147,8 +147,8 @@ export default class Light {
       self.setIODirection('out');
       self.writeIO(0);
 
-      logger.log(logLevel, `>>>>>self.getState(): ${self.getState()}`);
-      logger.log(logLevel, `>>>>>>>>>>>>>self.RCLoopCount: ${self.RCLoopCount}`);
+      logger.log(logLevel, `readLDRChargeLoopCount>self.getState(): ${self.getState()}`);
+      logger.log(logLevel, `readLDRChargeLoopCount>self.RCLoopCount: ${self.RCLoopCount}`);
 
       self.currentlySamplingLightSensor = false;
     } else {

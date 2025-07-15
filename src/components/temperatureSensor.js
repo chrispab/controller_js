@@ -98,7 +98,7 @@ export default class TemperatureSensor {
   }
 
   readSensor() {
-    logger.log(logLevel, '1 pre READING Temperature SENSOR STATE: ' + this.getState());
+    logger.log(logLevel, '1  SENSOR STATE pre READING Temperature sensor: ' + this.getState());
 
     try {
       var self = this;

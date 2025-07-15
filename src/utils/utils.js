@@ -45,13 +45,13 @@ function getHMSStr() {
 
 /**
  * Logs a message and publishes a state to an MQTT topic.
- * @param {string} comment - A descriptive comment for the log.
- * @param {string} topic - The MQTT topic to publish to.
- * @param {*} state - The state value to publish. It will be converted to a string.
+ * @param {string} preComment - A descriptive comment for the log.
+ * @param {string} pubToTopic - The MQTT topic to publish to.
+ * @param {*} message - The message/state value to publish. It will be converted to a string.
  */
-const logAndPublishState = (comment, topic, state) => {
-  logger.info(`> ${comment}: ${topic}: ${state}`);
-  mqttAgent.client.publish(topic, String(state));
+const logAndPublishState = (preComment, pubToTopic, message) => {
+  logger.info(`->${preComment}: ${pubToTopic}: ${message}`);
+  mqttAgent.client.publish(pubToTopic, String(message));
 };
 
 // export utils;
