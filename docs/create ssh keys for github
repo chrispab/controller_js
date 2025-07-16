@@ -1,5 +1,6 @@
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys
-Enter ls -al ~/.ssh to see if existing SSH keys are present.
+Enter  to see if existing SSH keys are present.
+ls -al ~/.ssh
 
 
 https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
@@ -34,6 +35,16 @@ add to github
 
 https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
 
+https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/setting-your-commit-email-address
+
+for single repository
+git config user.email "cbattisson@gmail.com"
+git config user.name "chrispab"
+
+https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-email-preferences/remembering-your-github-username-or-email
+git config user.name
+
+for all repositories
 
 git config --global user.email "cbattisson@gmail.com"
 git config --global user.name "chrispab"
