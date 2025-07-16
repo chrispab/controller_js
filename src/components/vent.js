@@ -80,18 +80,22 @@ export default class Vent {
   reloadSettingsIfChanged() {
     if (this.ventOnDarkMs != cfg.get('vent.ventOnDarkMs')) {
       this.ventOnDarkMs = cfg.get('vent.ventOnDarkMs');
+      utils.logAndPublishState('vent R', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), `${this.ventOnDarkMs / 1000}`)
       logger.debug(`ventOnDarkMs changed to ${this.ventOnDarkMs}`);
     }
     if (this.ventOffDarkMs != cfg.get('vent.ventOffDarkMs')) {
       this.ventOffDarkMs = cfg.get('vent.ventOffDarkMs');
+      utils.logAndPublishState('vent R', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), `${this.ventOffDarkMs / 1000}`)
       logger.debug(`ventOffDarkMs changed to ${this.ventOffDarkMs}`);
     }
     if (this.getOnMs() != cfg.get('vent.onMs')) {
       this.setOnMs(cfg.get('vent.onMs'));
+      utils.logAndPublishState('vent R', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), `${this.getOnMs() / 1000}`)
       logger.debug(`onMs changed to ${this.getOnMs()}`);
     }
     if (this.getOffMs() != cfg.get('vent.offMs')) {
       this.setOffMs(cfg.get('vent.offMs'));
+      utils.logAndPublishState('vent R', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), `${this.getOffMs() / 1000}`)
       logger.debug(`offMs changed to ${this.getOffMs()}`);
     }
   }

@@ -15,8 +15,8 @@ import * as utils from '../../utils/utils.js';
 function handleVent(topic, message, configKey, topicKey) {
   const value = Number(message.toString());
 
-  //insert lerrogging statement
-  logger.error("test error message");
+  //insert logging statement
+  logger.info("topic: "+ topic + " message: " + message + " configKey: " + configKey + " topicKey: " + topicKey);
   
   if (value > 0) {
     utils.logAndPublishState(`${configKey}: `, cfg.getWithMQTTPrefix(topicKey), `${value}`);
@@ -27,10 +27,10 @@ function handleVent(topic, message, configKey, topicKey) {
 }
 
 /**
- * Handles MQTT messages for setting the vent's "on" duration in seconds.
+ * Handles MQTT messages for setting the vent's various durations in seconds.
  * Converts the received message payload to milliseconds and updates the configuration.
  * @param {string} topic - The MQTT topic the message was received on.
- * @param {Buffer} message - The payload of the MQTT message, representing the "on" duration in seconds.
+ * @param {Buffer} message - The payload of the MQTT message, representing the duration in seconds.
  */
 export function handleVentOnDeltaSecsSet(topic, message) {
   handleVent(topic, message, 'vent.onMs', 'mqtt.ventOnDeltaSecsTopic');

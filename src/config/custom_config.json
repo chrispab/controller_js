@@ -64,12 +64,12 @@
   },
   "vent": {
     "offMs": 5000,
-    "onMs": 165000,
+    "onMs": 395000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
     "ventOverridePulseOnDelta": 5000,
-    "ventOnDarkMs": 80000,
+    "ventOnDarkMs": 420000,
     "ventOffDarkMs": 5000
   },
   "heater": {
