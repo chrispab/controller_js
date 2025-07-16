@@ -80,21 +80,24 @@ export default class Vent {
    */
   reloadSettingsIfChanged() {
     //  
+    // logLevel='debug';
+
     if (this.ventOnDarkMs != cfg.get('vent.ventOnDarkMs')) {
       this.ventOnDarkMs = cfg.get('vent.ventOnDarkMs');
-      logger.log(logLevel, `ventOnDarkMs changed to ${this.ventOnDarkMs}`);
+      logger.log("info", `ventOnDarkMs changed to ${this.ventOnDarkMs}`);
     }
     if (this.ventOffDarkMs != cfg.get('vent.ventOffDarkMs')) {
       this.ventOffDarkMs = cfg.get('vent.ventOffDarkMs');
-      logger.log(logLevel, `ventOffDarkMs changed to ${this.ventOffDarkMs}`);
+      logger.log("info", `ventOffDarkMs changed to ${this.ventOffDarkMs}`);
     }
-    if (this.onMs != cfg.get('vent.onMs')) {
-      this.onMs = cfg.get('vent.onMs');
-      logger.log(logLevel, `onMs changed to ${this.onMs}`);
+    if (this.getOnMs() != cfg.get('vent.onMs')) {
+      this.setOnMs(cfg.get('vent.onMs'));
+      logger.log("info", `onMs changed to ${this.getOnMs()}`);
     }
-    if (this.offMs != cfg.get('vent.offMs')) {
-      this.offMs = cfg.get('vent.offMs');
-      logger.log(logLevel, `offMs changed to ${this.offMs}`);
+    if (this.getOffMs() != cfg.get('vent.offMs')) {
+      this.setOffMs(cfg.get('vent.offMs'));
+      // loggeroffMs = cfg.get('vent.offMs');
+      logger.log("info", `offMs changed to ${this.getOffMs()}`);
     }
   }
 
