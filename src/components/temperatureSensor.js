@@ -54,15 +54,7 @@ export default class TemperatureSensor {
   }
 
   process() {
-    // this.processCount = this.processCount ? this.processCount + 1 : 1;
-    // ensure regular state publishing, at least every publishStateIntervalMs
     this.periodicPublication();
-
-    // if (Date.now() >= this.lastStatePublishedMs + this.publishStateIntervalMs) {
-    //   this.lastStatePublishedMs = Date.now();
-    //   utils.logAndPublishState('sensor P', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
-    //   utils.logAndPublishState('sensor P', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
-    // }
 
     // do an actual read of the sensor every sensorReadIntervalMs
     if (Date.now() >= this.lastSensorReadTimeMs + this.sensorReadIntervalMs) {
@@ -90,6 +82,7 @@ export default class TemperatureSensor {
     // ensure regular state publishing, at least every publishStateIntervalMs
     this.periodicPublication();
   }
+
 
   getTelemetryData() {
     let superTelemetry = this.getTelemetryData();

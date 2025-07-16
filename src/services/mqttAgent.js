@@ -56,12 +56,33 @@ class MqttAgent {
 
   process(components) {
     this.processCount = this.processCount ? this.processCount + 1 : 1;
+
+    this.reloadSettingsIfChanged();
+
     if (cfg.get('zone.telemetry.enabled') == true) {
       this.doTelemetry(components);
     }else{
       // logger.info("globally disabled telemetry")
     }
     this.periodicPublication();
+  }
+
+  /**
+   * Reloads vent settings from the configuration if they have changed.
+   * This includes `ventOnDarkMs`, `ventOffDarkMs`, `onMs`, and `offMs`.
+   * Logs a debug message if a setting is reloaded.
+   */
+  reloadSettingsIfChanged() {
+    if (this.highSetpoint != cfg.get('zone.highSetpoint')) {
+      this.highSetpoint = cfg.get('zone.highSetpoint');
+      utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${this.highSetpoint}`);
+      logger.debug(`highSetpoint changed to ${this.highSetpoint}`);
+    }
+    if (this.lowSetpoint != cfg.get('zone.lowSetpoint')) {
+      this.lowSetpoint = cfg.get('zone.lowSetpoint');
+      utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${this.lowSetpoint}`);
+      logger.debug(`lowSetpoint changed to ${this.lowSetpoint}`);
+    }
   }
 
   doTelemetry(components) {
@@ -157,6 +178,7 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic')]: handlers.handleVentOffDeltaSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
+
 };
 
 /**
