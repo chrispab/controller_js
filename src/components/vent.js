@@ -4,8 +4,8 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
 
-const logLevel = 'debug';
-// const logLevel = 'warn';
+// let logLevel = 'debug';
+let logLevel = 'warn';
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
@@ -84,20 +84,20 @@ export default class Vent {
 
     if (this.ventOnDarkMs != cfg.get('vent.ventOnDarkMs')) {
       this.ventOnDarkMs = cfg.get('vent.ventOnDarkMs');
-      logger.log("info", `ventOnDarkMs changed to ${this.ventOnDarkMs}`);
+      logger.log(logLevel, `ventOnDarkMs changed to ${this.ventOnDarkMs}`);
     }
     if (this.ventOffDarkMs != cfg.get('vent.ventOffDarkMs')) {
       this.ventOffDarkMs = cfg.get('vent.ventOffDarkMs');
-      logger.log("info", `ventOffDarkMs changed to ${this.ventOffDarkMs}`);
+      logger.log(logLevel, `ventOffDarkMs changed to ${this.ventOffDarkMs}`);
     }
     if (this.getOnMs() != cfg.get('vent.onMs')) {
       this.setOnMs(cfg.get('vent.onMs'));
-      logger.log("info", `onMs changed to ${this.getOnMs()}`);
+      logger.log(logLevel, `onMs changed to ${this.getOnMs()}`);
     }
     if (this.getOffMs() != cfg.get('vent.offMs')) {
       this.setOffMs(cfg.get('vent.offMs'));
       // loggeroffMs = cfg.get('vent.offMs');
-      logger.log("info", `offMs changed to ${this.getOffMs()}`);
+      logger.log(logLevel, `offMs changed to ${this.getOffMs()}`);
     }
   }
 

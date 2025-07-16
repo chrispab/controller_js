@@ -14,8 +14,8 @@ class IOBase {
         this.name = "not yet set-IOBase";
         this.newOnMsFlag = false;
         this.newOffMsFlag = false;
-        this.prevOnMsChangeMs = Date.now();
-        this.prevOffMsChangeMs = Date.now();
+        // this.prevOnMsChangeMs = Date.now();
+        // this.prevOffMsChangeMs = Date.now();
         //log constructor parameters
         // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
         this.GPIOAccessible = Gpio.accessible;
@@ -137,7 +137,7 @@ class IOBase {
         if (newOnMs !== this.getOnMs()) {
             this.onMs = newOnMs;
             this.newOnMsFlag = true;
-            this.setPrevOnMsChangeMs(Date.now());
+            // this.setPrevOnMsChangeMs(Date.now());
         }
     }
 
@@ -145,7 +145,7 @@ class IOBase {
         if (newOffMs !== this.getOffMs()) {
             this.offMs = newOffMs;
             this.newOffMsFlag = true;
-            this.setPrevOffMsChangeMs(Date.now());
+            // this.setPrevOffMsChangeMs(Date.now());
         }
     }
 
@@ -157,21 +157,21 @@ class IOBase {
         return this.offMs;
     }
 
-    getPrevOnMsChangeMs() {
-        return this.prevOnMsChangeMs;
-    }
+    // getPrevOnMsChangeMs() {
+    //     return this.prevOnMsChangeMs;
+    // }
 
-    setPrevOnMsChangeMs(newPrevOnMsChangeMs) {
-        this.prevOnMsChangeMs = newPrevOnMsChangeMs;
-    }
+    // setPrevOnMsChangeMs(newPrevOnMsChangeMs) {
+    //     this.prevOnMsChangeMs = newPrevOnMsChangeMs;
+    // }
 
-    getPrevOffMsChangeMs() {
-        return this.prevOffMsChangeMs;
-    }
+    // getPrevOffMsChangeMs() {
+    //     return this.prevOffMsChangeMs;
+    // }
 
-    setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
-        this.prevOffMsChangeMs = newPrevOffMsChangeMs;
-    }
+    // setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
+    //     this.prevOffMsChangeMs = newPrevOffMsChangeMs;
+    // }
 
     hasNewOnMsAvailable() {
         return this.newStateFlag;
