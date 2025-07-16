@@ -6,8 +6,7 @@ import { Gpio } from 'onoff';
 
 import * as utils from '../utils/utils.js';
 
-// const logLevel = 'debug';
-const logLevel = 'warn';
+const logLevel = 'debug';
 
 class Heater {
   constructor(name, heaterPin) {
@@ -66,21 +65,21 @@ class Heater {
         // let externalDiffT = Math.floor((setPointTemperature - 2 - outsideTemp) * this.ExternalTDiffMs);
         // Milliseconds per degree diff
         // let externalDiffT = Math.floor((setPointTemperature - outsideTemp) * this.ExternalTDiffMs);
-        let externalDiffT = (setPointTemperature - outsideTemp) * this.ExternalTDiffMs;
-        logger.log(logLevel, `setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
-        logger.log(logLevel, `--EXTERNAL DIFF t delta on to add ms:${externalDiffT}`);
+        const externalDiffT = (setPointTemperature - outsideTemp) * this.ExternalTDiffMs;
+        logger.debug(`setPointTemperature:${setPointTemperature} outsideTemp:${outsideTemp} externalDiffT:${externalDiffT}`);
+        logger.debug(`--EXTERNAL DIFF t delta on to add ms:${externalDiffT}`);
 
         // this.heatOnMs = cfg.getItemValueFromConfig('heatOnMs') + internalDiffT + externalDiffT; // + (outsideTemp / 50);
         this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT; // + (outsideTemp / 50);
         this.heatOffMs = cfg.get('heater.heatOffMs');
-        logger.log(logLevel, `>>CALCULATED TOTAL delta ON ms:this.heatOnMs:${this.heatOnMs}`);
+        logger.debug(`>>CALCULATED TOTAL delta ON ms:this.heatOnMs:${this.heatOnMs}`);
 
         // Start a cycle - ON first
         this.heatingCycleState = 'ON';
         // Init ON state timer
         // this.turnOn();
         this.toggleHeater(1);
-        logger.log(logLevel, '..temperature low - currently INACTIVE - TURN HEATing cycle state ON');
+        logger.debug('..temperature low - currently INACTIVE - TURN HEATing cycle state ON');
       }
     } else {
       this.toggleHeater(0);
@@ -90,15 +89,15 @@ class Heater {
         this.heatingCycleState = 'OFF';
         // this.turnOff();
         this.toggleHeater(0);
-        logger.log(logLevel, '..currently ON - TURN HEATing cycle state OFF');
+        logger.debug('..currently ON - TURN HEATing cycle state OFF');
       }
     }
 
     this.heatOffMs = cfg.get('heater.heatOffMs');
     if (this.heatingCycleState == 'OFF') {
       if (currentMs - this.getPrevStateChangeMs() >= this.heatOffMs) {
-        this.heatingCycleState = 'INACTIVE';
-        logger.log(logLevel, '..currently OFF - MAKE HEATing cycle state INACTIVE');
+        this.heatingCycleState = 'INACTIVE'
+        logger.debug('..currently OFF - MAKE HEATing cycle state INACTIVE');
         // this.turnOff();
         this.toggleHeater(0);
       }
@@ -120,7 +119,7 @@ class Heater {
         logger.error('==' + this.getName() + ' IO undefined==');
       }
       if (this.getStateAndClearNewStateFlag() == state) {
-        logger.log(logLevel, state ? 'Heater is on' : 'Heater is off');
+        logger.debug(state ? 'Heater is on' : 'Heater is off');
 
         // let evt = new Event('toggleHeater', this.getState(),'state');
         let evt = { name: 'heaterState', state: state, description: 'heater State' };

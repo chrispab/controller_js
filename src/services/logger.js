@@ -1,13 +1,15 @@
 // const { createLogger, format, transports } = require('../');
 
 import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 import process from 'process';
 
+// Determine log level from environment variable, default to 'info'
+const level = process.env.LOG_LEVEL || 'info';
 
 const logger = winston.createLogger({
-  level: 'info',
-  // level: 'debug',
+  level: level,
   format: winston.format.combine(
     winston.format.timestamp({
     }),
@@ -15,14 +17,25 @@ const logger = winston.createLogger({
     winston.format.splat(),
     winston.format.json()
   ),
-  // defaultMeta: { service: 'controller_js' },
   transports: [
     //
     // - Write to all logs with level `info` and below to `quick-start-combined.log`.
     // - Write all logs error (and below) to `quick-start-error.log`.
-    //
-    new winston.transports.File({ filename: 'logs/controller_js-error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/controller_js-combined.log' })
+    new DailyRotateFile({
+      filename: 'logs/controller_js-error-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d', // Keep logs for 14 days
+      level: 'error'
+    }),
+    new DailyRotateFile({
+      filename: 'logs/controller_js-combined-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      zippedArchive: true,
+      maxSize: '20m',
+      maxFiles: '14d'
+    })
   ]
 });
 

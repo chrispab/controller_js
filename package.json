@@ -26,6 +26,7 @@
     "nodemailer": "^6.9.16",
     "onoff": "^6.0.3",
     "winston": "^3.15.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {

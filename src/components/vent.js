@@ -4,8 +4,7 @@ import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
 
-// let logLevel = 'debug';
-let logLevel = 'warn';
+const logLevel = 'debug';
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
@@ -56,14 +55,14 @@ export default class Vent {
     } else if (evt.name === 'value') {
       topic = cfg.getWithMQTTPrefix('mqtt.ventValueTopic');
     }
-    logger.log(logLevel, "ventStateEventHandler: evt.name  " + evt.name );
+    logger.log('debug', "ventStateEventHandler: evt.name  " + evt.name );
 
     if (topic) {
       utils.logAndPublishState(evt.description, topic, evt.state);
     } else {
-      logger.warn(`ventStateEventHandler: unknown evt.name: ${evt.name}`);
+      logger.error(`ventStateEventHandler: unknown evt.name: ${evt.name}`);
     }
-    logger.log(logLevel,"topic: " + topic + " evt.state: "+ evt.state);
+    logger.log('debug',"ventStateEventHandler-topic: " + topic + " evt.state: "+ evt.state);
   };
 
 
@@ -79,25 +78,21 @@ export default class Vent {
    * Logs a debug message if a setting is reloaded.
    */
   reloadSettingsIfChanged() {
-    //  
-    // logLevel='debug';
-
     if (this.ventOnDarkMs != cfg.get('vent.ventOnDarkMs')) {
       this.ventOnDarkMs = cfg.get('vent.ventOnDarkMs');
-      logger.log(logLevel, `ventOnDarkMs changed to ${this.ventOnDarkMs}`);
+      logger.debug(`ventOnDarkMs changed to ${this.ventOnDarkMs}`);
     }
     if (this.ventOffDarkMs != cfg.get('vent.ventOffDarkMs')) {
       this.ventOffDarkMs = cfg.get('vent.ventOffDarkMs');
-      logger.log(logLevel, `ventOffDarkMs changed to ${this.ventOffDarkMs}`);
+      logger.debug(`ventOffDarkMs changed to ${this.ventOffDarkMs}`);
     }
     if (this.getOnMs() != cfg.get('vent.onMs')) {
       this.setOnMs(cfg.get('vent.onMs'));
-      logger.log(logLevel, `onMs changed to ${this.getOnMs()}`);
+      logger.debug(`onMs changed to ${this.getOnMs()}`);
     }
     if (this.getOffMs() != cfg.get('vent.offMs')) {
       this.setOffMs(cfg.get('vent.offMs'));
-      // loggeroffMs = cfg.get('vent.offMs');
-      logger.log(logLevel, `offMs changed to ${this.getOffMs()}`);
+      logger.debug(`offMs changed to ${this.getOffMs()}`);
     }
   }
 
@@ -160,15 +155,15 @@ export default class Vent {
       this.ventOverride = true;
       // this.speedPercent = 100;
       this.turnOn(100);
-      logger.log(logLevel, 'VENT ON - HI TEMP OVERRIDE - (Re)Triggering vent cooling pulse');
+      logger.debug('VENT ON - HI TEMP OVERRIDE - (Re)Triggering vent cooling pulse');
     } else if (this.ventOverride == true && elapsedMsSinceLastStateChange >= this.ventOverridePulseOnDelta) {
       // temperature below target, change state to OFF after pulse delay
       this.speedPercent = 0;
       this.turnOff();
       this.ventOverride = false;
-      logger.log(logLevel, 'VENT OFF - temperature ok, OVERRIDE - OFF');
+      logger.debug('VENT OFF - temperature ok, OVERRIDE - OFF');
     } else if (this.ventOverride == true) {
-      logger.log(logLevel, 'VENT ON - override in progress');
+      logger.debug('VENT ON - override in progress');
     }
     // periodic vent control - only execute if vent override not active
     if (this.ventOverride == false) {
@@ -180,9 +175,9 @@ export default class Vent {
         if (elapsedMsSinceLastStateChange >= this.getOffMs()) {
           // this.speedPercent = 50;
           this.turnOn(50);
-          logger.log(logLevel, 'VENT ON cycle start');
+          logger.debug('VENT ON cycle start');
         } else {
-          logger.log(logLevel, 'Vent OFF - during cycle OFF period');
+          logger.debug('Vent OFF - during cycle OFF period');
         }
       } else {
         // vent is on, we must wait for the 'on' duration to expire before
@@ -190,9 +185,9 @@ export default class Vent {
         // time up, change state to OFF
         if (elapsedMsSinceLastStateChange >= this.getOnMs()) {
           this.turnOff();
-          logger.log(logLevel, 'VENT OFF cycle start');
+          logger.debug('VENT OFF cycle start');
         } else {
-          logger.log(logLevel, 'Vent ON - during cycle ON period');
+          logger.debug('Vent ON - during cycle ON period');
         }
       }
     }
@@ -203,7 +198,7 @@ export default class Vent {
     const currentMs = Date.now();
 
     if (this.ventDarkStatus == 'inactive') {
-      logger.log(logLevel, 'VENT: lets start the vent dark ON period');
+      logger.debug('VENT: lets start the vent dark ON period');
       // lets start the vent dark ON period
       this.ventDarkStatus = true;
       // this.speedPercent = 50;
@@ -214,7 +209,7 @@ export default class Vent {
     }
     // if at end of ON period
     if (this.ventDarkStatus == true && currentMs > this.ventDarkOnStartMs + this.ventOnNightMs) {
-      logger.log(logLevel, 'VENT now at end of ON cylce');
+      logger.debug('VENT now at end of ON cylce');
       // now at end of ON cylce, enable off period
       this.ventDarkStatus = false;
       // this.speedPercent = 0;
@@ -253,7 +248,7 @@ export default class Vent {
         time: Date.now(),
       },
     };
-    logger.log(logLevel, `tele vent: ${JSON.stringify(telemetry)}`);
+    logger.debug(`tele vent: ${JSON.stringify(telemetry)}`);
     return telemetry;
   }
 
@@ -291,7 +286,7 @@ export default class Vent {
         logger.log('error', '==Vent IO undefined==');
       }
       if (this.emitIfStateChanged()) {
-        logger.log(logLevel, '==Vent on==');
+        logger.info('==Vent on==  emitIfStateChanged()');
       }
     }
   }
@@ -314,7 +309,7 @@ export default class Vent {
         logger.log('error', '==Vent IO undefined==');
       }
       if (this.emitIfStateChanged()) {
-        logger.log(logLevel, '==Vent off==');
+        logger.debug('==Vent off==');
       }
     }
   }
@@ -334,15 +329,16 @@ export default class Vent {
    */
   emitIfStateChanged() {
     if (this.hasNewStateAvailable()) {
-      if (this.getStateAndClearNewStateFlag() > 0) {
-        logger.log(logLevel, 'Vent is on');
+      const newState = this.getStateAndClearNewStateFlag();
+      if (newState > 0) {
+        logger.debug('Vent is on');
       } else {
-        logger.log(logLevel, 'Vent is off');
+        logger.debug('Vent is off');
       }
 
       const ventState = this.ventPowerPin.getState();
       const speedState = this.ventSpeedPin.getState();
-      logger.log(logLevel, `ventStateChange: ${ventState}, speedState: ${speedState}`);
+      logger.debug(`ventStateChange: ${ventState}, speedState: ${speedState}`);
 
       let evt = { name: 'state', state: ventState, description: 'vent State change: ' };
       this.trigger('ventStateChange', evt);

@@ -133,3 +133,8 @@ To ensure the application starts automatically on boot and runs reliably in the 
     ```bash
     journalctl -u zone_controller.service -f
     ```
+# Runs with the default 'info' level
+npm start
+
+# Runs with 'debug' level, showing info, warn, error, AND debug messages
+LOG_LEVEL=debug npm start

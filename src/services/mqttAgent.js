@@ -4,8 +4,6 @@ import cfg from './config.js';
 import wifi from 'node-wifi';
 import mqtt from 'mqtt';
 
-const logLevel = 'debug';
-
 import * as utils from '../utils/utils.js';
  
 import secret from '../secret.js';
@@ -61,7 +59,7 @@ class MqttAgent {
     if (cfg.get('zone.telemetry.enabled') == true) {
       this.doTelemetry(components);
     }else{
-      logger.log(logLevel, "globally disabled telemetry")
+      // logger.info("globally disabled telemetry")
     }
     this.periodicPublication();
   }
@@ -90,7 +88,7 @@ class MqttAgent {
       wifi.getCurrentConnections((error, currentConnections) => {
         if (error) {
           // console.log(error);
-          logger.log(logLevel,"getCurrentConnections error: " + error)
+          logger.error("getCurrentConnections error", { error });
         } else {
           utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
