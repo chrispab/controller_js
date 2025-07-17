@@ -7,7 +7,8 @@ import { startControlLoop } from '../src/controlLoop.js';
 import logger from '../src/services/logger.js';
 
 // const PORT = process.env.PORT || 3001;
-const PORT = process.env.PORT || 8081;
+// const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 5678;
 
 const app = express();
 app.use(express.static('client/public'));

@@ -12,6 +12,9 @@ function startWebSocketServer(httpServer) {
       console.log('Client disconnected from WebSocket');
     });
     ws.on('error', console.error);
+
+    // Mark this client as needing initial data
+    ws.needsInitialData = true;
   });
 
   // console.log('WebSocket server is set up and running.');
@@ -25,9 +28,25 @@ function broadcast(data) {
   }
 
   const jsonData = JSON.stringify(data);
+  logger.warn('web socket broadcast: ' + jsonData + '');
+
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
-      client.send(jsonData);
+      // remove quotes before sending
+      const formattedData = jsonData.replace(/"/g, '');
+
+      if (client.needsInitialData) {
+        // Send initial data and clear the flag
+        client.send('Version : 3.24 main: dark mode vent updates');
+        client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
+        
+        client.needsInitialData = false;
+        logger.error('Sent initial data to client.');
+      } 
+      // else {
+      //   client.send(formattedData);
+      // }
+      client.send(formattedData);
     }
   });
 }

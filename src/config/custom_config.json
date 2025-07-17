@@ -64,7 +64,7 @@
   },
   "vent": {
     "offMs": 5000,
-    "onMs": 395000,
+    "onMs": 420000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,
@@ -125,6 +125,7 @@
     "lowSetpointSetTopic": "/low_setpoint/set",
     "activeSetpointTopic": "/active_setpoint",
     "versionTopic": "/version",
-    "outsideSensorName": "DS18B20-1"
+    "outsideSensorName": "DS18B20-1",
+    "heartbeatTopic": "/HeartBeat"
   }
 }

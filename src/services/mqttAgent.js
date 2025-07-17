@@ -114,6 +114,10 @@ class MqttAgent {
           utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
         }
       });
+
+      //send heartbeat mqtt
+      // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
+      utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
     }
   }
 
