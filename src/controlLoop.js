@@ -12,9 +12,9 @@ import Vent from './components/vent.js';
 import cfg from './services/config.js';
 import mqttAgent from './services/mqttAgent.js';
 import { broadcast } from '../server/webSocketServer.js';
-import { format } from 'winston';
+// import { format } from 'winston';
 
-function startControlLoop(broadcast) {
+function startControlLoop() {
   //create components
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
@@ -60,27 +60,16 @@ function startControlLoop(broadcast) {
   }, 1000);
 }
 
-// function broadcastIfChanged(status) {
-// Version : 3.24 main: dark mode vent updates
-// Time ---- [Te]--[Hu]--L-H-F-V-S-VT
-// 17:07:47  23.0  59.9  0 0 0 1 0 1
-// Time ---- [Te]--[Hu]--L-H-F-V-S-VT
 
-//   broadcast(status);
-// }
 let lastStatus = {};
 let broadcastCount = 0;
 
 function broadcastIfChanged(status) {
   if (JSON.stringify(status) !== JSON.stringify(lastStatus)) {
-    //send heading if reqd
-    // if (broadcastCount === 0) {
-    //   broadcast('Version : 3.24 main: dark mode vent updates');
-    // }
 
     broadcastCount++;
     if (broadcastCount % 5 === 0) {
-      broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT`);
+      broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
     }
     var formattedStatus = formatStatus(status);
     broadcast(formattedStatus);

@@ -43,15 +43,13 @@ function broadcast(data) {
         let versionInfo = getVersionInfo();
         client.send('Version : ' + versionInfo.version);
         client.send('Release Notes : ' + versionInfo.releaseNotes);
-        // client.send('3.24 main: dark mode vent updates');
+
         client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
         
         client.needsInitialData = false;
         logger.error('Sent initial data to client.');
       } 
-      // else {
-      //   client.send(formattedData);
-      // }
+
       client.send(formattedData);
     }
   });
