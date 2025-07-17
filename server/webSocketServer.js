@@ -1,5 +1,8 @@
 import { WebSocketServer } from 'ws';
 import logger from '../src/services/logger.js';
+// import { version } from 'react';
+import { getVersionInfo } from '../src/utils/utils.js';
+
 
 let wss;
 
@@ -37,7 +40,10 @@ function broadcast(data) {
 
       if (client.needsInitialData) {
         // Send initial data and clear the flag
-        client.send('Version : 3.24 main: dark mode vent updates');
+        let versionInfo = getVersionInfo();
+        client.send('Version : ' + versionInfo.version);
+        client.send('Release Notes : ' + versionInfo.releaseNotes);
+        // client.send('3.24 main: dark mode vent updates');
         client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
         
         client.needsInitialData = false;

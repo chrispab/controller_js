@@ -3,6 +3,28 @@ import mqttAgent from '../services/mqttAgent.js';
 import secret from '../secret.js';
 import nodemailer from 'nodemailer';
 
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+
+
+function getVersionInfo() {
+  const packageJsonPath = resolve(__dirname, '../../package.json');
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  return {
+    version: packageJson.version,
+    releaseNotes: packageJson.releaseNotes || ''
+  };
+}
+
+// const versionInfo = getVersionInfo();
+// console.log(`Version: ${versionInfo.version}`);
+// console.log(`Release Notes: ${versionInfo.releaseNotes}`);
+
+
 function sendEmail(subject, body) {
   const mailOptions = {
     from: secret.user,
@@ -55,4 +77,4 @@ const logAndPublishState = (preComment, pubToTopic, message) => {
 };
 
 // export utils;
-export { logAndPublishState, getHMSStr, sendEmail };
+export { logAndPublishState, getHMSStr, sendEmail, getVersionInfo };

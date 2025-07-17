@@ -1,6 +1,7 @@
 {
   "name": "controller_js",
   "version": "1.0.0",
+  "releaseNotes": "node js controller initial version",
   "main": "server/index.js",
   "scripts": {
     "go": "nodemon server/index.js",
