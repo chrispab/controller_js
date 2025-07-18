@@ -66,11 +66,11 @@ function App() {
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     Temperature:
-                    <span>{typeof data.temperature === 'number' ? `${data.temperature.toFixed(2)} °C` : 'N/A'}</span>
+                    <span>{typeof data.temperature === 'number' ? `${data.temperature.toFixed(1)} °C` : 'N/A'}</span>
                   </li>
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     Humidity:
-                    <span>{typeof data.humidity === 'number' ? `${data.humidity.toFixed(2)} %` : 'N/A'}</span>
+                    <span>{typeof data.humidity === 'number' ? `${data.humidity.toFixed(1)} %` : 'N/A'}</span>
                   </li>
                 </ul>
               </div>

@@ -60,6 +60,27 @@ This will start the main control loop, the Express server, and the WebSocket ser
 
 This page will display the real-time status of the fan and vent.
 
+## Development Workflow
+
+For front-end development, it is recommended to use the React development server, which provides features like hot-reloading.
+
+1.  **Start the Node.js backend server:**
+    In the project root directory (`controller_js/`):
+    ```bash
+    node server/index.js
+    ```
+    This server will run on port `5678` and handle API requests.
+
+2.  **Start the React development server:**
+    In a separate terminal, navigate to the `client/` directory:
+    ```bash
+    cd client
+    npm start
+    ```
+    This will typically open the React application in your browser at `http://localhost:3000` (or another available port). The React development server is configured to proxy API requests to the Node.js backend.
+
+    **Important:** When using the development server, changes to the React code will be automatically reflected in your browser without needing to rebuild the client or restart the Node.js server.
+
 ## Running as a System Service (systemd)
 
 To ensure the application starts automatically on boot and runs reliably in the background, you can set it up as a `systemd` service.
