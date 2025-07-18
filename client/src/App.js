@@ -1,3 +1,4 @@
+
 // client/src/App.js
 
 import React from 'react';
@@ -29,7 +30,6 @@ function App() {
     if (value === null || value === undefined) {
       return <span className="text-muted">Loading...</span>;
     }
-    // This will now correctly interpret true/false or 1/0
     return value ? <span className="badge bg-success">On</span> : <span className="badge bg-danger">Off</span>;
   };
 
@@ -49,65 +49,83 @@ function App() {
 
   return (
     <div className="container mt-5">
-      <div className="card">
-        <div className="card-header">
-          <h1 className="mb-0">Greenhouse Control Status</h1>
+      <h1 className="text-center mb-4">Greenhouse Control Dashboard</h1>
+      {!data ? (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
-        <div className="card-body">
-          {!data ? (
-            <div className="d-flex justify-content-center">
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
+      ) : (
+        <div className="row">
+          {/* Environmental Readings */}
+          <div className="col-md-6 mb-4">
+            <div className="card h-100">
+              <div className="card-header">Environmental Readings</div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Temperature:
+                    <span>{typeof data.temperature === 'number' ? `${data.temperature.toFixed(2)} °C` : 'N/A'}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Humidity:
+                    <span>{typeof data.humidity === 'number' ? `${data.humidity.toFixed(2)} %` : 'N/A'}</span>
+                  </li>
+                </ul>
               </div>
             </div>
-          ) : (
-            <table className="table table-striped table-bordered mb-0">
-              <thead className="thead-dark">
-                <tr>
-                  <th style={{ width: '50%' }}>Metric</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Temperature</td>
-                  <td>{typeof data.temperature === 'number' ? `${data.temperature.toFixed(2)} °C` : 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td>Humidity</td>
-                  <td>{typeof data.humidity === 'number' ? `${data.humidity.toFixed(2)} %` : 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td>Light</td>
-                  <td>{renderIndicator(data.light)}</td>
-                </tr>
-                <tr>
-                  <td>Heater</td>
-                  <td>{renderIndicator(data.heater)}</td>
-                </tr>
-                <tr>
-                  <td>Fan</td>
-                  <td>{renderIndicator(data.fan)}</td>
-                </tr>
-                <tr>
-                  <td>Vent Power</td>
-                  <td>{renderIndicator(data.ventPower)}</td>
-                </tr>
-                <tr>
-                  <td>Vent Speed</td>
-                  <td>{data.ventSpeed ? 'High' : 'Low'}</td>
-                </tr>
-                <tr>
-                  <td>Vent Total</td>
-                  <td>{renderVentTotal(data.ventPower, data.ventSpeed)}</td>
-                </tr>
-              </tbody>
-            </table>
-          )}
+          </div>
+
+          {/* Device Status */}
+          <div className="col-md-6 mb-4">
+            <div className="card h-100">
+              <div className="card-header">Device Status</div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Light:
+                    <span>{renderIndicator(data.light)}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Heater:
+                    <span>{renderIndicator(data.heater)}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Vent Control */}
+          <div className="col-md-6 mb-4">
+            <div className="card h-100">
+              <div className="card-header">Vent Control</div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Fan:
+                    <span>{renderIndicator(data.fan)}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Vent Power:
+                    <span>{renderIndicator(data.ventPower)}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Vent Speed:
+                    <span>{data.ventSpeed ? 'High' : 'Low'}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Vent Total:
+                    <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="card-footer text-muted">
-          {lastUpdated ? `Last updated: ${lastUpdated.toLocaleTimeString()}` : ''}
-        </div>
+      )}
+      <div className="text-center text-muted mt-3">
+        {lastUpdated ? `Last updated: ${lastUpdated.toLocaleTimeString()}` : ''}
       </div>
     </div>
   );
