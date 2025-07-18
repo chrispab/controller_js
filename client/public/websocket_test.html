@@ -40,7 +40,7 @@
                 updateStatus(data);
             } catch (e) {
                 console.error("Failed to parse JSON:", e);
-                statusDiv.innerHTML = 'Received invalid data from server.';
+                statusDiv.innerHTML = `Received non-JSON data: <pre>${event.data}</pre>`;
             }
         });
 
@@ -64,11 +64,20 @@
         }
 
         function updateStatus(data) {
-            statusDiv.innerHTML = `
-                <p><span class="label">Fan:</span> ${formatState(data.fan)}</p>
-                <p><span class="label">Vent:</span> ${formatState(data.vent)}</p>
-                <p><small>Last updated: ${new Date().toLocaleTimeString()}</small></p>
-            `;
+            let html = '';
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    let value = data[key];
+                    if (typeof value === 'boolean') {
+                        value = formatState(value);
+                    } else if (typeof value === 'object' && value !== null) {
+                        value = JSON.stringify(value, null, 2); // Pretty print objects
+                    }
+                    html += `<p><span class="label">${key}:</span> ${value}</p>`;
+                }
+            }
+            html += `<p><small>Last updated: ${new Date().toLocaleTimeString()}</small></p>`;
+            statusDiv.innerHTML = html;
         }
     </script>
 </body>
