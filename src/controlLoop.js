@@ -44,13 +44,14 @@ function startControlLoop() {
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
     const status = {
-      fan: fan.getState(),
-      vent: vent.getState(),
       temperature: temperature,
       humidity: temperatureSensor.getHumidity(),
-      heater: heater.getState(),
       light: lightState,
+      heater: heater.getState(),
+      fan: fan.getState(),
+      ventPower: vent.ventPowerPin.getState(),
       ventSpeed: vent.ventSpeedPin.getState(),
+      ventTotal: vent.getState(),
     };
     //only broadcast web socket data if a state has changed
 
@@ -60,18 +61,26 @@ function startControlLoop() {
   }, 1000);
 }
 
-
-let lastStatus = {};
+let lastStatus = {
+  temperature: null,
+  humidity: null,
+  light: null,
+  heater: null,
+  fan: null,
+  ventPower: null,
+  ventSpeed: null,
+  ventTotal: null,
+};
 let broadcastCount = 0;
 
 function broadcastIfChanged(status) {
   if (JSON.stringify(status) !== JSON.stringify(lastStatus)) {
-
     broadcastCount++;
     if (broadcastCount % 5 === 0) {
       broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
     }
     var formattedStatus = formatStatus(status);
+    formattedStatus = status;
     broadcast(formattedStatus);
     lastStatus = status;
   }
@@ -109,4 +118,4 @@ function formatStatus(status) {
   return `${timeString}  ${temperature}  ${humidity}  ${lightState} ${heaterState} ${fanState} ${ventState} ${ventSpeedState} ${ventTotal}`;
 }
 
-export { startControlLoop };
+export { startControlLoop, lastStatus };

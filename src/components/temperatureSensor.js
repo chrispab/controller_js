@@ -100,8 +100,8 @@ export default class TemperatureSensor {
         // let sensorData = { temperature: 0, humidity: 0 };
         if (!err) {
           //limit to 1 dp
-          temperature = temperature.toFixed(1);
-          humidity = humidity.toFixed(1);
+          temperature = parseFloat(temperature.toFixed(1));
+          humidity = parseFloat(humidity.toFixed(1));
           // if new temperature, save it
           // if (temperature !== self.getTemperature()) {
           // self.setNewStateAvailable(true);

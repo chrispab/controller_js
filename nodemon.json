@@ -1,7 +1,8 @@
 {
   "watch": [
     "server/",
-    "src/"
+    "src/",
+    "client/src"
   ],
   "ext": "js,json",
   "ignore": [

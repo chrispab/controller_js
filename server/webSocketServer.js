@@ -36,7 +36,8 @@ function broadcast(data) {
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
       // remove quotes before sending
-      const formattedData = jsonData.replace(/"/g, '');
+      let formattedData = jsonData.replace(/"/g, '');
+      formattedData = jsonData;
 
       if (client.needsInitialData) {
         // Send initial data and clear the flag
