@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+body.dark-mode {
+  background-color: #282c34;
+  color: white;
+}
+
+body.dark-mode .card {
+  background-color: #3a3f44;
+  color: white;
+  border-color: #555;
+}
+
+body.dark-mode .card-header {
+  background-color: #4a4f54;
+  border-color: #555;
+}
+
+body.dark-mode .list-group-item {
+  background-color: #3a3f44;
+  color: white;
+  border-color: #555;
+}
+
+body.dark-mode .text-muted {
+  color: #bbb !important;
+}
