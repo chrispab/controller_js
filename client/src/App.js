@@ -14,6 +14,7 @@ function App() {
         const fullResponse = await fetch('/api/status');
         const responseJson = await fullResponse.json();
         setData(responseJson.message);
+        setVentOnDeltaSecs(responseJson.message.ventOnDeltaSecs || 0);
         setLastUpdated(new Date());
       } catch (error) {
         console.error("Failed to fetch status:", error);
@@ -45,6 +46,24 @@ function App() {
       return '100%';
     }
     return 'N/A'; // Fallback for unexpected values
+  };
+
+  const [ventOnDeltaSecs, setVentOnDeltaSecs] = React.useState(0);
+
+  const handleVentOnDeltaSecsChange = async (event) => {
+    const value = event.target.value;
+    setVentOnDeltaSecs(value);
+    try {
+      await fetch('/api/ventOnDeltaSecs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value }),
+      });
+    } catch (error) {
+      console.error("Failed to set ventOnDeltaSecs:", error);
+    }
   };
 
   return (
@@ -117,6 +136,31 @@ function App() {
                   <li className="list-group-item d-flex justify-content-between align-items-center">
                     Vent Total:
                     <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Ventilation Timing */}
+          <div className="col-md-6 mb-4">
+            <div className="card h-100">
+              <div className="card-header">Ventilation Timing</div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    <label htmlFor="ventOnDeltaSecs" className="form-label">On Delta (secs)</label>
+                    <input
+                      type="range"
+                      className="form-range"
+                      min="0"
+                      max="30"
+                      step="1"
+                      id="ventOnDeltaSecs"
+                      value={ventOnDeltaSecs}
+                      onChange={handleVentOnDeltaSecsChange}
+                    />
+                    <span>{ventOnDeltaSecs}</span>
                   </li>
                 </ul>
               </div>

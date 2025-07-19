@@ -10,6 +10,9 @@ import logger from '../src/services/logger.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
+import mqttAgent from '../src/services/mqttAgent.js';
+import cfg from '../src/services/config.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -18,6 +21,7 @@ const __dirname = dirname(__filename);
 const PORT = process.env.PORT || 5678;
 
 const app = express();
+app.use(express.json()); // Middleware to parse JSON bodies
 app.use(express.static('client/build'));
 const server = http.createServer(app);
 
@@ -25,6 +29,13 @@ startWebSocketServer(server);
 
 app.get('/api/status', (req, res) => {
   res.json({ message: lastStatus });
+});
+
+app.post('/api/ventOnDeltaSecs', (req, res) => {
+  const { value } = req.body;
+  const topic = cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic');
+  mqttAgent.publish(topic, value.toString());
+  res.status(200).send({ message: 'OK' });
 });
 
 app.get('/api', (req, res) => {

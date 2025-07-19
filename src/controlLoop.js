@@ -52,6 +52,7 @@ function startControlLoop() {
       ventPower: vent.ventPowerPin.getState(),
       ventSpeed: vent.ventSpeedPin.getState(),
       ventTotal: vent.getState(),
+      ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
     };
     //only broadcast web socket data if a state has changed
 
@@ -70,6 +71,7 @@ let lastStatus = {
   ventPower: null,
   ventSpeed: null,
   ventTotal: null,
+  ventOnDeltaSecs: null,
 };
 let broadcastCount = 0;
 
