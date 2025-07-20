@@ -11,7 +11,7 @@ import Vent from './components/vent.js';
 //import services as single instances
 import cfg from './services/config.js';
 import mqttAgent from './services/mqttAgent.js';
-import { broadcast } from '../server/webSocketServer.js';
+import { broadcast } from './services/webSocketServer.js';
 // import { format } from 'winston';
 
 function startControlLoop() {

@@ -1,4 +1,8 @@
 import { WebSocketServer } from 'ws';
+import logger from './logger.js';
+// import { version } from 'react';
+import { getVersionInfo } from '../utils/utils.js';
+
 
 let wss;
 
@@ -11,9 +15,14 @@ function startWebSocketServer(httpServer) {
       console.log('Client disconnected from WebSocket');
     });
     ws.on('error', console.error);
+
+    // Mark this client as needing initial data
+    ws.needsInitialData = true;
   });
 
-  console.log('WebSocket server is set up and running.');
+  // console.log('WebSocket server is set up and running.');
+  //use logger
+  logger.info('WebSocket server is set up and running.');
 }
 
 function broadcast(data) {
@@ -22,9 +31,27 @@ function broadcast(data) {
   }
 
   const jsonData = JSON.stringify(data);
+  logger.warn('web socket broadcast: ' + jsonData + '');
+
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
-      client.send(jsonData);
+      // remove quotes before sending
+      let formattedData = jsonData.replace(/"/g, '');
+      formattedData = jsonData;
+
+      if (client.needsInitialData) {
+        // Send initial data and clear the flag
+        let versionInfo = getVersionInfo();
+        client.send('Version : ' + versionInfo.version);
+        client.send('Release Notes : ' + versionInfo.releaseNotes);
+
+        client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
+        
+        client.needsInitialData = false;
+        logger.error('Sent initial data to client.');
+      } 
+
+      client.send(formattedData);
     }
   });
 }

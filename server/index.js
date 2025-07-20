@@ -3,7 +3,7 @@ import express from 'express';
 import http from 'http';
 import process from 'process';
 import path from 'path';
-import { startWebSocketServer, broadcast } from './webSocketServer.js';
+import { startWebSocketServer, broadcast } from '../src/services/webSocketServer.js';
 import { startControlLoop, lastStatus } from '../src/controlLoop.js';
 import logger from '../src/services/logger.js';
 
