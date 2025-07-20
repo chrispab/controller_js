@@ -1,6 +1,6 @@
 const secret = {
-    "user": "cbattisson@gmail.com",
-    "password": "mpbnuddpdogyxens"
+    "user": "kjhfhjgfkj@gmail.com",
+    "password": "kbhlkjklhj"
 }
 
 export default secret
