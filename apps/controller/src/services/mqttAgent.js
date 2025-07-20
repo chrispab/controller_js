@@ -153,6 +153,7 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'),
     'soil1/sensor_method5_batch_moving_average_float',
+    'openhab/soil_moisture/percentage',
     'irrigationPump/status',
   ]);
 
@@ -188,8 +189,12 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
   'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
+    lastStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
+    logger.warn(`lastStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${lastStatus.SensorSoilMoistureRaw}`);
+  },
+    'openhab/soil_moisture/percentage': (topic, message) => {
     lastStatus.soilMoisture = parseFloat(message.toString());
-    logger.info(`Soil Moisture: ${lastStatus.soilMoisture}`);
+    logger.warn(`openhab lastStatus.soilMoisture: ${lastStatus.soilMoisture}`);
   },
   'irrigationPump/status': (topic, message) => {
     lastStatus.irrigationPump = message.toString() === 'ON';

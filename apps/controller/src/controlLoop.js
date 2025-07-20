@@ -42,7 +42,9 @@ function startControlLoop() {
     mqttAgent.setactiveSetpoint(setpoint);
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
+    // Update lastStatus object with current component states and sensor readings
     Object.assign(lastStatus, {
+      
       temperature: temperature,
       humidity: temperatureSensor.getHumidity(),
       light: lightState,
@@ -53,15 +55,17 @@ function startControlLoop() {
       ventTotal: vent.getState(),
       ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
     });
-    //only broadcast web socket data if a state has changed
 
+    // Only broadcast web socket data if a state has changed
     broadcastIfChanged(lastStatus);
 
+    // Process configuration changes (e.g., save to file if updated)
     cfg.process();
   }, 1000);
 }
 
 let lastStatus = {
+  timeStamp: null,
   temperature: null,
   humidity: null,
   light: null,
@@ -71,18 +75,24 @@ let lastStatus = {
   ventSpeed: null,
   ventTotal: null,
   ventOnDeltaSecs: null,
+  SensorSoilMoistureRaw: null,
   soilMoisture: null,
   irrigationPump: null,
 };
+// Initialize previousStatus with a copy of lastStatus to track changes
+let previousStatus = { ...lastStatus }; // Initialize previousStatus with a copy of lastStatus
+// Counter for broadcast messages, used to periodically send header
 let broadcastCount = 0;
 
 function broadcastIfChanged(status) {
-  if (JSON.stringify(status) !== JSON.stringify(lastStatus)) {
+  if (JSON.stringify(status) !== JSON.stringify(previousStatus)) {
+    status.timeStamp = Date.now();
     broadcastCount++;
     if (broadcastCount % 5 === 0) {
       broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
     }
     broadcast(status);
+    previousStatus = { ...status }; // Update previousStatus with the current status
   }
 }
 

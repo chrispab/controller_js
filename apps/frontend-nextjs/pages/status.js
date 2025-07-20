@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
-  const [lastUpdated, setLastUpdated] = useState(null); // Initialize as null
+  const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
   const [ventOnDeltaSecs, setVentOnDeltaSecs] = useState(initialStatus.ventOnDeltaSecs || 0);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
@@ -25,7 +25,7 @@ function StatusBootstrapPage({ initialStatus }) {
             ...prevData,
             ...receivedData
           }));
-          setLastUpdated(new Date()); // Update timestamp only on client
+          setLastPageUpdate(new Date()); // Update timestamp only on client
         } else {
           console.log('Received non-JSON WebSocket message:', event.data);
         }
@@ -201,9 +201,14 @@ function StatusBootstrapPage({ initialStatus }) {
           </div>
         )}
         {mounted && (
-          <div className="text-center text-muted mt-4">
-            {lastUpdated ? `Last updated: ${lastUpdated.toLocaleTimeString()}` : ''}
-          </div>
+          <>
+            <div className={`text-center mt-4 ${isDarkMode ? 'text-light' : 'text-muted'}`}>
+              {data && data.timeStamp ? `Last changed: ${new Date(data.timeStamp).toLocaleTimeString()}` : ''}
+            </div>
+            <div className={`text-center ${isDarkMode ? 'text-light' : 'text-muted'}`}>
+              {lastPageUpdate ? `Last Page Update: ${lastPageUpdate.toLocaleTimeString()}` : ''}
+            </div>
+          </>
         )}
       </div>
     </div>

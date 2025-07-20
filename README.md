@@ -159,3 +159,6 @@ npm start
 
 # Runs with 'debug' level, showing info, warn, error, AND debug messages
 LOG_LEVEL=debug npm start
+
+
+pi@zone1:~/controller_js $ npm run dev --workspace=apps/frontend-nextjs
