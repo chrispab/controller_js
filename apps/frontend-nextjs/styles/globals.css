@@ -1,0 +1,19 @@
+/* styles/globals.css */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bs-card-custom-bg: #2c3034; /* A slightly lighter dark for the whole card */
+}
+
+.bg-custom-card-dark {
+  background-color: var(--bs-card-custom-bg) !important;
+}
