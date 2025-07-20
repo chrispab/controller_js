@@ -1,0 +1,24 @@
+{
+  "name": "@greenhouse-project/controller",
+  "version": "1.0.0",
+  "releaseNotes": "node js controller initial version",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "nodemon"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "The Node.js environment controller for the greenhouse.",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.21.1",
+    "mqtt": "^5.10.1",
+    "node-dht-sensor": "^0.4.3",
+    "node-wifi": "^2.0.16",
+    "nodemailer": "^6.9.16",
+    "onoff": "^6.0.3",
+    "winston": "^3.15.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "ws": "^8.18.3"
+  }
+}

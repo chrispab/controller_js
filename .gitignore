@@ -1,3 +1,18 @@
-node_modules/*
-logs/*
-src/secret.js
+# Global ignores for the monorepo
+
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+
+# Secrets - ignore secret.js file in any src directory
+**/src/secret.js
+
+# Log files
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
