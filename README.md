@@ -95,7 +95,7 @@ To ensure the application starts automatically on boot and runs reliably in the 
     After=network.target
 
     [Service]
-    ExecStart=/usr/bin/sudo /home/pi/.nvm/versions/node/v22.17.0/bin/node /home/pi/controller_js/server/index.js
+    ExecStart=/usr/bin/sudo /home/pi/.nvm/versions/node/v22.17.0/bin/node /home/pi/controller_js/apps/controller/server/index.js
     WorkingDirectory=/home/pi/controller_js
     Restart=always
     User=pi
@@ -162,3 +162,68 @@ LOG_LEVEL=debug npm start
 
 
 pi@zone1:~/controller_js $ npm run dev --workspace=apps/frontend-nextjs
+
+## Autostarting the Next.js Server on Raspberry Pi (systemd)
+
+To ensure your Next.js server starts automatically on boot and runs reliably in the background, you can set it up as a `systemd` service.
+
+1.  **Create a systemd service file**:
+
+    Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
+
+    ```
+    [Unit]
+    Description=Next.js Frontend Application
+    After=network.target
+
+    [Service]
+    User=pi
+    WorkingDirectory=/mnt/nfs/zone1/pi/controller_js/apps/frontend-nextjs
+    ExecStart=/usr/bin/npm start
+    Restart=always
+    Environment=NODE_ENV=production
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    *   **Note:** Adjust `WorkingDirectory` to the absolute path of your Next.js application's root directory.
+    *   **Note:** If you are building your Next.js application for production, you might want to change `ExecStart` to `ExecStart=/usr/bin/npm run start` after running `npm run build`.
+
+2.  **Reload systemd**:
+
+    After creating or modifying the service file, reload the systemd daemon to recognize the new service:
+
+    ```bash
+    sudo systemctl daemon-reload
+    ```
+
+3.  **Enable the service**:
+
+    Enable the service to start automatically on boot:
+
+    ```bash
+    sudo systemctl enable nextjs-frontend.service
+    ```
+
+4.  **Start the service**:
+
+    Start the service immediately:
+
+    ```bash
+    sudo systemctl start nextjs-frontend.service
+    ```
+
+5.  **Check the service status**:
+
+    To verify that the service is running correctly, check its status:
+
+    ```bash
+    sudo systemctl status nextjs-frontend.service
+    ```
+
+    You can also view the logs:
+
+    ```bash
+    journalctl -u nextjs-frontend.service -f
+    ```

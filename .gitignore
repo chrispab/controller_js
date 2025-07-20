@@ -19,3 +19,4 @@ Thumbs.db
 
 
 apps/frontend-nextjs/.next/*
+logs/*
