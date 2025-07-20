@@ -42,9 +42,9 @@ function startControlLoop() {
     mqttAgent.setactiveSetpoint(setpoint);
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
-    // Update lastStatus object with current component states and sensor readings
-    Object.assign(lastStatus, {
-      
+    // Update controllerStatus object with current component states and sensor readings
+    // some also set by mqtt sub handlers, e.g. soilmoisture
+    Object.assign(controllerStatus, {
       temperature: temperature,
       humidity: temperatureSensor.getHumidity(),
       light: lightState,
@@ -54,17 +54,18 @@ function startControlLoop() {
       ventSpeed: vent.ventSpeedPin.getState(),
       ventTotal: vent.getState(),
       ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
+      irrigationPump: 0
     });
 
     // Only broadcast web socket data if a state has changed
-    broadcastIfChanged(lastStatus);
+    broadcastIfChanged(controllerStatus);
 
     // Process configuration changes (e.g., save to file if updated)
     cfg.process();
   }, 1000);
 }
 
-let lastStatus = {
+let controllerStatus = {
   timeStamp: null,
   temperature: null,
   humidity: null,
@@ -79,21 +80,22 @@ let lastStatus = {
   soilMoisture: null,
   irrigationPump: null,
 };
-// Initialize previousStatus with a copy of lastStatus to track changes
-let previousStatus = { ...lastStatus }; // Initialize previousStatus with a copy of lastStatus
+// Initialize previousStatus with a copy of controllerStatus to track changes
+let previousStatus = { ...controllerStatus }; // Initialize previousStatus with a copy of controllerStatus
 // Counter for broadcast messages, used to periodically send header
-let broadcastCount = 0;
+// let broadcastCount = 0;
 
 function broadcastIfChanged(status) {
   if (JSON.stringify(status) !== JSON.stringify(previousStatus)) {
+    // add time change detected
     status.timeStamp = Date.now();
-    broadcastCount++;
-    if (broadcastCount % 5 === 0) {
-      broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
-    }
+    // broadcastCount++;
+    // if (broadcastCount % 5 === 0) {
+    //   broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
+    // }
     broadcast(status);
     previousStatus = { ...status }; // Update previousStatus with the current status
   }
 }
 
-export { startControlLoop, lastStatus };
+export { startControlLoop, controllerStatus };

@@ -3,7 +3,6 @@ import logger from './logger.js';
 // import { version } from 'react';
 import { getVersionInfo } from '../utils/utils.js';
 
-
 let wss;
 
 function startWebSocketServer(httpServer) {
@@ -33,16 +32,17 @@ function broadcast(data) {
   const jsonData = JSON.stringify(data);
   // logger.warn('web socket broadcast: ' + jsonData + '');
   if (wss.clients.size === 0) {
-    // No clients connected, no need to log broadcast
+    // No clients connected, no need to log broadcast or continue
     return;
   }
+
   logger.warn(`${wss.clients.size} clients to web socket broadcast to: ` + jsonData + `''`);
 
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
       // remove quotes before sending
-      let formattedData = jsonData.replace(/"/g, '');
-      formattedData = jsonData;
+      // let formattedData = jsonData.replace(/"/g, '');
+      // formattedData = jsonData;
 
       if (client.needsInitialData) {
         // Send initial data and clear the flag
@@ -51,12 +51,12 @@ function broadcast(data) {
         client.send('Release Notes : ' + versionInfo.releaseNotes);
 
         client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
-        
+
         client.needsInitialData = false;
         logger.warn('Sent initial data to client.');
-      } 
+      }
 
-      client.send(formattedData);
+      client.send(jsonData);
     }
   });
 }

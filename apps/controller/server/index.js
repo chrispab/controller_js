@@ -4,7 +4,7 @@ import http from 'http';
 import process from 'process';
 import path from 'path';
 import { startWebSocketServer, broadcast } from '../src/services/webSocketServer.js';
-import { startControlLoop, lastStatus } from '../src/controlLoop.js';
+import { startControlLoop, controllerStatus } from '../src/controlLoop.js';
 import logger from '../src/services/logger.js';
 
 import { fileURLToPath } from 'url';
@@ -28,7 +28,7 @@ const server = http.createServer(app);
 startWebSocketServer(server);
 
 app.get('/api/status', (req, res) => {
-  res.json({ message: lastStatus });
+  res.json({ message: controllerStatus });
 });
 
 app.post('/api/ventOnDeltaSecs', (req, res) => {
@@ -39,11 +39,11 @@ app.post('/api/ventOnDeltaSecs', (req, res) => {
 });
 
 app.get('/api/soilMoisture', (req, res) => {
-  res.json({ message: lastStatus.soilMoisture });
+  res.json({ message: controllerStatus.soilMoisture });
 });
 
 app.get('/api/irrigationPump', (req, res) => {
-  res.json({ message: lastStatus.irrigationPump });
+  res.json({ message: controllerStatus.irrigationPump });
 });
 
 app.get('/api', (req, res) => {

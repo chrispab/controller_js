@@ -9,7 +9,7 @@ import * as utils from '../utils/utils.js';
 import secret from '../secret.js';
  
 import nodemailer from 'nodemailer';
-import { lastStatus } from '../controlLoop.js';
+import { controllerStatus } from '../controlLoop.js';
 // import { warn } from 'winston';
 
 // const wifi = require('node-wifi');
@@ -189,16 +189,16 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
   'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
-    lastStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
-    logger.warn(`lastStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${lastStatus.SensorSoilMoistureRaw}`);
+    controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
+    logger.warn(`controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
     'openhab/soil_moisture/percentage': (topic, message) => {
-    lastStatus.soilMoisture = parseFloat(message.toString());
-    logger.warn(`openhab lastStatus.soilMoisture: ${lastStatus.soilMoisture}`);
+    controllerStatus.soilMoisture = parseFloat(message.toString());
+    logger.warn(`openhab controllerStatus.soilMoisture: ${controllerStatus.soilMoisture}`);
   },
   'irrigationPump/status': (topic, message) => {
-    lastStatus.irrigationPump = message.toString() === 'ON';
-    logger.info(`Irrigation Pump: ${lastStatus.irrigationPump}`);
+    controllerStatus.irrigationPump = message.toString() === 'ON';
+    logger.info(`Irrigation Pump: ${controllerStatus.irrigationPump}`);
   },
 
 };
