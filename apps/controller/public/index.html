@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controller Server Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .api-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Available Pages on Controller Server</h1>
+        <ul>
+            <li><a href="/websocket_test.html">WebSocket Test Page</a></li>
+            <li><a href="/api/status">API: Get Current Status (GET)</a></li>
+            <li><a href="/api">API: Base API Endpoint (GET)</a></li>
+        </ul>
+        <div class="api-note">
+            <p>Note: The <code>/api/ventOnDeltaSecs</code> endpoint is a POST request and cannot be accessed directly via a link.</p>
+        </div>
+    </div>
+</body>
+</html>

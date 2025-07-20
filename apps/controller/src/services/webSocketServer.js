@@ -10,11 +10,11 @@ function startWebSocketServer(httpServer) {
   wss = new WebSocketServer({ server: httpServer });
 
   wss.on('connection', (ws) => {
-    console.log('Client connected to WebSocket');
+    logger.info(`Client connected to WebSocket. Total clients: ${wss.clients.size}`);
     ws.on('close', () => {
-      console.log('Client disconnected from WebSocket');
+      logger.info(`Client disconnected from WebSocket. Total clients: ${wss.clients.size}`);
     });
-    ws.on('error', console.error);
+    ws.on('error', (error) => logger.error('WebSocket error:', error));
 
     // Mark this client as needing initial data
     ws.needsInitialData = true;
@@ -31,7 +31,12 @@ function broadcast(data) {
   }
 
   const jsonData = JSON.stringify(data);
-  logger.warn('web socket broadcast: ' + jsonData + '');
+  // logger.warn('web socket broadcast: ' + jsonData + '');
+  if (wss.clients.size === 0) {
+    // No clients connected, no need to log broadcast
+    return;
+  }
+  logger.warn(`${wss.clients.size} clients to web socket broadcast to: ` + jsonData + `''`);
 
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
@@ -48,7 +53,7 @@ function broadcast(data) {
         client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
         
         client.needsInitialData = false;
-        logger.error('Sent initial data to client.');
+        logger.warn('Sent initial data to client.');
       } 
 
       client.send(formattedData);
