@@ -20,8 +20,11 @@ function StatusBootstrapPage({ initialStatus }) {
     ws.onmessage = (event) => {
       try {
         const receivedData = JSON.parse(event.data);
-        if (typeof receivedData === 'object' && receivedData !== null && 'temperature' in receivedData) {
-          setData(receivedData);
+        if (typeof receivedData === 'object' && receivedData !== null) {
+          setData(prevData => ({
+            ...prevData,
+            ...receivedData
+          }));
           setLastUpdated(new Date()); // Update timestamp only on client
         } else {
           console.log('Received non-JSON WebSocket message:', event.data);
@@ -159,17 +162,6 @@ function StatusBootstrapPage({ initialStatus }) {
                       Vent Total:
                       <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
                     </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Ventilation Timing */}
-            <div className="col-md-6">
-              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                <div className={`card-header ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>Ventilation Timing</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
                     <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       <label htmlFor="ventOnDeltaSecs" className="form-label">On Delta (secs)</label>
                       <input
@@ -183,6 +175,24 @@ function StatusBootstrapPage({ initialStatus }) {
                         onChange={handleVentOnDeltaSecsChange}
                       />
                       <span>{ventOnDeltaSecs}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            {/* Water Control */}
+            <div className="col-md-6">
+              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                <div className="card-header">Water Control</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Soil Moisture:
+                      <span>{typeof data.soilMoisture === 'number' ? `${data.soilMoisture.toFixed(1)} %` : 'N/A'}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Irrigation Pump:
+                      <span>{renderIndicator(data.irrigationPump)}</span>
                     </li>
                   </ul>
                 </div>
@@ -203,9 +213,18 @@ function StatusBootstrapPage({ initialStatus }) {
 export async function getServerSideProps() {
   let initialStatus = {};
   try {
-    const res = await fetch('http://192.168.0.151:5678/api/status');
-    const data = await res.json();
-    initialStatus = data.message; 
+    const statusRes = await fetch('http://192.168.0.151:5678/api/status');
+    const statusData = await statusRes.json();
+    initialStatus = statusData.message; 
+
+    const soilMoistureRes = await fetch('http://192.168.0.151:5678/api/mqtt/soil1/sensor_method5_batch_moving_average_float');
+    const soilMoistureData = await soilMoistureRes.json();
+    initialStatus.soilMoisture = soilMoistureData.message; 
+
+    const irrigationPumpRes = await fetch('http://192.168.0.151:5678/api/mqtt/irrigationPump/status');
+    const irrigationPumpData = await irrigationPumpRes.json();
+    initialStatus.irrigationPump = irrigationPumpData.message;
+
   } catch (error) {
     console.error('Failed to fetch initial status:', error);
   }

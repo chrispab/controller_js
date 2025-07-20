@@ -9,6 +9,7 @@ import * as utils from '../utils/utils.js';
 import secret from '../secret.js';
  
 import nodemailer from 'nodemailer';
+import { lastStatus } from '../controlLoop.js';
 // import { warn } from 'winston';
 
 // const wifi = require('node-wifi');
@@ -141,6 +142,8 @@ mqttAgent.client.on('connect', function () {
   // client.subscribe("/a", { qos: 0 });
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
+
+  // mqtt subscriptions
   mqttAgent.client.subscribe([
     cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
@@ -149,6 +152,8 @@ mqttAgent.client.on('connect', function () {
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'),
+    'soil1/sensor_method5_batch_moving_average_float',
+    'irrigationPump/status',
   ]);
 
   mqttAgent.client.publish(cfg.getWithMQTTPrefix('mqtt.LWTTopic'), 'Online', {
@@ -182,6 +187,14 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic')]: handlers.handleVentOffDeltaSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
+  'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
+    lastStatus.soilMoisture = parseFloat(message.toString());
+    logger.info(`Soil Moisture: ${lastStatus.soilMoisture}`);
+  },
+  'irrigationPump/status': (topic, message) => {
+    lastStatus.irrigationPump = message.toString() === 'ON';
+    logger.info(`Irrigation Pump: ${lastStatus.irrigationPump}`);
+  },
 
 };
 

@@ -38,6 +38,14 @@ app.post('/api/ventOnDeltaSecs', (req, res) => {
   res.status(200).send({ message: 'OK' });
 });
 
+app.get('/api/soilMoisture', (req, res) => {
+  res.json({ message: lastStatus.soilMoisture });
+});
+
+app.get('/api/irrigationPump', (req, res) => {
+  res.json({ message: lastStatus.irrigationPump });
+});
+
 app.get('/api', (req, res) => {
   res.json({ message: "This is the API" });
 });

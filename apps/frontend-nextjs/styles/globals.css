@@ -11,7 +11,7 @@ body {
 }
 
 :root {
-  --bs-card-custom-bg: #2c3034; /* A slightly lighter dark for the whole card */
+  --bs-card-custom-bg: #395169; /* A slightly lighter dark for the whole card */
 }
 
 .bg-custom-card-dark {

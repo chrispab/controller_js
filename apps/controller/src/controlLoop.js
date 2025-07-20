@@ -12,7 +12,6 @@ import Vent from './components/vent.js';
 import cfg from './services/config.js';
 import mqttAgent from './services/mqttAgent.js';
 import { broadcast } from './services/webSocketServer.js';
-// import { format } from 'winston';
 
 function startControlLoop() {
   //create components
@@ -43,7 +42,7 @@ function startControlLoop() {
     mqttAgent.setactiveSetpoint(setpoint);
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
-    const status = {
+    Object.assign(lastStatus, {
       temperature: temperature,
       humidity: temperatureSensor.getHumidity(),
       light: lightState,
@@ -53,10 +52,10 @@ function startControlLoop() {
       ventSpeed: vent.ventSpeedPin.getState(),
       ventTotal: vent.getState(),
       ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
-    };
+    });
     //only broadcast web socket data if a state has changed
 
-    broadcastIfChanged(status);
+    broadcastIfChanged(lastStatus);
 
     cfg.process();
   }, 1000);
@@ -72,6 +71,8 @@ let lastStatus = {
   ventSpeed: null,
   ventTotal: null,
   ventOnDeltaSecs: null,
+  soilMoisture: null,
+  irrigationPump: null,
 };
 let broadcastCount = 0;
 
@@ -81,43 +82,8 @@ function broadcastIfChanged(status) {
     if (broadcastCount % 5 === 0) {
       broadcast(`Time ---- [Te]--[Hu]--L-H-F-V-S-VT-`);
     }
-    var formattedStatus = formatStatus(status);
-    formattedStatus = status;
-    broadcast(formattedStatus);
-    lastStatus = status;
+    broadcast(status);
   }
-}
-
-//function to format status info for broadcasting
-function formatStatus(status) {
-  // Version : 3.24 main: dark mode vent updates
-  // Time ---- [Te]--[Hu]--L-H-F-V-S-VT
-  // 17:07:47  23.0  59.9  0 0 0 1 0 1
-  // Time ---- [Te]--[Hu]--L-H-F-V-S-VT
-
-  //get time string
-  const now = new Date();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const timeString = `${hours}:${minutes}:${seconds}`;
-
-  // Format temperature and humidity (assuming humidity is part of temperatureSensor data)
-  // For now, just temperature is available in status.temperature
-  const temperature = status.temperature !== undefined ? status.temperature : 'N/A';
-  const humidity = status.humidity !== undefined ? status.humidity : 'N/A'; // Assuming humidity might be added later
-
-  // Format boolean states to 0 or 1
-  const lightState = status.light ? 1 : 0;
-  const heaterState = status.heater ? 1 : 0;
-  const fanState = status.fan ? 1 : 0;
-  const ventState = status.vent ? 1 : 0;
-  const ventSpeedState = status.ventSpeed ? 1 : 0;
-  const ventTotal = ventState + ventSpeedState;
-
-  // Construct the formatted string
-
-  return `${timeString}  ${temperature}  ${humidity}  ${lightState} ${heaterState} ${fanState} ${ventState} ${ventSpeedState} ${ventTotal}`;
 }
 
 export { startControlLoop, lastStatus };
