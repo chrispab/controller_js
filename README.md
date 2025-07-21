@@ -4,11 +4,11 @@ This Node.js application is designed to control and monitor a greenhouse or othe
 
 ## Features
 
-*   **Temperature-based control:** The application reads from a temperature sensor and controls a heater, fan, and vent to maintain a desired temperature range.
-*   **Day/Night Setpoints:** Different temperature setpoints can be configured for when the lights are on or off.
-*   **MQTT Integration:** The application uses MQTT to publish sensor data and device states, and to receive commands.
-*   **Web Server:** An Express server provides a simple API and serves a test page.
-*   **WebSocket Server:** A WebSocket server broadcasts the real-time status of the fan and vent to connected clients.
+* **Temperature-based control:** The application reads from a temperature sensor and controls a heater, fan, and vent to maintain a desired temperature range.
+* **Day/Night Setpoints:** Different temperature setpoints can be configured for when the lights are on or off.
+* **MQTT Integration:** The application uses MQTT to publish sensor data and device states, and to receive commands.
+* **Web Server:** An Express server provides a simple API and serves a test page.
+* **WebSocket Server:** A WebSocket server broadcasts the real-time status of the fan and vent to connected clients.
 
 ## Project Structure
 
@@ -31,13 +31,13 @@ controller_js/
 
 ## Installation
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
 
     ```bash
     git clone <repository-url>
     ```
 
-2.  **Install dependencies:**
+2. **Install dependencies:**
 
     ```bash
     npm install
@@ -55,8 +55,8 @@ This will start the main control loop, the Express server, and the WebSocket ser
 
 ### Testing the WebSocket Server
 
-1.  Start the application.
-2.  Open your browser and navigate to `http://<your-raspberry-pi-ip-address>:8081/websocket_test.html`.
+1. Start the application.
+2. Open your browser and navigate to `http://<your-raspberry-pi-ip-address>:8081/websocket_test.html`.
 
 This page will display the real-time status of the fan and vent.
 
@@ -64,19 +64,23 @@ This page will display the real-time status of the fan and vent.
 
 For front-end development, it is recommended to use the React development server, which provides features like hot-reloading.
 
-1.  **Start the Node.js backend server:**
+1. **Start the Node.js backend server:**
     In the project root directory (`controller_js/`):
+
     ```bash
     node server/index.js
     ```
+
     This server will run on port `5678` and handle API requests.
 
-2.  **Start the React development server:**
+2. **Start the React development server:**
     In a separate terminal, navigate to the `client/` directory:
+
     ```bash
     cd client
     npm start
     ```
+
     This will typically open the React application in your browser at `http://localhost:3000` (or another available port). The React development server is configured to proxy API requests to the Node.js backend.
 
     **Important:** When using the development server, changes to the React code will be automatically reflected in your browser without needing to rebuild the client or restart the Node.js server.
@@ -85,25 +89,26 @@ For front-end development, it is recommended to use the React development server
 
 To ensure the application starts automatically on boot and runs reliably in the background, you can set it up as a `systemd` service.
 
-1.  **Create a service file:**
+1. **Create a service file:**
 
     Create a new file named `zone_controller.service` in `/etc/systemd/system/` with the following content:
 
     ```
-    [Unit]
-    Description=Zone Controller Node.js Application
-    After=network.target
 
-    [Service]
-    ExecStart=/usr/bin/sudo /home/pi/.nvm/versions/node/v22.17.0/bin/node /home/pi/controller_js/apps/controller/server/index.js
-    WorkingDirectory=/home/pi/controller_js
-    Restart=always
-    User=pi
-    Group=pi
-    Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/pi/.nvm/versions/node/v22.17.0/bin
+[Unit]
+Description=Zone Controller Node.js Application
+After=network.target
 
-    [Install]
-    WantedBy=multi-user.target
+[Service]
+ExecStart=/home/pi/.nvm/versions/node/v22.17.0/bin/node /home/pi/controller_js/apps/controller/server/index.js
+WorkingDirectory=/home/pi/controller_js
+Restart=always
+User=pi
+Group=pi
+Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/pi/.nvm/versions/node/v22.17.0/bin
+
+[Install]
+WantedBy=multi-user.target
     ```
 
     *   **Note:** Adjust `ExecStart` if your `npm` path is different or if you are not using `nvm`.
@@ -154,37 +159,48 @@ To ensure the application starts automatically on boot and runs reliably in the 
     ```bash
     journalctl -u zone_controller.service -f
     ```
-# Runs with the default 'info' level
+
+### Runs with the default 'info' level
+
+```bash
+sudo systemctl stop zone_controller.service
+cd controller_js/apps/controller
 npm start
+```
 
-# Runs with 'debug' level, showing info, warn, error, AND debug messages
+### Runs with 'debug' level, showing info, warn, error, AND debug messages
+
 LOG_LEVEL=debug npm start
-
 
 pi@zone1:~/controller_js $ npm run dev --workspace=apps/frontend-nextjs
 
-## Autostarting the Next.js Server on Raspberry Pi (systemd)
+
+
+
+## Autostarting the Next.js dev Frontend Server on Raspberry Pi (systemd)
 
 To ensure your Next.js server starts automatically on boot and runs reliably in the background, you can set it up as a `systemd` service.
 
-1.  **Create a systemd service file**:
+1. **Create a systemd service file**:
 
     Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
 
     ```
-    [Unit]
-    Description=Next.js Frontend Application
-    After=network.target
 
-    [Service]
-    User=pi
-    WorkingDirectory=/mnt/nfs/zone1/pi/controller_js/apps/frontend-nextjs
-    ExecStart=/usr/bin/npm start
-    Restart=always
-    Environment=NODE_ENV=production
+[Unit]
+Description=Next.js Frontend Application
+After=network.target
 
-    [Install]
-    WantedBy=multi-user.target
+[Service]
+User=pi
+WorkingDirectory=/home/pi/controller_js/apps/frontend-nextjs
+ExecStart=/home/pi/.nvm/versions/node/v22.17.0/bin/npm run dev
+Restart=always
+Environment=NODE_ENV=development
+Environment="PATH=/home/pi/.nvm/versions/node/v22.17.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+[Install]
+WantedBy=multi-user.target
     ```
 
     *   **Note:** Adjust `WorkingDirectory` to the absolute path of your Next.js application's root directory.
@@ -227,6 +243,5 @@ To ensure your Next.js server starts automatically on boot and runs reliably in 
     ```bash
     journalctl -u nextjs-frontend.service -f
     ```
-
 
 cd apps/frontend-nextjs && npm run dev

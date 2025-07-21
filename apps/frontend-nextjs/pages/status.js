@@ -6,9 +6,14 @@ function StatusBootstrapPage({ initialStatus }) {
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
   const [ventOnDeltaSecs, setVentOnDeltaSecs] = useState(initialStatus.ventOnDeltaSecs || 0);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     setMounted(true); // Set mounted to true after initial render on client
+
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
 
     // WebSocket for real-time updates
     const ws = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:5678'); 
@@ -44,6 +49,7 @@ function StatusBootstrapPage({ initialStatus }) {
     };
 
     return () => {
+      clearInterval(timer);
       ws.close();
     };
   }, []);
@@ -206,7 +212,7 @@ function StatusBootstrapPage({ initialStatus }) {
               {data && data.timeStamp ? `Last changed: ${new Date(data.timeStamp).toLocaleTimeString()}` : ''}
             </div>
             <div className={`text-center ${isDarkMode ? 'text-light' : 'text-muted'}`}>
-              {lastPageUpdate ? `Last Page Update: ${lastPageUpdate.toLocaleTimeString()}` : ''}
+              Current Time: {new Date().toLocaleTimeString()}
             </div>
           </>
         )}

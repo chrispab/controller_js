@@ -51,9 +51,9 @@ app.get('/api/mqtt/irrigationPump/status', (req, res) => {
 });
 
 
-app.get('/api/irrigationPump', (req, res) => {
-  res.json({ message: controllerStatus.irrigationPump });
-});
+// app.get('/api/irrigationPump', (req, res) => {
+//   res.json({ message: controllerStatus.irrigationPump });
+// });
 
 app.get('/api', (req, res) => {
   res.json({ message: "This is the API" });
