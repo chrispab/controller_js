@@ -23,31 +23,29 @@ function startControlLoop() {
 
   setInterval(() => {
     temperatureSensor.process();
-    let temperature = temperatureSensor.getTemperature();
+    controllerStatus.temperature = temperatureSensor.getTemperature();
 
     light.process();
-    let lightState = light.getState();
+    controllerStatus.lightState = light.getState();
 
-    let setpoint = lightState == false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
+    controllerStatus.setpoint = controllerStatus.lightState == false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
 
-    vent.control(temperature, setpoint, lightState);
+    vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.lightState);
     vent.process();
 
-    heater.control(temperature, setpoint, lightState, mqttAgent.outsideTemperature);
+    heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.lightState, mqttAgent.outsideTemperature);
     heater.process();
 
     fan.control();
     fan.process();
 
-    mqttAgent.setactiveSetpoint(setpoint);
+    mqttAgent.setactiveSetpoint(controllerStatus.setpoint);
     mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
 
     // Update controllerStatus object with current component states and sensor readings
     // some also set by mqtt sub handlers, e.g. soilmoisture
     Object.assign(controllerStatus, {
-      temperature: temperature,
       humidity: temperatureSensor.getHumidity(),
-      light: lightState,
       heater: heater.getState(),
       fan: fan.getState(),
       ventPower: vent.ventPowerPin.getState(),
