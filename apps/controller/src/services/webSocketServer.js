@@ -44,17 +44,17 @@ function broadcast(data) {
       // let formattedData = jsonData.replace(/"/g, '');
       // formattedData = jsonData;
 
-      if (client.needsInitialData) {
-        // Send initial data and clear the flag
-        let versionInfo = getVersionInfo();
-        client.send('Version : ' + versionInfo.version);
-        client.send('Release Notes : ' + versionInfo.releaseNotes);
+      // if (client.needsInitialData) {
+      //   // Send initial data and clear the flag
+      //   let versionInfo = getVersionInfo();
+      //   client.send('Version : ' + versionInfo.version);
+      //   client.send('Release Notes : ' + versionInfo.releaseNotes);
 
-        client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
+      //   client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
 
-        client.needsInitialData = false;
-        logger.warn('Sent initial data to client.');
-      }
+      //   client.needsInitialData = false;
+      //   logger.warn('Sent initial data to client.');
+      // }
 
       client.send(jsonData);
     }

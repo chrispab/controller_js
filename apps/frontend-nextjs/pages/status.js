@@ -11,7 +11,7 @@ function StatusBootstrapPage({ initialStatus }) {
     setMounted(true); // Set mounted to true after initial render on client
 
     // WebSocket for real-time updates
-    const ws = new WebSocket('ws://192.168.0.151:5678'); 
+    const ws = new WebSocket('ws://localhost:5678'); 
 
     ws.onopen = () => {
       console.log('WebSocket connected');
@@ -73,7 +73,7 @@ function StatusBootstrapPage({ initialStatus }) {
     const value = event.target.value;
     setVentOnDeltaSecs(value);
     try {
-      await fetch('http://192.168.0.151:5678/api/ventOnDeltaSecs', {
+      await fetch('http://localhost:5678/api/ventOnDeltaSecs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -217,16 +217,23 @@ function StatusBootstrapPage({ initialStatus }) {
 
 export async function getServerSideProps() {
   let initialStatus = {};
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5678'; // Fallback for development
   try {
-    const statusRes = await fetch('http://192.168.0.151:5678/api/status');
+    console.log(`Fetching status from: ${API_URL}/api/status`);
+    const statusRes = await fetch(`${API_URL}/api/status`);
+    console.log(`Status response status: ${statusRes.status}`);
     const statusData = await statusRes.json();
     initialStatus = statusData.message; 
 
-    const soilMoistureRes = await fetch('http://192.168.0.151:5678/api/mqtt/soil1/sensor_method5_batch_moving_average_float');
+    console.log(`Fetching soil moisture from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
+    const soilMoistureRes = await fetch(`${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
+    console.log(`Soil moisture response status: ${soilMoistureRes.status}`);
     const soilMoistureData = await soilMoistureRes.json();
     initialStatus.soilMoisture = soilMoistureData.message; 
 
-    const irrigationPumpRes = await fetch('http://192.168.0.151:5678/api/mqtt/irrigationPump/status');
+    console.log(`Fetching irrigation pump from: ${API_URL}/api/mqtt/irrigationPump/status`);
+    const irrigationPumpRes = await fetch(`${API_URL}/api/mqtt/irrigationPump/status`);
+    console.log(`Irrigation pump response status: ${irrigationPumpRes.status}`);
     const irrigationPumpData = await irrigationPumpRes.json();
     initialStatus.irrigationPump = irrigationPumpData.message;
 
