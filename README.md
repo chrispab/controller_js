@@ -227,3 +227,6 @@ To ensure your Next.js server starts automatically on boot and runs reliably in 
     ```bash
     journalctl -u nextjs-frontend.service -f
     ```
+
+
+cd apps/frontend-nextjs && npm run dev

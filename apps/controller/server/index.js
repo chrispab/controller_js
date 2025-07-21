@@ -42,6 +42,15 @@ app.get('/api/soilMoisture', (req, res) => {
   res.json({ message: controllerStatus.soilMoisture });
 });
 
+app.get('/api/mqtt/soil1/sensor_method5_batch_moving_average_float', (req, res) => {
+  res.json({ message: controllerStatus.SensorSoilMoistureRaw });
+});
+
+app.get('/api/mqtt/irrigationPump/status', (req, res) => {
+  res.json({ message: controllerStatus.irrigationPump });
+});
+
+
 app.get('/api/irrigationPump', (req, res) => {
   res.json({ message: controllerStatus.irrigationPump });
 });

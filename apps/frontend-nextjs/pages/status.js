@@ -11,7 +11,7 @@ function StatusBootstrapPage({ initialStatus }) {
     setMounted(true); // Set mounted to true after initial render on client
 
     // WebSocket for real-time updates
-    const ws = new WebSocket('ws://localhost:5678'); 
+    const ws = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:5678'); 
 
     ws.onopen = () => {
       console.log('WebSocket connected');
