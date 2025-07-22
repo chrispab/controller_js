@@ -12,6 +12,8 @@ import Vent from './components/vent.js';
 import cfg from './services/config.js';
 import mqttAgent from './services/mqttAgent.js';
 import { broadcast } from './services/webSocketServer.js';
+// import { version } from 'react';
+import { getVersionInfo } from './utils/utils.js';
 
 function startControlLoop() {
   //create components
@@ -65,6 +67,10 @@ function startControlLoop() {
 
 let controllerStatus = {
   zoneName: cfg.get('zone.name'),
+  version: getVersionInfo().version,
+  releaseNotes: getVersionInfo().releaseNotes,
+  description: getVersionInfo().description,
+  setpoint: null,
   timeStamp: null,
   temperature: null,
   humidity: null,

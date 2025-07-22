@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import logger from './logger.js';
 // import { version } from 'react';
-import { getVersionInfo } from '../utils/utils.js';
+// import { getVersionInfo } from '../utils/utils.js';
 
 let wss;
 

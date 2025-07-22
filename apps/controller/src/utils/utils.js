@@ -12,11 +12,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 
 function getVersionInfo() {
-  const packageJsonPath = resolve(__dirname, '../../package.json');
+  // Constructs the absolute path to the package.json file.
+  // __dirname is the directory of the current module (utils.js).
+  // '../../package.json' navigates up two directories to the project root and then to package.json.
+  const packageJsonPath = resolve(__dirname, '../../../../package.json');
+  // Reads the content of the package.json file synchronously and parses it as JSON.
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+  // Returns an object containing the version and releaseNotes from package.json.
   return {
     version: packageJson.version,
-    releaseNotes: packageJson.releaseNotes || ''
+    releaseNotes: packageJson.releaseNotes || '',
+    description: packageJson.description || ''
   };
 }
 

@@ -204,17 +204,42 @@ function StatusBootstrapPage({ initialStatus }) {
                 </div>
               </div>
             </div>
+
+            {/* System Information */}
+            <div className="col-md-12">
+              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                <div className="card-header">System Information</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Version:
+                      <span>{data.version}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Description:
+                      <span>{data.description}</span>
+                    </li>
+                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Release Notes:
+                      <pre>{data.releaseNotes}</pre>
+                    </li>
+                    {mounted && (
+                      <>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Last Changed:
+                          <span>{data && data.timeStamp ? new Date(data.timeStamp).toLocaleTimeString() : ''}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Current Time:
+                          <span>{new Date().toLocaleTimeString()}</span>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-        {mounted && (
-          <>
-            <div className={`text-center mt-4 ${isDarkMode ? 'text-light' : 'text-muted'}`}>
-              {data && data.timeStamp ? `Last changed: ${new Date(data.timeStamp).toLocaleTimeString()}` : ''}
-            </div>
-            <div className={`text-center ${isDarkMode ? 'text-light' : 'text-muted'}`}>
-              Current Time: {new Date().toLocaleTimeString()}
-            </div>
-          </>
         )}
       </div>
     </div>

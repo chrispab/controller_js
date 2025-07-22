@@ -2,6 +2,7 @@
   "name": "greenhouse-project",
   "private": true,
   "version": "1.0.0",
+  "releaseNotes": "node js controller initial version",
   "description": "A monorepo for the greenhouse environment controller and frontends.",
   "workspaces": [
     "apps/*",
