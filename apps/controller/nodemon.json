@@ -2,7 +2,7 @@
   "watch": [
     "server/",
     "src/",
-    "client/src"
+    "public/"
   ],
   "ext": "js,json",
   "ignore": [

@@ -193,8 +193,8 @@ const topicHandlers = {
     logger.warn(`controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
     'openhab/soil_moisture/percentage': (topic, message) => {
-    controllerStatus.soilMoisture = parseFloat(message.toString());
-    logger.warn(`openhab controllerStatus.soilMoisture: ${controllerStatus.soilMoisture}`);
+    controllerStatus.soilMoisturePercent = parseFloat(message.toString());
+    logger.warn(`openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
   },
   'irrigationPump/status': (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';

@@ -16,6 +16,8 @@ import { broadcast } from './services/webSocketServer.js';
 import { getVersionInfo } from './utils/utils.js';
 
 function startControlLoop() {
+  //if wierd onoff pin numbering exists then add the offset to resolve
+
   //create components
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
@@ -82,7 +84,7 @@ let controllerStatus = {
   ventTotal: null,
   ventOnDeltaSecs: null,
   SensorSoilMoistureRaw: null,
-  soilMoisture: null,
+  soilMoisturePercent: null,
   irrigationPump: null,
 };
 // Initialize previousStatus with a copy of controllerStatus to track changes

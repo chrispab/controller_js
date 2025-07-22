@@ -38,8 +38,11 @@ app.post('/api/ventOnDeltaSecs', (req, res) => {
   res.status(200).send({ message: 'OK' });
 });
 
-app.get('/api/soilMoisture', (req, res) => {
-  res.json({ message: controllerStatus.soilMoisture });
+// app.get('/api/soilMoisture', (req, res) => {
+//   res.json({ message: controllerStatus.soilMoisture });
+// });
+app.get('/api/soilMoisturePercent', (req, res) => {
+  res.json({ message: controllerStatus.soilMoisturePercent });
 });
 
 app.get('/api/mqtt/soil1/sensor_method5_batch_moving_average_float', (req, res) => {

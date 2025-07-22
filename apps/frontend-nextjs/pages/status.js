@@ -194,7 +194,7 @@ function StatusBootstrapPage({ initialStatus }) {
                   <ul className="list-group list-group-flush">
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Soil Moisture:
-                      <span>{typeof data.soilMoisture === 'number' ? `${data.soilMoisture.toFixed(1)} %` : 'N/A'}</span>
+                      <span>{typeof data.soilMoisturePercent === 'number' ? `${data.soilMoisturePercent.toFixed(1)} %` : 'N/A'}</span>
                     </li>
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Irrigation Pump:
@@ -206,7 +206,7 @@ function StatusBootstrapPage({ initialStatus }) {
             </div>
 
             {/* System Information */}
-            <div className="col-md-12">
+            <div className="col-md-6 mx-auto">
               <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                 <div className="card-header">System Information</div>
                 <div className="card-body">
@@ -217,11 +217,11 @@ function StatusBootstrapPage({ initialStatus }) {
                     </li>
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Description:
-                      <span>{data.description}</span>
+                      <span className="text-end">{data.description}</span>
                     </li>
                     <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Release Notes:
-                      <pre>{data.releaseNotes}</pre>
+                      <span className="text-end">{data.releaseNotes}</span>
                     </li>
                     {mounted && (
                       <>
@@ -265,11 +265,11 @@ export async function getServerSideProps() {
     initialStatus.sensorSoilMoistureRaw = sensorSoilMoistureRawData.message;
 
     //get soil moisture percentage from api
-    console.log(`Fetching soil moisture percentage from: ${API_URL}/api/soilMoisture`);
-    const soilMoisturePercent = await fetch(`${API_URL}/api/soilMoisture`);
+    console.log(`Fetching soil moisture percentage from: ${API_URL}/api/soilMoisturePercent`);
+    const soilMoisturePercent = await fetch(`${API_URL}/api/soilMoisturePercent`);
     console.log(`Soil moisture response status: ${soilMoisturePercent.status}`);
     const soilMoisturePercentData = await soilMoisturePercent.json();
-    initialStatus.soilMoisture = soilMoisturePercentData.message;     
+    initialStatus.soilMoisturePercent = soilMoisturePercentData.message;     
 
     console.log(`Fetching irrigation pump from: ${API_URL}/api/mqtt/irrigationPump/status`);
     const irrigationPumpRes = await fetch(`${API_URL}/api/mqtt/irrigationPump/status`);
