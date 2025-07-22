@@ -221,6 +221,7 @@ function StatusBootstrapPage({ initialStatus }) {
   );
 }
 
+//get initial data from controller api
 export async function getServerSideProps() {
   let initialStatus = {};
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5678'; // Fallback for development
@@ -231,11 +232,19 @@ export async function getServerSideProps() {
     const statusData = await statusRes.json();
     initialStatus = statusData.message; 
 
-    console.log(`Fetching soil moisture from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
-    const soilMoistureRes = await fetch(`${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
-    console.log(`Soil moisture response status: ${soilMoistureRes.status}`);
-    const soilMoistureData = await soilMoistureRes.json();
-    initialStatus.soilMoisture = soilMoistureData.message; 
+    //sensor soil moisture raw - 'dryness' reading - not a percentage. e.g something like 1960 to 2020 values 
+    console.log(`Fetching sensor Raw soil moisture reading from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
+    const sensorSoilMoistureRaw = await fetch(`${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
+    console.log(`Soil moisture response status: ${sensorSoilMoistureRaw.status}`);
+    const sensorSoilMoistureRawData = await sensorSoilMoistureRaw.json();
+    initialStatus.sensorSoilMoistureRaw = sensorSoilMoistureRawData.message;
+
+    //get soil moisture percentage from api
+    console.log(`Fetching soil moisture percentage from: ${API_URL}/api/soilMoisture`);
+    const soilMoisturePercent = await fetch(`${API_URL}/api/soilMoisture`);
+    console.log(`Soil moisture response status: ${soilMoisturePercent.status}`);
+    const soilMoisturePercentData = await soilMoisturePercent.json();
+    initialStatus.soilMoisture = soilMoisturePercentData.message;     
 
     console.log(`Fetching irrigation pump from: ${API_URL}/api/mqtt/irrigationPump/status`);
     const irrigationPumpRes = await fetch(`${API_URL}/api/mqtt/irrigationPump/status`);
