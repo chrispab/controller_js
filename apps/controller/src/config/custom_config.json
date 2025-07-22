@@ -4,7 +4,7 @@
     "lowSetpoint": 16,
     "highSetpoint": 24,
     "periodicPublishIntervalMs": 120000,
-    "name": "zone1",
+    "name": "Zone 1",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
       "enabled": false,

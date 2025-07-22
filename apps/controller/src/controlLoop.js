@@ -64,6 +64,7 @@ function startControlLoop() {
 }
 
 let controllerStatus = {
+  zoneName: cfg.get('zone.name'),
   timeStamp: null,
   temperature: null,
   humidity: null,

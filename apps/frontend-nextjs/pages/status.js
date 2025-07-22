@@ -96,7 +96,7 @@ function StatusBootstrapPage({ initialStatus }) {
   return (
     <div className={isDarkMode ? 'bg-dark text-light min-vh-100 py-3' : 'bg-light text-dark min-vh-100 py-3'}>
       <div className="container">
-        <h1 className="text-center my-4">Greenhouse Control Dashboard</h1>
+        <h1 className="text-center my-4">{data.zoneName} Greenhouse Control Dashboard</h1>
         <button onClick={toggleDarkMode} className="btn btn-info d-block mx-auto mb-4">
           Toggle {isDarkMode ? 'Light' : 'Dark'} Mode
         </button>
