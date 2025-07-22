@@ -230,6 +230,10 @@ function StatusBootstrapPage({ initialStatus }) {
                           <span>{data && data.timeStamp ? new Date(data.timeStamp).toLocaleTimeString() : ''}</span>
                         </li>
                         <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Last Change:
+                          <span>{data ? data.lastChange : ''}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                           Current Time:
                           <span>{new Date().toLocaleTimeString()}</span>
                         </li>
