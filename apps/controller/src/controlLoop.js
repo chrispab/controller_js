@@ -26,14 +26,14 @@ function startControlLoop() {
     controllerStatus.temperature = temperatureSensor.getTemperature();
 
     light.process();
-    controllerStatus.lightState = light.getState();
+    controllerStatus.light = light.getState();
+    // controllerStatus.light = controllerStatus.light;
+    controllerStatus.setpoint = controllerStatus.light == false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
 
-    controllerStatus.setpoint = controllerStatus.lightState == false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
-
-    vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.lightState);
+    vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light);
     vent.process();
 
-    heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.lightState, mqttAgent.outsideTemperature);
+    heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light, mqttAgent.outsideTemperature);
     heater.process();
 
     fan.control();
@@ -52,7 +52,7 @@ function startControlLoop() {
       ventSpeed: vent.ventSpeedPin.getState(),
       ventTotal: vent.getState(),
       ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
-      irrigationPump: 0
+      irrigationPump: 0,
     });
 
     // Only broadcast web socket data if a state has changed

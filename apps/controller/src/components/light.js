@@ -2,7 +2,7 @@ import IOBase from './IOBase.js';
 import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
-import * as utils from "../utils/utils.js";
+import * as utils from '../utils/utils.js';
 // import Event from './event.js';
 
 // const logLevel = 'info';
@@ -12,20 +12,19 @@ const logLevel = 'debug';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {
-
   constructor(name, LDRPin) {
     this.IOPin = new IOBase(LDRPin, 'out', 0);
     this.setName(name);
     this.setState(false);
     this.setPrevStateChangeMs(Date.now());
-        this.RCLoopCount = 0;
-    this.currentlySamplingLightSensor = false
+    this.RCLoopCount = 0;
+    this.currentlySamplingLightSensor = false;
     this.readLightSensorState();
     this.on('lightStateChange', this.lightStateEventHandler);
-    
+
     this.publishStateIntervalMs = cfg.get('light.publishStateIntervalMs');
     this.lastStatePublishedMs = Date.now() - this.publishStateIntervalMs;
-    
+
     this.sensorReadIntervalMs = cfg.get('light.sensorReadIntervalMs');
     this.lastSensorReadTimeMs = Date.now() - this.sensorReadIntervalMs;
 
@@ -61,7 +60,7 @@ export default class Light {
   }
 
   periodicPublication() {
-    if (Date.now() >= (this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs)) {
+    if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
       // ensure regular state publishing
       logger.log(logLevel, 'READING REGULAR Light STATE: ' + this.getState());
       // const evt = new Event('light periodic', this.getState());
@@ -157,7 +156,6 @@ export default class Light {
   }
 }
 
-
 // https://javascript.info/mixins
 
 // Add the mixin with event-related methods
@@ -166,4 +164,3 @@ Object.assign(Light.prototype, eventMixin);
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Light.prototype, IOPinAccessorsMixin);
-
