@@ -6,6 +6,7 @@ class IOBase {
 
     constructor(IOPin, direction, initialValue = 0) {
         this.state = initialValue;
+        logger.debug(`IOBase constructor: IOPin=${IOPin}, direction=${direction}, initialValue=${initialValue}, this.state=${this.state}`);
         this.newStateFlag = false;
         this.prevStateChangeMs = Date.now();
         this.onMs = 10 * 1000;
@@ -101,6 +102,7 @@ class IOBase {
     }
 
     getState() {
+        logger.debug(`IOBase getState: name=${this.name}, state=${this.state}`);
         return this.state;
     }
 

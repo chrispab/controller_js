@@ -1,5 +1,4 @@
 // src/controlLoop.js
-//import classes
 //inputs
 import Light from './components/light.js';
 import TemperatureSensor from './components/temperatureSensor.js';
@@ -14,9 +13,10 @@ import mqttAgent from './services/mqttAgent.js';
 import { broadcast } from './services/webSocketServer.js';
 import { getVersionInfo } from './utils/utils.js';
 import logger from './services/logger.js';
+import eventEmitter from './services/eventEmitter.js';
 
 // Component and service instances
-let components;
+let components = {};
 
 // Application state
 let controllerStatus = {
@@ -44,54 +44,6 @@ let controllerStatus = {
 // Previous state for change detection
 let previousStatus = { ...controllerStatus };
 
-function readSensors() {
-  const { temperatureSensor } = components;
-  temperatureSensor.process();
-  controllerStatus.temperature = temperatureSensor.getTemperature();
-  controllerStatus.humidity = temperatureSensor.getHumidity();
-}
-
-function updateLogicAndControl() {
-  const { light, vent, heater, fan } = components;
-
-  // Light
-  light.process();
-  controllerStatus.light = light.getState();
-
-  // Setpoint
-  controllerStatus.setpoint = controllerStatus.light === false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
-
-  // Vent
-  vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light);
-  vent.process();
-
-  // Heater
-  heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light, mqttAgent.outsideTemperature);
-  heater.process();
-
-  // Fan
-  fan.control();
-  fan.process();
-
-  // Update status with component states
-  Object.assign(controllerStatus, {
-    heater: heater.getState(),
-    fan: fan.getState(),
-    ventPower: vent.ventPowerPin.getState(),
-    ventSpeed: vent.ventSpeedPin.getState(),
-    ventTotal: vent.getState(),
-    ventOnDeltaSecs: cfg.get('vent.onMs') / 1000,
-    irrigationPump: 0, // Note: This is currently hardcoded
-  });
-}
-
-function processServices() {
-  const { vent, temperatureSensor, fan, heater, light } = components;
-  mqttAgent.setactiveSetpoint(controllerStatus.setpoint);
-  mqttAgent.process([vent, temperatureSensor, fan, heater, light]);
-  cfg.process();
-}
-
 function broadcastIfChanged(status) {
   const changes = [];
   // Find all changed fields
@@ -115,18 +67,50 @@ function broadcastIfChanged(status) {
   }
 }
 
-function mainLoop() {
-  try {
-    readSensors();
-    updateLogicAndControl();
-    processServices();
+function setupEventListeners() {
+  eventEmitter.on('temperatureChanged', (temp) => {
+    controllerStatus.temperature = temp;
+    components.heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light, mqttAgent.outsideTemperature);
+    components.vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light);
     broadcastIfChanged(controllerStatus);
-  } catch (error) {
-    logger.error('Error in control loop:', {
-      message: error.message,
-      stack: error.stack,
-    });
-  }
+  });
+
+  eventEmitter.on('humidityChanged', (humidity) => {
+    controllerStatus.humidity = humidity;
+    broadcastIfChanged(controllerStatus);
+  });
+
+  eventEmitter.on('lightStateChanged', (state) => {
+    controllerStatus.light = state;
+    controllerStatus.setpoint = controllerStatus.light === false ? cfg.get('zone.lowSetpoint') : cfg.get('zone.highSetpoint');
+    components.heater.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light, mqttAgent.outsideTemperature);
+    components.vent.control(controllerStatus.temperature, controllerStatus.setpoint, controllerStatus.light);
+    broadcastIfChanged(controllerStatus);
+  });
+
+  eventEmitter.on('heaterStateChanged', (state) => {
+    controllerStatus.heater = state;
+    broadcastIfChanged(controllerStatus);
+  });
+
+  eventEmitter.on('fanStateChanged', (state) => {
+    controllerStatus.fan = state;
+    broadcastIfChanged(controllerStatus);
+  });
+
+  eventEmitter.on('ventStateChanged', (data) => {
+    controllerStatus.ventPower = data.state;
+    controllerStatus.ventSpeed = data.speed;
+    controllerStatus.ventTotal = data.value;
+    broadcastIfChanged(controllerStatus);
+  });
+
+  // Periodically process MQTT and config changes
+  setInterval(() => {
+    mqttAgent.setactiveSetpoint(controllerStatus.setpoint);
+    mqttAgent.process([components.vent, components.temperatureSensor, components.fan, components.heater, components.light]);
+    cfg.process();
+  }, 1000);
 }
 
 function startControlLoop() {
@@ -139,7 +123,12 @@ function startControlLoop() {
     vent: new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin')),
   };
 
-  setInterval(mainLoop, 1000);
+  // Initialize vent status
+  controllerStatus.ventPower = components.vent.ventPowerPin.getState();
+  controllerStatus.ventSpeed = components.vent.ventSpeedPin.getState();
+  controllerStatus.ventTotal = components.vent.getState();
+
+  setupEventListeners();
 }
 
 export { startControlLoop, controllerStatus };
