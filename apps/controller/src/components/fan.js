@@ -1,102 +1,72 @@
 import IOBase from './IOBase.js';
-import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
-const logLevel = 'debug';
-// const logLevel = 'info';
+import eventEmitter from '../services/eventEmitter.js';
+
+const logLevel = 'warn';
 
 export default class Fan {
   constructor(name, fanPin) {
     this.IOPin = new IOBase(fanPin, 'out', 0);
     this.setName(name);
-    this.setState(false);
-    this.setOffMs(cfg.get('fan.offMs'));
-    this.setOnMs(cfg.get('fan.onMs'));
-    this.setPrevStateChangeMs(Date.now() - this.getOffMs());
-    this.on('fanStateChange', this.fanStateEventHandler);
-    //set new reading available
-    this.setNewStateAvailable(true);
+    this.onMs = cfg.get('fan.onMs');
+    this.offMs = cfg.get('fan.offMs');
+    this.prevStateChangeMs = Date.now() - this.offMs; // Assume it was off before starting
 
-    this.periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
-    this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
+    const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
+
+    // Start autonomous operation
+    setInterval(() => this.controlCycle(), 1000); // Check every second
+    setInterval(() => this.periodicPublication(), periodicPublishIntervalMs);
+
+    this.updateState(false); // Ensure initial state is set and published
   }
 
-  fanStateEventHandler = function (evt) {
-    utils.logAndPublishState(evt.description, cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), evt.state);
-  };
+  controlCycle() {
+    const elapsedMs = Date.now() - this.prevStateChangeMs;
 
-  process() {
-    // this.control();
-    this.periodicPublication();
+    if (this.getState() === true) { // Fan is ON
+      if (elapsedMs >= this.onMs) {
+        this.updateState(false); // Turn OFF
+      }
+    } else { // Fan is OFF
+      if (elapsedMs >= this.offMs) {
+        this.updateState(true); // Turn ON
+      }
+    }
   }
 
-  /**
-   * Publishes periodic telemetry data for the fan, including its current state,
-   * and the configured on/off delta times in seconds.
-   */
+  updateState(newState) {
+    const oldState = this.getState();
+    if (newState !== oldState) {
+      // This now calls the mixin's setState, which updates the IOPin's state
+      this.setState(newState);
+      this.prevStateChangeMs = Date.now();
+
+      this.IOPin.writeIO(newState ? 1 : 0);
+
+      logger.log(logLevel, `!!!!!!!${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
+
+      // Emit event on central bus
+      eventEmitter.emit('fanStateChanged', { name: this.name, state: newState });
+
+      // Publish state change to MQTT
+      utils.logAndPublishState('Fan', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), newState);
+    }
+  }
+
   periodicPublication() {
-    // ensure regular publishing of additional properties
-    if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
-      this.lastPeriodicPublishedMs = Date.now();
-      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-      // fan_on_delta_secs
-      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
-      // fan_off_delta_secs
-      utils.logAndPublishState('fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
-    }
-  }
+    // Reload settings in case they were changed in config file
+    this.onMs = cfg.get('fan.onMs');
+    this.offMs = cfg.get('fan.offMs');
 
-  /**
-   * Controls the fan's on/off state based on configured on and off durations.
-   * If the fan is currently on and its 'on' duration has elapsed, it turns off.
-   * If the fan is currently off and its 'off' duration has elapsed, it turns on.
-   * The state changes are managed by `toggleFan`.
-   */
-  control() {
-    const currentState = this.getState();
-    const currentMs = Date.now();
-    const elapsedMs = currentMs - this.getPrevStateChangeMs();
-
-    if (currentState == 1) {
-      // is it time to turn off?
-      if (elapsedMs >= this.getOnMs()) {
-        this.toggleFan(0);
-      }
-    } else {
-      // is it time to turn on?
-      if (elapsedMs >= this.getOffMs()) {
-        this.toggleFan(1);
-      }
-    }
-  }
-
-  /**
-   * Toggles the fan's state (on/off) and emits a 'fanStateChange' event if the state has actually changed.
-   *
-   * @param {number} state - The desired state for the fan (0 for off, 1 for on).
-   */
-  toggleFan(state) {
-    this.setState(state);
-    if (this.hasNewStateAvailable()) {
-      if (Gpio.accessible) {
-        this.IOPin.writeIO(state);
-      } else {
-        logger.error('==Fan IO undefined==');
-      }
-      if (this.getStateAndClearNewStateFlag() == state) {
-        logger.log(logLevel, state ? 'Fan is on' : 'Fan is off');
-        let evt = { name: 'fanState', state: state, description: 'fan State change: ' };
-        this.trigger('fanStateChange', evt);
-      }
-    }
+    // Publish current state and settings periodically
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.onMs / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.offMs / 1000);
   }
 }
-
-// https://javascript.info/mixins
-// Add the mixin with event-related methods
-import eventMixin from './mixins/eventMixin.js';
-Object.assign(Fan.prototype, eventMixin);
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Fan.prototype, IOPinAccessorsMixin);

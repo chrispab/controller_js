@@ -40,7 +40,7 @@ High-Level Observations:
 
   Would you like me to proceed with this refactoring?
 
-Consider a more event-driven approach. Instead of a fixed-interval loop, have components emit events when their state changes, and have other components listen and react to those events. This would make the system more responsive and efficient.
+@apps/controller/ Consider a more event-driven approach. Instead of a fixed-interval loop, have components emit events when their state changes, and have other components listen and react to those events. This would make the system more responsive and efficient.
 
 
 ✦ You're right, an event-driven approach is a great way to improve the design. It will make the system more modular, responsive, and easier

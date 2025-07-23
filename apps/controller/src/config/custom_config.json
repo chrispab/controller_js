@@ -58,7 +58,7 @@
     "periodicPublishIntervalMs": 30000
   },
   "light": {
-    "sensorReadIntervalMs": 60000,
+    "sensorReadIntervalMs": 9000,
     "publishStateIntervalMs": 60000,
     "periodicPublishIntervalMs": 120000
   },
@@ -84,8 +84,8 @@
   },
   "fan": {
     "speedPercent": 50,
-    "onMs": 60000,
-    "offMs": 6000,
+    "onMs": 10000,
+    "offMs": 10000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
   },
