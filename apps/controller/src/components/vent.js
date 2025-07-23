@@ -42,7 +42,7 @@ export default class Vent {
 
 
 
-  setState(newState) {
+  updateState(newState) {
     const oldState = this.getState();
     if (newState !== oldState) {
       this.setState(newState);
@@ -81,7 +81,7 @@ export default class Vent {
         logger.debug('High-temperature override ACTIVATED');
         this.ventOverride = true;
       }
-      this.setState(2); // Set to 100% speed
+      this.updateState(2); // Set to 100% speed
       return; // Override takes precedence
     }
 
@@ -92,7 +92,7 @@ export default class Vent {
                 logger.debug('High-temperature override DEACTIVATED');
                 this.ventOverride = false;
                 this.cycleState = 'inactive'; // Reset cycle
-                this.setState(0); // Turn off
+                this.updateState(0); // Turn off
             }
         } 
         return; // Wait for override to complete
@@ -106,20 +106,20 @@ export default class Vent {
       case 'inactive':
         // Start a new cycle
         this.cycleState = 'ON';
-        this.setState(1); // 50% speed
+        this.updateState(1); // 50% speed
         break;
 
       case 'ON':
         if (elapsedMs >= onMs) {
           this.cycleState = 'OFF';
-          this.setState(0);
+          this.updateState(0);
         }
         break;
 
       case 'OFF':
         if (elapsedMs >= offMs) {
           this.cycleState = 'ON';
-          this.setState(1); // 50% speed
+          this.updateState(1); // 50% speed
         }
         break;
     }
