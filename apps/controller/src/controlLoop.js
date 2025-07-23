@@ -56,6 +56,7 @@ function startControlLoop() {
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
   logger.info('Components initialized.');
 
+  updateAndBroadcastStatus('irrigationPump', false);
 
   // --- Setup Event Listeners to Update Global Status ---
   eventEmitter.on('temperatureChanged', ({ temperature }) => {

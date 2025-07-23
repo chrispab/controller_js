@@ -43,7 +43,7 @@ export default class Heater {
 
 
 
-  setState(newState) {
+  updateState(newState) {
     const oldState = this.getState();
     if (newState !== oldState) {
       this.setState(newState);
@@ -60,7 +60,7 @@ export default class Heater {
     const currentMs = Date.now();
 
     if (this.lightState === true) {
-      this.setState(false); // Heater is always off when light is on
+      this.updateState(false); // Heater is always off when light is on
       this.heatingCycleState = 'INACTIVE';
       return;
     }
@@ -74,7 +74,7 @@ export default class Heater {
           this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT;
           logger.debug(`New heating cycle. Calculated ON time: ${this.heatOnMs}ms`);
           this.heatingCycleState = 'ON';
-          this.setState(true);
+          this.updateState(true);
         }
         break;
 
@@ -82,7 +82,7 @@ export default class Heater {
         if (currentMs - this.lastStateChangeMs >= this.heatOnMs) {
           // On-time has elapsed, switch to OFF period
           this.heatingCycleState = 'OFF';
-          this.setState(false);
+          this.updateState(false);
         }
         break;
 
@@ -100,7 +100,7 @@ export default class Heater {
             logger.debug('Temperature is above setpoint. Forcing heater OFF and cycle to INACTIVE.');
             this.heatingCycleState = 'INACTIVE';
         }
-        this.setState(false);
+        this.updateState(false);
     }
   }
 }
