@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { execSync } from 'child_process';
 
 function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
@@ -223,6 +224,14 @@ function StatusBootstrapPage({ initialStatus }) {
                       Release Notes:
                       <span className="text-end">{data.releaseNotes}</span>
                     </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Git Branch:
+                      <span>{data.gitBranch}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Last Commit:
+                      <span className="text-end">{data.gitCommit}</span>
+                    </li>
                     {mounted && (
                       <>
                         <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
@@ -283,6 +292,15 @@ export async function getServerSideProps() {
 
   } catch (error) {
     console.error('Failed to fetch initial status:', error);
+  }
+
+  try {
+    initialStatus.gitBranch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+    initialStatus.gitCommit = execSync('git log -1 --pretty=%B').toString().trim();
+  } catch (error) {
+    console.error('Failed to fetch git info:', error);
+    initialStatus.gitBranch = 'N/A';
+    initialStatus.gitCommit = 'N/A';
   }
 
   return {
