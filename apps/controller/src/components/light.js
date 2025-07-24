@@ -36,7 +36,7 @@ export default class Light {
       this.setState(newState);
       logger.debug(`Light state changed from ${oldState} to ${newState}`);
       eventEmitter.emit('lightStateChanged', { lightState: newState });
-      utils.logAndPublishState('Light', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), newState);
+      utils.logAndPublishState('Light', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), newState ? 1 : 0);
     }
   }
 
