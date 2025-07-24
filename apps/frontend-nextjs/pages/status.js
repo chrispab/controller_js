@@ -8,6 +8,7 @@ function StatusBootstrapPage({ initialStatus }) {
   const [ventOnDeltaSecs, setVentOnDeltaSecs] = useState(initialStatus.ventOnDeltaSecs || 0);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [isWsConnected, setIsWsConnected] = useState(false);
 
   useEffect(() => {
     setMounted(true); // Set mounted to true after initial render on client
@@ -21,6 +22,7 @@ function StatusBootstrapPage({ initialStatus }) {
 
     ws.onopen = () => {
       console.log('WebSocket connected');
+      setIsWsConnected(true);
     };
 
     ws.onmessage = (event) => {
@@ -43,6 +45,7 @@ function StatusBootstrapPage({ initialStatus }) {
 
     ws.onclose = () => {
       console.log('WebSocket disconnected');
+      setIsWsConnected(false);
     };
 
     ws.onerror = (error) => {
@@ -252,6 +255,10 @@ function StatusBootstrapPage({ initialStatus }) {
                         <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                           Current Time:
                           <span>{new Date().toLocaleTimeString()}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          WebSocket:
+                          <span>{renderIndicator(isWsConnected)}</span>
                         </li>
                       </>
                     )}
