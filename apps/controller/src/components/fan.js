@@ -10,9 +10,9 @@ export default class Fan {
   constructor(name, fanPin) {
     this.IOPin = new IOBase(fanPin, 'out', 0);
     this.setName(name);
-    this.onMs = cfg.get('fan.onMs');
-    this.offMs = cfg.get('fan.offMs');
-    this.prevStateChangeMs = Date.now() - this.offMs; // Assume it was off before starting
+    this.setOnMs(cfg.get('fan.onMs'));
+    this.setOffMs(cfg.get('fan.offMs'));
+    this.prevStateChangeMs = Date.now() - this.getOffMs(); // Assume it was off before starting
 
     const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
 
@@ -27,11 +27,11 @@ export default class Fan {
     const elapsedMs = Date.now() - this.prevStateChangeMs;
 
     if (this.getState() === true) { // Fan is ON
-      if (elapsedMs >= this.onMs) {
+      if (elapsedMs >= this.getOnMs()) {
         this.updateState(false); // Turn OFF
       }
     } else { // Fan is OFF
-      if (elapsedMs >= this.offMs) {
+      if (elapsedMs >= this.getOffMs()) {
         this.updateState(true); // Turn ON
       }
     }
@@ -59,13 +59,15 @@ export default class Fan {
 
   periodicPublication() {
     // Reload settings in case they were changed in config file
-    this.onMs = cfg.get('fan.onMs');
-    this.offMs = cfg.get('fan.offMs');
+    this.setOnMs(cfg.get('fan.onMs'));
+    this.setOffMs(cfg.get('fan.offMs'));
+    //  = cfg.get('fan.onMs');
+    // this.offMs = cfg.get('fan.offMs');
 
     // Publish current state and settings periodically
     utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.onMs / 1000);
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.offMs / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.this.getOnMs() / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.this.getOffMs() / 1000);
   }
 }
 
