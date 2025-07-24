@@ -8,8 +8,8 @@ class IOBase {
         this.state = initialValue;
         this.newStateFlag = false;
         this.prevStateChangeMs = Date.now();
-        this.onMs = 10 * 1000;
-        this.offMs = 10 * 1000;
+        this.onMs = 5 * 1000;
+        this.offMs = 5 * 1000;
         this.IOPin = IOPin;
         this.name = "not yet set-IOBase";
         this.newOnMsFlag = false;
