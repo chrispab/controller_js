@@ -1,5 +1,6 @@
 // server/index.js
 import express from 'express';
+import cors from 'cors';
 import http from 'http';
 import process from 'process';
 import path from 'path';
@@ -22,6 +23,7 @@ const PORT = process.env.PORT || 5678;
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
+app.use(cors()); // Enable CORS for all routes
 app.use(express.static(path.resolve(__dirname, '../public')));
 const server = http.createServer(app);
 
@@ -34,8 +36,18 @@ app.get('/api/status', (req, res) => {
 app.post('/api/ventOnDeltaSecs', (req, res) => {
   const { value } = req.body;
   const topic = cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic');
-  mqttAgent.publish(topic, value.toString());
+  // mqttAgent.publish(topic, value.toString());
+  //set in controllerStatus
+  controllerStatus.ventOnDeltaSecs = value;
+  //set in cofig object
+  cfg.set('vent.onMs', value * 1000);
+  //broadcast
+  broadcast(controllerStatus);
   res.status(200).send({ message: 'OK' });
+});
+
+app.get('/api/ventOnDeltaSecs', (req, res) => {
+  res.json({ message: controllerStatus.ventOnDeltaSecs });
 });
 
 // app.get('/api/soilMoisture', (req, res) => {

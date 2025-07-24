@@ -16,7 +16,7 @@ function handleVent(topic, message, configKey, topicKey) {
   const value = Number(message.toString());
 
   //insert logging statement
-  logger.info("topic: "+ topic + " message: " + message + " configKey: " + configKey + " topicKey: " + topicKey);
+  logger.warn("................topic: "+ topic + " message: " + message + " configKey: " + configKey + " topicKey: " + topicKey);
   
   if (value > 0) {
     utils.logAndPublishState(`${configKey}: `, cfg.getWithMQTTPrefix(topicKey), `${value}`);

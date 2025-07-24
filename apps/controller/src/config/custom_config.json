@@ -65,7 +65,7 @@
   },
   "vent": {
     "offMs": 5000,
-    "onMs": 420000,
+    "onMs": 265000,
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "lightOnSetpointOffset": 0,

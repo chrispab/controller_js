@@ -32,6 +32,7 @@ let controllerStatus = {
   soilMoisturePercent: null,
   irrigationPump: null,
   lastChange: null,
+  ventOnDeltaSecs: null,
 };
 
 let previousStatus = { ...controllerStatus };
@@ -92,6 +93,9 @@ function startControlLoop() {
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000); // Check for config changes
   setInterval(() => mqttAgent.process(), 5000); // Process MQTT Agent periodically
+  setInterval(() => {
+    updateAndBroadcastStatus('ventOnDeltaSecs', cfg.get('vent.onMs') / 1000);
+  }, 1000);
 
   logger.info('Event-driven control loop started.');
 }

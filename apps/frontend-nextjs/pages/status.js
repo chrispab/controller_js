@@ -90,7 +90,7 @@ function StatusBootstrapPage({ initialStatus }) {
     const value = event.target.value;
     setVentOnDeltaSecs(value);
     try {
-      await fetch('http://localhost:5678/api/ventOnDeltaSecs', {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/ventOnDeltaSecs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -184,9 +184,9 @@ function StatusBootstrapPage({ initialStatus }) {
                       <input
                         type="range"
                         className="form-range"
-                        min="0"
-                        max="30"
-                        step="1"
+                        min="5"
+                        max="420"
+                        step="5"
                         id="ventOnDeltaSecs"
                         value={ventOnDeltaSecs}
                         onChange={handleVentOnDeltaSecsChange}
