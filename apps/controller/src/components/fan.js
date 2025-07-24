@@ -46,8 +46,8 @@ export default class Fan {
 
       this.IOPin.writeIO(newState ? 1 : 0);
 
-      logger.log(logLevel, `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
-      logger.log(logLevel, `--------${this.getName()} is ${newState}`);
+      // logger.log(logLevel, `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
+      // logger.log(logLevel, `--------${this.getName()} is ${newState}`);
 
       // Emit event on central bus
       eventEmitter.emit('fanStateChanged', { name: this.name, state: newState });

@@ -76,6 +76,13 @@ function StatusBootstrapPage({ initialStatus }) {
     return 'N/A'; // Fallback for unexpected values
   };
 
+  const renderSoilMoisture = (value) => {
+    if (value === null || value === undefined) {
+      return <span className="text-muted">Loading...</span>;
+    }
+    const badgeColor = value >= 30 ? 'bg-success' : 'bg-danger';
+    return <span className={`badge ${badgeColor}`}>{value.toFixed(1)} %</span>;
+  };
   const handleVentOnDeltaSecsChange = async (event) => {
     const value = event.target.value;
     setVentOnDeltaSecs(value);
@@ -195,7 +202,7 @@ function StatusBootstrapPage({ initialStatus }) {
                   <ul className="list-group list-group-flush">
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Soil Moisture:
-                      <span>{typeof data.soilMoisturePercent === 'number' ? `${data.soilMoisturePercent.toFixed(1)} %` : 'N/A'}</span>
+                      <span>{renderSoilMoisture(data.soilMoisturePercent)}</span>
                     </li>
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Irrigation Pump:

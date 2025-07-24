@@ -58,16 +58,16 @@ export default class Vent {
       eventEmitter.emit('ventStateChanged', { name: this.name, state: newState });
 
       // MQTT Publications
-      utils.logAndPublishState('Vent', cfg.getWithMQTTPrefix('mqtt.ventStateTopic'), power);
-      utils.logAndPublishState('Vent', cfg.getWithMQTTPrefix('mqtt.ventSpeedStateTopic'), speed);
-      utils.logAndPublishState('Vent', cfg.getWithMQTTPrefix('mqtt.ventValueTopic'), newState);
-      utils.logAndPublishState('Vent', cfg.getWithMQTTPrefix('mqtt.ventSpeedPercentTopic'), this.getSpeedPercent());
+      utils.logAndPublishState('Vent power update', cfg.getWithMQTTPrefix('mqtt.ventStateTopic'), power);
+      utils.logAndPublishState('Vent speed update', cfg.getWithMQTTPrefix('mqtt.ventSpeedStateTopic'), speed);
+      utils.logAndPublishState('Vent value update', cfg.getWithMQTTPrefix('mqtt.ventValueTopic'), newState);
+      utils.logAndPublishState('Vent power percent update', cfg.getWithMQTTPrefix('mqtt.ventSpeedPercentTopic'), this.getSpeedPercent());
     }
   }
 
   getSpeedPercent() {
-      if (this.state === 2) return 100;
-      if (this.state === 1) return 50;
+      if (this.getState() === 2) return 100;
+      if (this.getState() === 1) return 50;
       return 0;
   }
 
