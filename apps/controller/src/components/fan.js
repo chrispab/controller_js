@@ -53,7 +53,7 @@ export default class Fan {
       eventEmitter.emit('fanStateChanged', { name: this.name, state: newState });
 
       // Publish state change to MQTT
-      utils.logAndPublishState('Fan', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), newState);
+      utils.logAndPublishState('Fan update', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), newState ? 1 : 0);
     }
   }
 
