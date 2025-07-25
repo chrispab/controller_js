@@ -5,7 +5,6 @@ function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
   const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
-  const [ventOnDeltaSecs, setVentOnDeltaSecs] = useState(initialStatus.ventOnDeltaSecs || 0);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isWsConnected, setIsWsConnected] = useState(false);
@@ -88,7 +87,7 @@ function StatusBootstrapPage({ initialStatus }) {
   };
   const handleVentOnDeltaSecsChange = async (event) => {
     const value = event.target.value;
-    setVentOnDeltaSecs(value);
+    setData(prevData => ({ ...prevData, ventOnDeltaSecs: value }));
     try {
       await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/ventOnDeltaSecs', {
         method: 'POST',
@@ -188,10 +187,10 @@ function StatusBootstrapPage({ initialStatus }) {
                         max="420"
                         step="5"
                         id="ventOnDeltaSecs"
-                        value={ventOnDeltaSecs}
+                        value={data.ventOnDeltaSecs || 0}
                         onChange={handleVentOnDeltaSecsChange}
                       />
-                      <span>{ventOnDeltaSecs}</span>
+                      <span>{data.ventOnDeltaSecs || 0}</span>
                     </li>
                   </ul>
                 </div>
