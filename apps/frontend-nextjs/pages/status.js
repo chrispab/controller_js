@@ -101,6 +101,22 @@ function StatusBootstrapPage({ initialStatus }) {
     }
   };
 
+  const handleVentOffDeltaSecsChange = async (event) => {
+    const value = event.target.value;
+    setData(prevData => ({ ...prevData, ventOffDeltaSecs: value }));
+    try {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/ventOffDeltaSecs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value }),
+      });
+    } catch (error) {
+      console.error("Failed to set ventOffDeltaSecs:", error);
+    }
+  };
+
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   return (
@@ -191,6 +207,20 @@ function StatusBootstrapPage({ initialStatus }) {
                         onChange={handleVentOnDeltaSecsChange}
                       />
                       <span>{data.ventOnDeltaSecs || 0}</span>
+                    </li>
+                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      <label htmlFor="ventOffDeltaSecs" className="form-label">Off Delta (secs)</label>
+                      <input
+                        type="range"
+                        className="form-range"
+                        min="5"
+                        max="420"
+                        step="5"
+                        id="ventOffDeltaSecs"
+                        value={data.ventOffDeltaSecs || 0}
+                        onChange={handleVentOffDeltaSecsChange}
+                      />
+                      <span>{data.ventOffDeltaSecs || 0}</span>
                     </li>
                   </ul>
                 </div>

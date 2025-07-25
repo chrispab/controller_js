@@ -50,6 +50,23 @@ app.get('/api/ventOnDeltaSecs', (req, res) => {
   res.json({ message: controllerStatus.ventOnDeltaSecs });
 });
 
+app.post('/api/ventOffDeltaSecs', (req, res) => {
+  const { value } = req.body;
+  const topic = cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic');
+  // mqttAgent.publish(topic, value.toString());
+  //set in controllerStatus
+  controllerStatus.ventOffDeltaSecs = value;
+  //set in cofig object
+  cfg.set('vent.offMs', value * 1000);
+  //broadcast
+  broadcast(controllerStatus);
+  res.status(200).send({ message: 'OK' });
+});
+
+app.get('/api/ventOffDeltaSecs', (req, res) => {
+  res.json({ message: controllerStatus.ventOffDeltaSecs });
+});
+
 // app.get('/api/soilMoisture', (req, res) => {
 //   res.json({ message: controllerStatus.soilMoisture });
 // });
