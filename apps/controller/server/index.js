@@ -35,8 +35,8 @@ app.get('/api/status', (req, res) => {
 
 app.post('/api/ventOnDeltaSecs', (req, res) => {
   const { value } = req.body;
-  const topic = cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic');
-  // mqttAgent.publish(topic, value.toString());
+  const topic = cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic');
+  mqttAgent.client.publish(topic, value.toString());
   //set in controllerStatus
   controllerStatus.ventOnDeltaSecs = value;
   //set in cofig object
@@ -52,8 +52,8 @@ app.get('/api/ventOnDeltaSecs', (req, res) => {
 
 app.post('/api/ventOffDeltaSecs', (req, res) => {
   const { value } = req.body;
-  const topic = cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic');
-  // mqttAgent.publish(topic, value.toString());
+  const topic = cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic');
+  mqttAgent.client.publish(topic, value.toString());
   //set in controllerStatus
   controllerStatus.ventOffDeltaSecs = value;
   //set in cofig object

@@ -190,15 +190,15 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
   'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
     controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
-    logger.warn(`controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
+    logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
     'openhab/soil_moisture/percentage': (topic, message) => {
     controllerStatus.soilMoisturePercent = parseFloat(message.toString());
-    logger.warn(`openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
+    logger.warn(`XXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
   },
   'irrigationPump/status': (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';
-    logger.info(`Irrigation Pump: ${controllerStatus.irrigationPump}`);
+    logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
   },
 
 };
@@ -210,6 +210,7 @@ const topicHandlers = {
  * @param {Buffer} message - The payload of the MQTT message.
  */
 mqttAgent.client.on('message', (topic, message) => {
+  logger.info(`MQTT message received. Topic: ${topic}, Message: ${message.toString()}`);
   const handler = topicHandlers[topic];
   if (handler) {
     handler(topic, message);

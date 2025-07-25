@@ -1,31 +1,68 @@
 
 // client/src/App.js
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [data, setData] = React.useState(null);
-  const [lastUpdated, setLastUpdated] = React.useState(null);
+  const [data, setData] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [isWsConnected, setIsWsConnected] = useState(false);
 
-  React.useEffect(() => {
-    async function fetchStatus() {
+  useEffect(() => {
+    // Fetch initial data once on load
+    async function fetchInitialStatus() {
       try {
         const fullResponse = await fetch('/api/status');
         const responseJson = await fullResponse.json();
         setData(responseJson.message);
-        setVentOnDeltaSecs(responseJson.message.ventOnDeltaSecs || 0);
         setLastUpdated(new Date());
       } catch (error) {
-        console.error("Failed to fetch status:", error);
+        console.error("Failed to fetch initial status:", error);
       }
     }
+    fetchInitialStatus();
 
-    const intervalId = setInterval(fetchStatus, 2000); // Fetch every 2 seconds
-    fetchStatus(); // Initial fetch
+    // Then, establish WebSocket for real-time updates
+    const wsUrl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:5678';
+    const ws = new WebSocket(wsUrl);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []);
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      setIsWsConnected(true);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const receivedData = JSON.parse(event.data);
+        if (typeof receivedData === 'object' && receivedData !== null) {
+          // Update data state with the new info from the server
+          setData(prevData => ({
+            ...prevData,
+            ...receivedData
+          }));
+          setLastUpdated(new Date());
+        }
+      } catch (e) {
+        console.error('Failed to parse WebSocket message:', event.data, e);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+      setIsWsConnected(false);
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setIsWsConnected(false);
+    };
+
+    // Cleanup on component unmount
+    return () => {
+      ws.close();
+    };
+  }, []); // Empty dependency array ensures this runs only once
 
   const renderIndicator = (value) => {
     if (value === null || value === undefined) {
@@ -48,13 +85,13 @@ function App() {
     return 'N/A'; // Fallback for unexpected values
   };
 
-  const [ventOnDeltaSecs, setVentOnDeltaSecs] = React.useState(0);
+  const handleVentTimingChange = async (event) => {
+    const { id, value } = event.target;
+    // Optimistically update the UI
+    setData(prevData => ({ ...prevData, [id]: value }));
 
-  const handleVentOnDeltaSecsChange = async (event) => {
-    const value = event.target.value;
-    setVentOnDeltaSecs(value);
     try {
-      await fetch('/api/ventOnDeltaSecs', {
+      await fetch(`/api/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,13 +99,14 @@ function App() {
         body: JSON.stringify({ value }),
       });
     } catch (error) {
-      console.error("Failed to set ventOnDeltaSecs:", error);
+      console.error(`Failed to set ${id}:`, error);
+      // Optionally, you could revert the UI change here on failure
     }
   };
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Greenhouse Control Dashboard</h1>
+      <h1 className="text-center mb-4">{data?.zoneName || 'Greenhouse'} Control Dashboard</h1>
       {!data ? (
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
@@ -148,19 +186,56 @@ function App() {
               <div className="card-header">Ventilation Timing</div>
               <div className="card-body">
                 <ul className="list-group list-group-flush">
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                  <li className="list-group-item">
                     <label htmlFor="ventOnDeltaSecs" className="form-label">On Delta (secs)</label>
                     <input
                       type="range"
                       className="form-range"
-                      min="0"
-                      max="30"
-                      step="1"
+                      min="5"
+                      max="420"
+                      step="5"
                       id="ventOnDeltaSecs"
-                      value={ventOnDeltaSecs}
-                      onChange={handleVentOnDeltaSecsChange}
+                      value={data.ventOnDeltaSecs || 0}
+                      onChange={handleVentTimingChange}
                     />
-                    <span>{ventOnDeltaSecs}</span>
+                    <span>{data.ventOnDeltaSecs || 0}</span>
+                  </li>
+                  <li className="list-group-item">
+                    <label htmlFor="ventOffDeltaSecs" className="form-label">Off Delta (secs)</label>
+                    <input
+                      type="range"
+                      className="form-range"
+                      min="5"
+                      max="420"
+                      step="5"
+                      id="ventOffDeltaSecs"
+                      value={data.ventOffDeltaSecs || 0}
+                      onChange={handleVentTimingChange}
+                    />
+                    <span>{data.ventOffDeltaSecs || 0}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* System Information */}
+          <div className="col-md-6 mx-auto">
+            <div className="card mb-4">
+              <div className="card-header">System Information</div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Version:
+                    <span>{data.version}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    Last Change:
+                    <span>{data.lastChange || 'N/A'}</span>
+                  </li>
+                  <li className="list-group-item d-flex justify-content-between align-items-center">
+                    WebSocket:
+                    <span>{renderIndicator(isWsConnected)}</span>
                   </li>
                 </ul>
               </div>

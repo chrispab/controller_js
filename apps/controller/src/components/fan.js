@@ -23,6 +23,7 @@ export default class Fan {
     this.updateState(false); // Ensure initial state is set and published
   }
 
+  
   controlCycle() {
     const elapsedMs = Date.now() - this.prevStateChangeMs;
 
