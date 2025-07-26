@@ -167,9 +167,19 @@ function StatusBootstrapPage({ initialStatus }) {
     <div className={isDarkMode ? 'bg-dark text-light min-vh-100 py-3' : 'bg-light text-dark min-vh-100 py-3'}>
       <div className="container">
         <h1 className="text-center my-4">{data.zoneName} Greenhouse Control Dashboard</h1>
-        <button onClick={toggleDarkMode} className="btn btn-info d-block mx-auto mb-4">
-          Toggle {isDarkMode ? 'Light' : 'Dark'} Mode
-        </button>
+        <div className="form-check form-switch d-flex justify-content-center align-items-center mb-4">
+          <input
+            className="form-check-input" 
+            type="checkbox" 
+            role="switch" 
+            id="darkModeSwitch" 
+            checked={isDarkMode}
+            onChange={toggleDarkMode}
+          />
+          <label className="form-check-label ms-2" htmlFor="darkModeSwitch">
+            Toggle Dark Mode
+          </label>
+        </div>
         {!data ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100px' }}>
             <div className="spinner-border text-primary" role="status">
@@ -191,6 +201,10 @@ function StatusBootstrapPage({ initialStatus }) {
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Humidity:
                       <span>{typeof data.humidity === 'number' ? `${data.humidity.toFixed(1)} %` : 'N/A'}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Outside Temperature:
+                      <span>{typeof data.outsideTemperature === 'number' ? `${data.outsideTemperature.toFixed(1)} °C` : 'N/A'}</span>
                     </li>
                   </ul>
                 </div>
@@ -219,11 +233,11 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Vent Control */}
             <div className="col-md-6">
               <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                <div className="card-header">Vent Control</div>
+                <div className="card-header">Air Control</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Vent Power:
+                      Vent:
                       <span>{renderIndicator(data.ventPower)}</span>
                     </li>
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
@@ -233,10 +247,6 @@ function StatusBootstrapPage({ initialStatus }) {
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Vent Total:
                       <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Fan:
-                      <span>{renderIndicator(data.fan)}</span>
                     </li>
                   </ul>
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
@@ -317,7 +327,12 @@ function StatusBootstrapPage({ initialStatus }) {
                       </div>
                     </div>
                   </div>
-                  
+                  <ul className="list-group list-group-flush">
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Fan:
+                      <span>{renderIndicator(data.fan)}</span>
+                    </li>
+                  </ul>
                   <div className="my-3"><hr /></div>
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                     <div className="card-header" onClick={toggleFanSettings} style={{ cursor: 'pointer' }}>
@@ -388,6 +403,14 @@ function StatusBootstrapPage({ initialStatus }) {
                 <div className="card-header">System Information</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
+                    {mounted && (
+                      <>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          WebSocket:
+                          <span>{renderIndicator(isWsConnected)}</span>
+                        </li>
+                      </>
+                    )}
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Version:
                       <span>{data.version}</span>
@@ -421,10 +444,6 @@ function StatusBootstrapPage({ initialStatus }) {
                         <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                           Current Time:
                           <span>{new Date().toLocaleTimeString()}</span>
-                        </li>
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                          WebSocket:
-                          <span>{renderIndicator(isWsConnected)}</span>
                         </li>
                       </>
                     )}
@@ -491,6 +510,12 @@ export async function getServerSideProps() {
     console.log(`Irrigation pump response status: ${irrigationPumpRes.status}`);
     const irrigationPumpData = await irrigationPumpRes.json();
     initialStatus.irrigationPump = irrigationPumpData.message;
+
+    console.log(`Fetching outside temperature from: ${API_URL}/api/mqtt/outsideTemperature/temperature`);
+    const outsideTemperatureRes = await fetch(`${API_URL}/api/mqtt/outsideTemperature/temperature`);
+    console.log(`Outside temperature response status: ${outsideTemperatureRes.status}`);
+    const outsideTemperatureData = await outsideTemperatureRes.json();
+    initialStatus.outsideTemperature = outsideTemperatureData.message;
 
   } catch (error) {
     console.error('Failed to fetch initial status:', error);

@@ -190,15 +190,15 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
   'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
     controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
-    logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
+    // logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
     'openhab/soil_moisture/percentage': (topic, message) => {
     controllerStatus.soilMoisturePercent = parseFloat(message.toString());
-    logger.warn(`XXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
+    // logger.warn(`XXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
   },
   'irrigationPump/status': (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';
-    logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
+    // logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
   },
 
 };

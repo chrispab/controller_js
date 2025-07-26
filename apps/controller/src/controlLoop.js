@@ -36,6 +36,8 @@ let controllerStatus = {
   ventOffDurationDaySecs: null,
   ventOnDurationNightSecs: null,
   ventOffDurationNightSecs: null,
+  outsideTemperature: null,
+  activeSetpoint: null,
 };
 
 let previousStatus = { ...controllerStatus };
@@ -101,6 +103,8 @@ function startControlLoop() {
     updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', cfg.get('vent.offDurationMs.day') / 1000);
     updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
     updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
+    updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
+
   }, 1000);
 
   logger.info('Event-driven control loop started.');

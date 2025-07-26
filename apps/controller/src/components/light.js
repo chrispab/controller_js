@@ -58,7 +58,7 @@ export default class Light {
   initiateGetRCChargeLoopCount() {
     return new Promise((resolve, reject) => {
         if (this.currentlySamplingLightSensor) {
-            logger.warn('Light sensor sampling already in progress.');
+            // logger.warn('Light sensor sampling already in progress.');
             return resolve(this.RCLoopCount); // return last value if busy
         }
 
@@ -78,7 +78,7 @@ export default class Light {
                 this.IOPin.setIODirection('out');
                 this.IOPin.writeIO(0);
                 this.currentlySamplingLightSensor = false;
-                logger.warn(`New RCLoopCount: ${this.RCLoopCount}`);
+                // logger.warn(`New RCLoopCount: ${this.RCLoopCount}`);
                 resolve(this.RCLoopCount);
             });
         } else {
