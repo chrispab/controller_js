@@ -172,6 +172,10 @@ mqttAgent.client.on('packetsend', function () {
   // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
 });
 
+mqttAgent.client.on('error', function (err) {
+  logger.error('MQTT client error:', err);
+});
+
 import * as handlers from './mqttHandlers/index.js';
 
 /**
