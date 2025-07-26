@@ -230,190 +230,14 @@ function StatusBootstrapPage({ initialStatus }) {
               </div>
             </div>
 
-            {/* Vent Control */}
-            <div className="col-md-6">
+            {/* Air Control Card */}
+            <div className="col-md-6 mx-auto">
               <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                 <div className="card-header">Air Control</div>
                 <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Vent:
-                      <span>{renderIndicator(data.ventPower)}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Vent Speed:
-                      <span>{data.ventSpeed ? 'High' : 'Low'}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Vent Total:
-                      <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
-                    </li>
-                  </ul>
+                  {/* <p>This is a new card for Air Control.</p> */}
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                    <div className="card-header" onClick={toggleDaySettings} style={{ cursor: 'pointer' }}>
-                      Day Settings {showDaySettings ? '▲' : '▼'}
-                    </div>
-                    <div className={`collapse ${showDaySettings ? 'show' : ''}`}>
-                      <div className="card-body">
-                        <ul className="list-group list-group-flush">
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="ventOnDurationDaySecs" className="form-label">On Duration (Day, secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="ventOnDurationDaySecs"
-                              value={data.ventOnDurationDaySecs || 0}
-                              onChange={(e) => handleVentOnDurationChange(e, 'day')}
-                            />
-                            <span>{data.ventOnDurationDaySecs || 0}</span>
-                          </li>
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="ventOffDurationDaySecs" className="form-label">Off Duration (Day, secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="ventOffDurationDaySecs"
-                              value={data.ventOffDurationDaySecs || 0}
-                              onChange={(e) => handleVentOffDurationChange(e, 'day')}
-                            />
-                            <span>{data.ventOffDurationDaySecs || 0}</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                    <div className="card-header" onClick={toggleNightSettings} style={{ cursor: 'pointer' }}>
-                      Night Settings {showNightSettings ? '▲' : '▼'}
-                    </div>
-                    <div className={`collapse ${showNightSettings ? 'show' : ''}`}>
-                      <div className="card-body">
-                        <ul className="list-group list-group-flush">
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="ventOnDurationNightSecs" className="form-label">On Duration (Night, secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="ventOnDurationNightSecs"
-                              value={data.ventOnDurationNightSecs || 0}
-                              onChange={(e) => handleVentOnDurationChange(e, 'night')}
-                            />
-                            <span>{data.ventOnDurationNightSecs || 0}</span>
-                          </li>
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="ventOffDurationNightSecs" className="form-label">Off Duration (Night, secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="ventOffDurationNightSecs"
-                              value={data.ventOffDurationNightSecs || 0}
-                              onChange={(e) => handleVentOffDurationChange(e, 'night')}
-                            />
-                            <span>{data.ventOffDurationNightSecs || 0}</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-
-
-                </div>
-              </div>
-            </div>
-            {/* Water Control */}
-            <div className="col-md-6">
-              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                <div className="card-header">Water Control</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Soil Moisture:
-                      <span>{renderSoilMoisture(data.soilMoisturePercent)}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Irrigation Pump:
-                      <span>{renderIndicator(data.irrigationPump)}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* System Information */}
-            <div className="col-md-6 mx-auto">
-              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                <div className="card-header">System Information</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    {mounted && (
-                      <>
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                          WebSocket:
-                          <span>{renderIndicator(isWsConnected)}</span>
-                        </li>
-                      </>
-                    )}
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Version:
-                      <span>{data.version}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Description:
-                      <span className="text-end">{data.description}</span>
-                    </li>
-                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Release Notes:
-                      <span className="text-end">{data.releaseNotes}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Git Branch:
-                      <span>{data.gitBranch}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Last Commit:
-                      <span className="text-end">{data.gitCommit}</span>
-                    </li>
-                    {mounted && (
-                      <>
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                          Last Changed:
-                          <span>{data && data.timeStamp ? new Date(data.timeStamp).toLocaleTimeString() : ''}</span>
-                        </li>
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                          Last Change:
-                          <span>{data ? data.lastChange : ''}</span>
-                        </li>
-                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                          Current Time:
-                          <span>{new Date().toLocaleTimeString()}</span>
-                        </li>
-                      </>
-                    )}
-                  </ul>
-                </div>
-              </div>
-            </div>
-            {/* Testing Card */}
-            <div className="col-md-6 mx-auto">
-              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                <div className="card-header">Testing</div>
-                <div className="card-body">
-                  <p>This is a new card for testing purposes.</p>
-                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                    <div className="card-header">Vent Power: {renderIndicator(data.ventPower)}</div>
+                    <div className="card-header">Vent: {renderIndicator(data.ventPower)}</div>
                     <div className="card-body">
                       <ul className="list-group list-group-flush">
                         <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
@@ -553,6 +377,82 @@ function StatusBootstrapPage({ initialStatus }) {
                 </div>
               </div>
             </div>
+
+
+            {/* Water Control */}
+            <div className="col-md-6">
+              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                <div className="card-header">Water Control</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Soil Moisture:
+                      <span>{renderSoilMoisture(data.soilMoisturePercent)}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Irrigation Pump:
+                      <span>{renderIndicator(data.irrigationPump)}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* System Information */}
+            <div className="col-md-6 mx-auto">
+              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                <div className="card-header">System Information</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    {mounted && (
+                      <>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          WebSocket:
+                          <span>{renderIndicator(isWsConnected)}</span>
+                        </li>
+                      </>
+                    )}
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Version:
+                      <span>{data.version}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Description:
+                      <span className="text-end">{data.description}</span>
+                    </li>
+                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Release Notes:
+                      <span className="text-end">{data.releaseNotes}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Git Branch:
+                      <span>{data.gitBranch}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Last Commit:
+                      <span className="text-end">{data.gitCommit}</span>
+                    </li>
+                    {mounted && (
+                      <>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Last Changed:
+                          <span>{data && data.timeStamp ? new Date(data.timeStamp).toLocaleTimeString() : ''}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Last Change:
+                          <span>{data ? data.lastChange : ''}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Current Time:
+                          <span>{new Date().toLocaleTimeString()}</span>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
           </div>
         )}
       </div>
