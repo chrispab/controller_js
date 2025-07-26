@@ -200,35 +200,77 @@ function StatusBootstrapPage({ initialStatus }) {
                       Vent Total:
                       <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
                     </li>
-                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      <label htmlFor="ventOnDurationDaySecs" className="form-label">On Duration (Day, secs)</label>
-                      <input
-                        type="range"
-                        className="form-range"
-                        min="5"
-                        max="420"
-                        step="5"
-                        id="ventOnDurationDaySecs"
-                        value={data.ventOnDurationDaySecs || 0}
-                        onChange={(e) => handleVentOnDurationChange(e, 'day')}
-                      />
-                      <span>{data.ventOnDurationDaySecs || 0}</span>
-                    </li>
-                    <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      <label htmlFor="ventOffDurationDaySecs" className="form-label">Off Duration (Day, secs)</label>
-                      <input
-                        type="range"
-                        className="form-range"
-                        min="5"
-                        max="420"
-                        step="5"
-                        id="ventOffDurationDaySecs"
-                        value={data.ventOffDurationDaySecs || 0}
-                        onChange={(e) => handleVentOffDurationChange(e, 'day')}
-                      />
-                      <span>{data.ventOffDurationDaySecs || 0}</span>
-                    </li>
                   </ul>
+                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                    <div className="card-header">Day Settings</div>
+                    <div className="card-body">
+                      <ul className="list-group list-group-flush">
+                        <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          <label htmlFor="ventOnDurationDaySecs" className="form-label">On Duration (Day, secs)</label>
+                          <input
+                            type="range"
+                            className="form-range"
+                            min="5"
+                            max="420"
+                            step="5"
+                            id="ventOnDurationDaySecs"
+                            value={data.ventOnDurationDaySecs || 0}
+                            onChange={(e) => handleVentOnDurationChange(e, 'day')}
+                          />
+                          <span>{data.ventOnDurationDaySecs || 0}</span>
+                        </li>
+                        <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          <label htmlFor="ventOffDurationDaySecs" className="form-label">Off Duration (Day, secs)</label>
+                          <input
+                            type="range"
+                            className="form-range"
+                            min="5"
+                            max="420"
+                            step="5"
+                            id="ventOffDurationDaySecs"
+                            value={data.ventOffDurationDaySecs || 0}
+                            onChange={(e) => handleVentOffDurationChange(e, 'day')}
+                          />
+                          <span>{data.ventOffDurationDaySecs || 0}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                    <div className="card-header">Night Settings</div>
+                    <div className="card-body">
+                      <ul className="list-group list-group-flush">
+                        <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          <label htmlFor="ventOnDurationNightSecs" className="form-label">On Duration (Night, secs)</label>
+                          <input
+                            type="range"
+                            className="form-range"
+                            min="5"
+                            max="420"
+                            step="5"
+                            id="ventOnDurationNightSecs"
+                            value={data.ventOnDurationNightSecs || 0}
+                            onChange={(e) => handleVentOnDurationChange(e, 'night')}
+                          />
+                          <span>{data.ventOnDurationNightSecs || 0}</span>
+                        </li>
+                        <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          <label htmlFor="ventOffDurationNightSecs" className="form-label">Off Duration (Night, secs)</label>
+                          <input
+                            type="range"
+                            className="form-range"
+                            min="5"
+                            max="420"
+                            step="5"
+                            id="ventOffDurationNightSecs"
+                            value={data.ventOffDurationNightSecs || 0}
+                            onChange={(e) => handleVentOffDurationChange(e, 'night')}
+                          />
+                          <span>{data.ventOffDurationNightSecs || 0}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -318,6 +360,28 @@ export async function getServerSideProps() {
     console.log(`Status response status: ${statusRes.status}`);
     const statusData = await statusRes.json();
     initialStatus = statusData.message; 
+
+    // Fetch vent durations for day
+    console.log(`Fetching vent on duration (day) from: ${API_URL}/api/vent/onDurationSecs?period=day`);
+    const ventOnDayRes = await fetch(`${API_URL}/api/vent/onDurationSecs?period=day`);
+    const ventOnDayData = await ventOnDayRes.json();
+    initialStatus.ventOnDurationDaySecs = ventOnDayData.day; // Assuming the API returns { day: value, night: value }
+
+    console.log(`Fetching vent off duration (day) from: ${API_URL}/api/vent/offDurationSecs?period=day`);
+    const ventOffDayRes = await fetch(`${API_URL}/api/vent/offDurationSecs?period=day`);
+    const ventOffDayData = await ventOffDayRes.json();
+    initialStatus.ventOffDurationDaySecs = ventOffDayData.day; // Assuming the API returns { day: value, night: value }
+
+    // Fetch vent durations for night
+    console.log(`Fetching vent on duration (night) from: ${API_URL}/api/vent/onDurationSecs?period=night`);
+    const ventOnNightRes = await fetch(`${API_URL}/api/vent/onDurationSecs?period=night`);
+    const ventOnNightData = await ventOnNightRes.json();
+    initialStatus.ventOnDurationNightSecs = ventOnNightData.night; // Assuming the API returns { day: value, night: value }
+
+    console.log(`Fetching vent off duration (night) from: ${API_URL}/api/vent/offDurationSecs?period=night`);
+    const ventOffNightRes = await fetch(`${API_URL}/api/vent/offDurationSecs?period=night`);
+    const ventOffNightData = await ventOffNightRes.json();
+    initialStatus.ventOffDurationNightSecs = ventOffNightData.night; // Assuming the API returns { day: value, night: value }
 
     //sensor soil moisture raw - 'dryness' reading - not a percentage. e.g something like 1960 to 2020 values 
     console.log(`Fetching sensor Raw soil moisture reading from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`);
