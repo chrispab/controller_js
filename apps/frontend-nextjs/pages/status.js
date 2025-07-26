@@ -327,53 +327,8 @@ function StatusBootstrapPage({ initialStatus }) {
                       </div>
                     </div>
                   </div>
-                  <ul className="list-group list-group-flush">
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Fan:
-                      <span>{renderIndicator(data.fan)}</span>
-                    </li>
-                  </ul>
-                  <div className="my-3"><hr /></div>
-                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                    <div className="card-header" onClick={toggleFanSettings} style={{ cursor: 'pointer' }}>
-                      Fan Settings {showFanSettings ? '▲' : '▼'}
-                    </div>
-                    <div className={`collapse ${showFanSettings ? 'show' : ''}`}>
-                      <div className="card-body">
-                        <ul className="list-group list-group-flush">
-                          
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="fanOnDurationSecs" className="form-label">On Duration (secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="fanOnDurationSecs"
-                              value={data.fanOnDurationSecs || 0}
-                              onChange={handleFanOnDurationChange}
-                            />
-                            <span>{data.fanOnDurationSecs || 0}</span>
-                          </li>
-                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                            <label htmlFor="fanOffDurationSecs" className="form-label">Off Duration (secs)</label>
-                            <input
-                              type="range"
-                              className="form-range"
-                              min="5"
-                              max="420"
-                              step="5"
-                              id="fanOffDurationSecs"
-                              value={data.fanOffDurationSecs || 0}
-                              onChange={handleFanOffDurationChange}
-                            />
-                            <span>{data.fanOffDurationSecs || 0}</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+
+
 
                 </div>
               </div>
@@ -448,6 +403,66 @@ function StatusBootstrapPage({ initialStatus }) {
                       </>
                     )}
                   </ul>
+                </div>
+              </div>
+            </div>
+            {/* Testing Card */}
+            <div className="col-md-6 mx-auto">
+              <div className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                <div className="card-header">Testing</div>
+                <div className="card-body">
+                  <p>This is a new card for testing purposes.</p>
+                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                    <div className="card-header">Vent Power: {renderIndicator(data.ventPower)}</div>
+                    <div className="card-body">
+                      <p>Content for sub-card 1.</p>
+                    </div>
+                  </div>
+                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                    <div className="card-header">Fan: {renderIndicator(data.fan)}</div>
+                    <div className="card-body">
+                      <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                        <div className="card-header" onClick={toggleFanSettings} style={{ cursor: 'pointer' }}>
+                          Fan Settings {showFanSettings ? '▲' : '▼'}
+                        </div>
+                        <div className={`collapse ${showFanSettings ? 'show' : ''}`}>
+                          <div className="card-body">
+                            <ul className="list-group list-group-flush">
+                              
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="fanOnDurationSecs" className="form-label">On Duration (secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="fanOnDurationSecs"
+                                  value={data.fanOnDurationSecs || 0}
+                                  onChange={handleFanOnDurationChange}
+                                />
+                                <span>{data.fanOnDurationSecs || 0}</span>
+                              </li>
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="fanOffDurationSecs" className="form-label">Off Duration (secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="fanOffDurationSecs"
+                                  value={data.fanOffDurationSecs || 0}
+                                  onChange={handleFanOffDurationChange}
+                                />
+                                <span>{data.fanOffDurationSecs || 0}</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
