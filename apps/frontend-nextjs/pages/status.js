@@ -415,7 +415,94 @@ function StatusBootstrapPage({ initialStatus }) {
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                     <div className="card-header">Vent Power: {renderIndicator(data.ventPower)}</div>
                     <div className="card-body">
-                      <p>Content for sub-card 1.</p>
+                      <ul className="list-group list-group-flush">
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Vent Speed:
+                          <span>{data.ventSpeed ? 'High' : 'Low'}</span>
+                        </li>
+                        <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                          Vent Total:
+                          <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
+                        </li>
+                      </ul>
+                      <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                        <div className="card-header" onClick={toggleDaySettings} style={{ cursor: 'pointer' }}>
+                          Day Settings {showDaySettings ? '▲' : '▼'}
+                        </div>
+                        <div className={`collapse ${showDaySettings ? 'show' : ''}`}>
+                          <div className="card-body">
+                            <ul className="list-group list-group-flush">
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="ventOnDurationDaySecs" className="form-label">On Duration (Day, secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="ventOnDurationDaySecs"
+                                  value={data.ventOnDurationDaySecs || 0}
+                                  onChange={(e) => handleVentOnDurationChange(e, 'day')}
+                                />
+                                <span>{data.ventOnDurationDaySecs || 0}</span>
+                              </li>
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="ventOffDurationDaySecs" className="form-label">Off Duration (Day, secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="ventOffDurationDaySecs"
+                                  value={data.ventOffDurationDaySecs || 0}
+                                  onChange={(e) => handleVentOffDurationChange(e, 'day')}
+                                />
+                                <span>{data.ventOffDurationDaySecs || 0}</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                        <div className="card-header" onClick={toggleNightSettings} style={{ cursor: 'pointer' }}>
+                          Night Settings {showNightSettings ? '▲' : '▼'}
+                        </div>
+                        <div className={`collapse ${showNightSettings ? 'show' : ''}`}>
+                          <div className="card-body">
+                            <ul className="list-group list-group-flush">
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="ventOnDurationNightSecs" className="form-label">On Duration (Night, secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="ventOnDurationNightSecs"
+                                  value={data.ventOnDurationNightSecs || 0}
+                                  onChange={(e) => handleVentOnDurationChange(e, 'night')}
+                                />
+                                <span>{data.ventOnDurationNightSecs || 0}</span>
+                              </li>
+                              <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                                <label htmlFor="ventOffDurationNightSecs" className="form-label">Off Duration (Night, secs)</label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="5"
+                                  max="420"
+                                  step="5"
+                                  id="ventOffDurationNightSecs"
+                                  value={data.ventOffDurationNightSecs || 0}
+                                  onChange={(e) => handleVentOffDurationChange(e, 'night')}
+                                />
+                                <span>{data.ventOffDurationNightSecs || 0}</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
