@@ -99,8 +99,9 @@ export default class Vent {
     }
 
     // --- Regular Day/Night Cycle Logic ---
-    const onMs = this.lightState ? cfg.get('vent.onMs') : cfg.get('vent.ventOnDarkMs');
-    const offMs = this.lightState ? cfg.get('vent.offMs') : cfg.get('vent.ventOffDarkMs');
+    const dayOrNight = this.lightState ? 'day' : 'night';
+    const onMs = cfg.get(`vent.onDurationMs.${dayOrNight}`);
+    const offMs = cfg.get(`vent.offDurationMs.${dayOrNight}`);
 
     switch (this.cycleState) {
       case 'inactive':
@@ -126,15 +127,15 @@ export default class Vent {
   }
 
   periodicPublication() {
-    const onMs = cfg.get('vent.onMs');
-    const offMs = cfg.get('vent.offMs');
-    const onDarkMs = cfg.get('vent.ventOnDarkMs');
-    const offDarkMs = cfg.get('vent.ventOffDarkMs');
+    const onMsDay = cfg.get('vent.onDurationMs.day');
+    const offMsDay = cfg.get('vent.offDurationMs.day');
+    const onMsNight = cfg.get('vent.onDurationMs.night');
+    const offMsNight = cfg.get('vent.offDurationMs.night');
 
-    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic'), onMs / 1000);
-    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic'), offMs / 1000);
-    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsTopic'), onDarkMs / 1000);
-    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsTopic'), offDarkMs / 1000);
+    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsTopic'), onMsDay / 1000);
+    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsTopic'), offMsDay / 1000);
+    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsTopic'), onMsNight / 1000);
+    utils.logAndPublishState('Vent P', cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsTopic'), offMsNight / 1000);
   }
 }
 // add IOPinAccessorsMixin

@@ -32,18 +32,18 @@ function handleVent(topic, message, configKey, topicKey) {
  * @param {string} topic - The MQTT topic the message was received on.
  * @param {Buffer} message - The payload of the MQTT message, representing the duration in seconds.
  */
-export function handleVentOnDeltaSecsSet(topic, message) {
-  handleVent(topic, message, 'vent.onMs', 'mqtt.ventOnDeltaSecsTopic');
+export function handleVentOnDurationDaySecsSet(topic, message) {
+  handleVent(topic, message, 'vent.onDurationMs.day', 'mqtt.ventOnDurationDaySecsTopic');
 }
 
-export function handleVentOffDeltaSecsSet(topic, message) {
-  handleVent(topic, message, 'vent.offMs', 'mqtt.ventOffDeltaSecsTopic');
+export function handleVentOffDurationDaySecsSet(topic, message) {
+  handleVent(topic, message, 'vent.offDurationMs.day', 'mqtt.ventOffDurationDaySecsTopic');
 }
 
-export function handleVentOnDarkSecsSet(topic, message) {
-  handleVent(topic, message, 'vent.ventOnDarkMs', 'mqtt.ventOnDarkSecsTopic');
+export function handleVentOnDurationNightSecsSet(topic, message) {
+  handleVent(topic, message, 'vent.onDurationMs.night', 'mqtt.ventOnDurationNightSecsTopic');
 }
 
-export function handleVentOffDarkSecsSet(topic, message) {
-  handleVent(topic, message, 'vent.ventOffDarkMs', 'mqtt.ventOffDarkSecsTopic');
+export function handleVentOffDurationNightSecsSet(topic, message) {
+  handleVent(topic, message, 'vent.offDurationMs.night', 'mqtt.ventOffDurationNightSecsTopic');
 }

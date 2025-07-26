@@ -33,38 +33,54 @@ app.get('/api/status', (req, res) => {
   res.json({ message: controllerStatus });
 });
 
-app.post('/api/ventOnDeltaSecs', (req, res) => {
-  const { value } = req.body;
-  const topic = cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsTopic');
+app.post('/api/vent/onDurationSecs', (req, res) => {
+  const { value, period } = req.body; // period will be 'day' or 'night'
+  const topic = cfg.getWithMQTTPrefix(`mqtt.ventOnDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`);
   mqttAgent.client.publish(topic, value.toString());
-  //set in controllerStatus
-  controllerStatus.ventOnDeltaSecs = value;
-  //set in cofig object
-  cfg.set('vent.onMs', value * 1000);
-  //broadcast
+
+  // Update controllerStatus and config based on period
+  if (period === 'day') {
+    controllerStatus.ventOnDurationDaySecs = value;
+    cfg.set('vent.onDurationMs.day', value * 1000);
+  } else if (period === 'night') {
+    controllerStatus.ventOnDurationNightSecs = value;
+    cfg.set('vent.onDurationMs.night', value * 1000);
+  }
+
   broadcast(controllerStatus);
   res.status(200).send({ message: 'OK' });
 });
 
-app.get('/api/ventOnDeltaSecs', (req, res) => {
-  res.json({ message: controllerStatus.ventOnDeltaSecs });
+app.get('/api/vent/onDurationSecs', (req, res) => {
+  res.json({
+    day: controllerStatus.ventOnDurationDaySecs,
+    night: controllerStatus.ventOnDurationNightSecs
+  });
 });
 
-app.post('/api/ventOffDeltaSecs', (req, res) => {
-  const { value } = req.body;
-  const topic = cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsTopic');
+app.post('/api/vent/offDurationSecs', (req, res) => {
+  const { value, period } = req.body; // period will be 'day' or 'night'
+  const topic = cfg.getWithMQTTPrefix(`mqtt.ventOffDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`);
   mqttAgent.client.publish(topic, value.toString());
-  //set in controllerStatus
-  controllerStatus.ventOffDeltaSecs = value;
-  //set in cofig object
-  cfg.set('vent.offMs', value * 1000);
-  //broadcast
+
+  // Update controllerStatus and config based on period
+  if (period === 'day') {
+    controllerStatus.ventOffDurationDaySecs = value;
+    cfg.set('vent.offDurationMs.day', value * 1000);
+  } else if (period === 'night') {
+    controllerStatus.ventOffDurationNightSecs = value;
+    cfg.set('vent.offDurationMs.night', value * 1000);
+  }
+
   broadcast(controllerStatus);
   res.status(200).send({ message: 'OK' });
 });
 
-app.get('/api/ventOffDeltaSecs', (req, res) => {
-  res.json({ message: controllerStatus.ventOffDeltaSecs });
+app.get('/api/vent/offDurationSecs', (req, res) => {
+  res.json({
+    day: controllerStatus.ventOffDurationDaySecs,
+    night: controllerStatus.ventOffDurationNightSecs
+  });
 });
 
 // app.get('/api/soilMoisture', (req, res) => {

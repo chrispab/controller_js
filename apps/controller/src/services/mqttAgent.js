@@ -147,11 +147,11 @@ mqttAgent.client.on('connect', function () {
   mqttAgent.client.subscribe([
     cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic'),
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
-    cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
     'soil1/sensor_method5_batch_moving_average_float',
     'openhab/soil_moisture/percentage',
     'irrigationPump/status',
@@ -184,10 +184,10 @@ const topicHandlers = {
   [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpointSet,
   [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDeltaSecsSetTopic')]: handlers.handleVentOnDeltaSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDeltaSecsSetTopic')]: handlers.handleVentOffDeltaSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDarkSecsSetTopic')]: handlers.handleVentOnDarkSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDarkSecsSetTopic')]: handlers.handleVentOffDarkSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic')]: handlers.handleVentOnDurationDaySecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
   'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
     controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
     logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);

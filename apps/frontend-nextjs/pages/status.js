@@ -85,35 +85,41 @@ function StatusBootstrapPage({ initialStatus }) {
     const badgeColor = value >= 30 ? 'bg-success' : 'bg-danger';
     return <span className={`badge ${badgeColor}`}>{value.toFixed(1)} %</span>;
   };
-  const handleVentOnDeltaSecsChange = async (event) => {
+  const handleVentOnDurationChange = async (event, period) => {
     const value = event.target.value;
-    setData(prevData => ({ ...prevData, ventOnDeltaSecs: value }));
+    setData(prevData => ({
+      ...prevData,
+      [`ventOnDuration${period === 'day' ? 'Day' : 'Night'}Secs`]: value
+    }));
     try {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/ventOnDeltaSecs', {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + `/api/vent/onDurationSecs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ value }),
+        body: JSON.stringify({ value, period }),
       });
     } catch (error) {
-      console.error("Failed to set ventOnDeltaSecs:", error);
+      console.error(`Failed to set ventOnDuration for ${period}:`, error);
     }
   };
 
-  const handleVentOffDeltaSecsChange = async (event) => {
+  const handleVentOffDurationChange = async (event, period) => {
     const value = event.target.value;
-    setData(prevData => ({ ...prevData, ventOffDeltaSecs: value }));
+    setData(prevData => ({
+      ...prevData,
+      [`ventOffDuration${period === 'day' ? 'Day' : 'Night'}Secs`]: value
+    }));
     try {
-      await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/ventOffDeltaSecs', {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + `/api/vent/offDurationSecs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ value }),
+        body: JSON.stringify({ value, period }),
       });
     } catch (error) {
-      console.error("Failed to set ventOffDeltaSecs:", error);
+      console.error(`Failed to set ventOffDuration for ${period}:`, error);
     }
   };
 
@@ -195,32 +201,32 @@ function StatusBootstrapPage({ initialStatus }) {
                       <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
                     </li>
                     <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      <label htmlFor="ventOnDeltaSecs" className="form-label">On Delta (secs)</label>
+                      <label htmlFor="ventOnDurationDaySecs" className="form-label">On Duration (Day, secs)</label>
                       <input
                         type="range"
                         className="form-range"
                         min="5"
                         max="420"
                         step="5"
-                        id="ventOnDeltaSecs"
-                        value={data.ventOnDeltaSecs || 0}
-                        onChange={handleVentOnDeltaSecsChange}
+                        id="ventOnDurationDaySecs"
+                        value={data.ventOnDurationDaySecs || 0}
+                        onChange={(e) => handleVentOnDurationChange(e, 'day')}
                       />
-                      <span>{data.ventOnDeltaSecs || 0}</span>
+                      <span>{data.ventOnDurationDaySecs || 0}</span>
                     </li>
                     <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      <label htmlFor="ventOffDeltaSecs" className="form-label">Off Delta (secs)</label>
+                      <label htmlFor="ventOffDurationDaySecs" className="form-label">Off Duration (Day, secs)</label>
                       <input
                         type="range"
                         className="form-range"
                         min="5"
                         max="420"
                         step="5"
-                        id="ventOffDeltaSecs"
-                        value={data.ventOffDeltaSecs || 0}
-                        onChange={handleVentOffDeltaSecsChange}
+                        id="ventOffDurationDaySecs"
+                        value={data.ventOffDurationDaySecs || 0}
+                        onChange={(e) => handleVentOffDurationChange(e, 'day')}
                       />
-                      <span>{data.ventOffDeltaSecs || 0}</span>
+                      <span>{data.ventOffDurationDaySecs || 0}</span>
                     </li>
                   </ul>
                 </div>

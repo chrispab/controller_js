@@ -90,14 +90,12 @@
       "ventValueTopic": "/VentValue",
       "fanStateTopic": "/FanStatus",
       "heaterStateTopic": "/HeaterStatus",
-      "ventOnSecsTopic": "/vent_on_delta_secs",
-      "ventOffSecsTopic": "/vent_off_delta_secs",
+      "ventOnDurationDaySecsTopic": "/vent_on_delta_secs",
+      "ventOffDurationDaySecsTopic": "/vent_off_delta_secs",
       "highSetpointTopic": "/high_setpoint",
       "lowSetpointTopic": "/low_setpoint",
-      "telemetryTopic": "/telemetry",
-      "ventOnDeltaSecsTopic": "/vent_on_delta_secs",
-      "ventOffDeltaSecsTopic": "/vent_off_delta_secs",
-      "fanOnDeltaSecsTopic": "/fan_on_delta_secs",
+      "ventOnDurationNightSecsTopic": "/vent_on_delta_dark_secs",
+      "ventOffDurationNightSecsTopic": "/vent_off_delta_dark_secs",
       "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
     }
   }
