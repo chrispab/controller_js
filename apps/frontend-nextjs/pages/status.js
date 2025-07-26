@@ -10,6 +10,7 @@ function StatusBootstrapPage({ initialStatus }) {
   const [isWsConnected, setIsWsConnected] = useState(false);
   const [showDaySettings, setShowDaySettings] = useState(false);
   const [showNightSettings, setShowNightSettings] = useState(false);
+  const [showFanSettings, setShowFanSettings] = useState(false);
 
   useEffect(() => {
     setMounted(true); // Set mounted to true after initial render on client
@@ -125,9 +126,42 @@ function StatusBootstrapPage({ initialStatus }) {
     }
   };
 
+  const handleFanOnDurationChange = async (event) => {
+    const value = event.target.value;
+    setData(prevData => ({ ...prevData, fanOnDurationSecs: value }));
+    try {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + `/api/fan/onDurationSecs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value }),
+      });
+    } catch (error) {
+      console.error(`Failed to set fanOnDurationSecs:`, error);
+    }
+  };
+
+  const handleFanOffDurationChange = async (event) => {
+    const value = event.target.value;
+    setData(prevData => ({ ...prevData, fanOffDurationSecs: value }));
+    try {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + `/api/fan/offDurationSecs`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ value }),
+      });
+    } catch (error) {
+      console.error(`Failed to set fanOffDurationSecs:`, error);
+    }
+  };
+
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
   const toggleDaySettings = () => setShowDaySettings(!showDaySettings);
   const toggleNightSettings = () => setShowNightSettings(!showNightSettings);
+  const toggleFanSettings = () => setShowFanSettings(!showFanSettings);
 
   return (
     <div className={isDarkMode ? 'bg-dark text-light min-vh-100 py-3' : 'bg-light text-dark min-vh-100 py-3'}>
@@ -189,10 +223,6 @@ function StatusBootstrapPage({ initialStatus }) {
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
-                      Fan:
-                      <span>{renderIndicator(data.fan)}</span>
-                    </li>
-                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Vent Power:
                       <span>{renderIndicator(data.ventPower)}</span>
                     </li>
@@ -203,6 +233,10 @@ function StatusBootstrapPage({ initialStatus }) {
                     <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
                       Vent Total:
                       <span>{renderVentTotal(data.ventPower, data.ventSpeed)}</span>
+                    </li>
+                    <li className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                      Fan:
+                      <span>{renderIndicator(data.fan)}</span>
                     </li>
                   </ul>
                   <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
@@ -283,6 +317,49 @@ function StatusBootstrapPage({ initialStatus }) {
                       </div>
                     </div>
                   </div>
+                  
+                  <div className="my-3"><hr /></div>
+                  <div className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                    <div className="card-header" onClick={toggleFanSettings} style={{ cursor: 'pointer' }}>
+                      Fan Settings {showFanSettings ? '▲' : '▼'}
+                    </div>
+                    <div className={`collapse ${showFanSettings ? 'show' : ''}`}>
+                      <div className="card-body">
+                        <ul className="list-group list-group-flush">
+                          
+                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                            <label htmlFor="fanOnDurationSecs" className="form-label">On Duration (secs)</label>
+                            <input
+                              type="range"
+                              className="form-range"
+                              min="5"
+                              max="420"
+                              step="5"
+                              id="fanOnDurationSecs"
+                              value={data.fanOnDurationSecs || 0}
+                              onChange={handleFanOnDurationChange}
+                            />
+                            <span>{data.fanOnDurationSecs || 0}</span>
+                          </li>
+                          <li className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}>
+                            <label htmlFor="fanOffDurationSecs" className="form-label">Off Duration (secs)</label>
+                            <input
+                              type="range"
+                              className="form-range"
+                              min="5"
+                              max="420"
+                              step="5"
+                              id="fanOffDurationSecs"
+                              value={data.fanOffDurationSecs || 0}
+                              onChange={handleFanOffDurationChange}
+                            />
+                            <span>{data.fanOffDurationSecs || 0}</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>

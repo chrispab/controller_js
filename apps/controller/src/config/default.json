@@ -96,6 +96,6 @@
       "lowSetpointTopic": "/low_setpoint",
       "ventOnDurationNightSecsTopic": "/vent_on_delta_dark_secs",
       "ventOffDurationNightSecsTopic": "/vent_off_delta_dark_secs",
-      "fanOffDeltaSecsTopic": "/fan_off_delta_secs"
+      "fanOffDurationSecsTopic": "/fan_off_delta_secs"
     }
   }

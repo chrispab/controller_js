@@ -67,8 +67,8 @@ export default class Fan {
 
     // Publish current state and settings periodically
     utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDeltaSecsTopic'), this.getOnMs() / 1000);
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDeltaSecsTopic'), this.getOffMs() / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
   }
 }
 
