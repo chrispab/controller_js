@@ -65,11 +65,11 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 385000,
+      "day": 215000,
       "night": 380000
     },
     "offDurationMs": {
-      "day": 25000,
+      "day": 80000,
       "night": 30000
     },
     "speedPercent": 50,
@@ -130,5 +130,7 @@
     "versionTopic": "/version",
     "outsideSensorName": "DS18B20-1",
     "heartbeatTopic": "/HeartBeat"
-  }
+  },
+  "ventOnDurationDaySecs": 380,
+  "ventOffDurationDaySecs": 45
 }

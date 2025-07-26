@@ -1,4 +1,5 @@
 
+import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 import logger from '../logger.js';
 import cfg from '../config.js';
 import mqttAgent from '../mqttAgent.js';
@@ -14,7 +15,7 @@ export default function handleOutsideSensor(topic, message) {
     const temperature = obj?.[sensorName]?.['Temperature'];
 
     if (typeof temperature !== 'undefined') {
-      mqttAgent.outsideTemperature = temperature;
+      updateAndBroadcastStatusIfValueChanged('outsideTemperature', temperature);
     } else {
       logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
     }
