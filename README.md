@@ -4,11 +4,11 @@ This Node.js application is designed to control and monitor a greenhouse or othe
 
 ## Features
 
-* **Temperature-based control:** The application reads from a temperature sensor and controls a heater, fan, and vent to maintain a desired temperature range.
-* **Day/Night Setpoints:** Different temperature setpoints can be configured for when the lights are on or off.
-* **MQTT Integration:** The application uses MQTT to publish sensor data and device states, and to receive commands.
-* **Web Server:** An Express server provides a simple API and serves a test page.
-* **WebSocket Server:** A WebSocket server broadcasts the real-time status of the fan and vent to connected clients.
+- **Temperature-based control:** The application reads from a temperature sensor and controls a heater, fan, and vent to maintain a desired temperature range.
+- **Day/Night Setpoints:** Different temperature setpoints can be configured for when the lights are on or off.
+- **MQTT Integration:** The application uses MQTT to publish sensor data and device states, and to receive commands.
+- **Web Server:** An Express server provides a simple API and serves a test page.
+- **WebSocket Server:** A WebSocket server broadcasts the real-time status of the fan and vent to connected clients.
 
 ## Project Structure
 
@@ -33,15 +33,15 @@ controller_js/
 
 1. **Clone the repository:**
 
-    ```bash
-    git clone <repository-url>
-    ```
+   ```bash
+   git clone <repository-url>
+   ```
 
 2. **Install dependencies:**
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 ## Usage
 
@@ -65,25 +65,25 @@ This page will display the real-time status of the fan and vent.
 For front-end development, it is recommended to use the React development server, which provides features like hot-reloading.
 
 1. **Start the Node.js backend server:**
-    In the project root directory (`controller_js/`):
+   In the project root directory (`controller_js/`):
 
-    ```bash
-    node server/index.js
-    ```
+   ```bash
+   node server/index.js
+   ```
 
-    This server will run on port `5678` and handle API requests.
+   This server will run on port `5678` and handle API requests.
 
 2. **Start the React development server:**
-    In a separate terminal, navigate to the `client/` directory:
+   In a separate terminal, navigate to the `client/` directory:
 
-    ```bash
-    cd client
-    npm start
-    ```
+   ```bash
+   cd client
+   npm start
+   ```
 
-    This will typically open the React application in your browser at `http://localhost:3000` (or another available port). The React development server is configured to proxy API requests to the Node.js backend.
+   This will typically open the React application in your browser at `http://localhost:3000` (or another available port). The React development server is configured to proxy API requests to the Node.js backend.
 
-    **Important:** When using the development server, changes to the React code will be automatically reflected in your browser without needing to rebuild the client or restart the Node.js server.
+   **Important:** When using the development server, changes to the React code will be automatically reflected in your browser without needing to rebuild the client or restart the Node.js server.
 
 ## Running as a System Service (systemd)
 
@@ -91,9 +91,11 @@ To ensure the application starts automatically on boot and runs reliably in the 
 
 1. **Create a service file:**
 
-    Create a new file named `zone_controller.service` in `/etc/systemd/system/` with the following content:
+   Create a new file named `zone_controller.service` in `/etc/systemd/system/` with the following content:
 
-    ```
+   ```
+
+   ```
 
 [Unit]
 Description=Zone Controller Node.js Application
@@ -109,7 +111,8 @@ Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/gam
 
 [Install]
 WantedBy=multi-user.target
-    ```
+
+````
 
     *   **Note:** Adjust `ExecStart` if your `npm` path is different or if you are not using `nvm`.
     *   **Note:** Ensure `WorkingDirectory` points to the absolute path of your project.
@@ -166,7 +169,7 @@ WantedBy=multi-user.target
 sudo systemctl stop zone_controller.service
 cd controller_js/apps/controller
 npm start
-```
+````
 
 ### Runs with 'debug' level, showing info, warn, error, AND debug messages
 
@@ -174,18 +177,17 @@ LOG_LEVEL=debug npm start
 
 pi@zone1:~/controller_js $ npm run dev --workspace=apps/frontend-nextjs
 
-
-
-
 ## Autostarting the Next.js dev Frontend Server on Raspberry Pi (systemd)
 
 To ensure your Next.js server starts automatically on boot and runs reliably in the background, you can set it up as a `systemd` service.
 
 1. **Create a systemd service file**:
 
-    Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
+   Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
 
-    ```
+   ```
+
+   ```
 
 [Unit]
 Description=Next.js Frontend Application
@@ -201,7 +203,8 @@ Environment="PATH=/home/pi/.nvm/versions/node/v22.17.0/bin:/usr/local/sbin:/usr/
 
 [Install]
 WantedBy=multi-user.target
-    ```
+
+````
 
     *   **Note:** Adjust `WorkingDirectory` to the absolute path of your Next.js application's root directory.
     *   **Note:** If you are building your Next.js application for production, you might want to change `ExecStart` to `ExecStart=/usr/bin/npm run start` after running `npm run build`.
@@ -245,3 +248,8 @@ WantedBy=multi-user.target
     ```
 
 cd apps/frontend-nextjs && npm run dev
+````
+
+npm run lint
+npm run prettier
+

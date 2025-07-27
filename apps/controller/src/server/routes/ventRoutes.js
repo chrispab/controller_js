@@ -8,7 +8,9 @@ const router = express.Router();
 
 router.post('/vent/onDurationSecs', (req, res) => {
   const { value, period } = req.body; // period will be 'day' or 'night'
-  const topic = cfg.getWithMQTTPrefix(`mqtt.ventOnDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`);
+  const topic = cfg.getWithMQTTPrefix(
+    `mqtt.ventOnDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`,
+  );
   mqttAgent.client.publish(topic, value.toString());
 
   // Update controllerStatus and config based on period
@@ -26,13 +28,15 @@ router.post('/vent/onDurationSecs', (req, res) => {
 router.get('/vent/onDurationSecs', (req, res) => {
   res.json({
     day: controllerStatus.ventOnDurationDaySecs,
-    night: controllerStatus.ventOnDurationNightSecs
+    night: controllerStatus.ventOnDurationNightSecs,
   });
 });
 
 router.post('/vent/offDurationSecs', (req, res) => {
   const { value, period } = req.body; // period will be 'day' or 'night'
-  const topic = cfg.getWithMQTTPrefix(`mqtt.ventOffDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`);
+  const topic = cfg.getWithMQTTPrefix(
+    `mqtt.ventOffDuration${period === 'day' ? 'Day' : 'Night'}SecsTopic`,
+  );
   mqttAgent.client.publish(topic, value.toString());
 
   // Update controllerStatus and config based on period
@@ -50,7 +54,7 @@ router.post('/vent/offDurationSecs', (req, res) => {
 router.get('/vent/offDurationSecs', (req, res) => {
   res.json({
     day: controllerStatus.ventOffDurationDaySecs,
-    night: controllerStatus.ventOffDurationNightSecs
+    night: controllerStatus.ventOffDurationNightSecs,
   });
 });
 

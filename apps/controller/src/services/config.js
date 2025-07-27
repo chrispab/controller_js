@@ -24,7 +24,10 @@ class ConfigHandler {
    */
   process() {
     // Check if config has changed and if enough time has passed to save it
-    if (this.configHasChanged && Date.now() - this.configChangedTime > this.delayBeforeConfigSaveMs) {
+    if (
+      this.configHasChanged &&
+      Date.now() - this.configChangedTime > this.delayBeforeConfigSaveMs
+    ) {
       this.save();
       this.configHasChanged = false;
       this.configChangedTime = null;
@@ -47,11 +50,14 @@ class ConfigHandler {
     } else {
       // If not, read the content of the default configuration file
       file_content = fs.readFileSync(defaultPath);
-      logger.log('info', `custom configuration file ${customPath} does not exist. Using default configuration file ${defaultPath}`);
+      logger.log(
+        'info',
+        `custom configuration file ${customPath} does not exist. Using default configuration file ${defaultPath}`,
+      );
     }
     // Parse the JSON content and return the resulting object
     var content = JSON.parse(file_content);
-    logger.log('info',  `configuration file ${customPath} loaded`);
+    logger.log('info', `configuration file ${customPath} loaded`);
 
     return content;
   }
@@ -95,7 +101,7 @@ class ConfigHandler {
     }
     return prefix + value;
   }
-  
+
   /**
    * Sets a value in the configuration using a dot-notation path.
    * @param {string} path - The path to the property (e.g., 'zone.highSetpoint').

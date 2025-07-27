@@ -131,6 +131,6 @@
     "outsideSensorName": "DS18B20-1",
     "heartbeatTopic": "/HeartBeat"
   },
-  "ventOnDurationDaySecs": 380,
-  "ventOffDurationDaySecs": 250
+  "ventOnDurationDaySecs": 410,
+  "ventOffDurationDaySecs": 25
 }

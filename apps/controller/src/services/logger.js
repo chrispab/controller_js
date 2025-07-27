@@ -11,11 +11,10 @@ const level = process.env.LOG_LEVEL || 'info';
 const logger = winston.createLogger({
   level: level,
   format: winston.format.combine(
-    winston.format.timestamp({
-    }),
+    winston.format.timestamp({}),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
     //
@@ -27,34 +26,36 @@ const logger = winston.createLogger({
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d', // Keep logs for 14 days
-      level: 'error'
+      level: 'error',
     }),
     new DailyRotateFile({
       filename: 'logs/controller_js-combined-%DATE%.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
-      maxFiles: '14d'
-    })
-  ]
+      maxFiles: '14d',
+    }),
+  ],
 });
 
-export default logger
+export default logger;
 
 //
 // If we're not in production then **ALSO** log to the `console`
 // with the colorized simple format.
 //
 if (process.env.NODE_ENV !== 'production') {
-  logger.add(new winston.transports.Console({
-    format: winston.format.combine(
-      winston.format.colorize(),
-      winston.format.simple()
-    )
-  }));
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple(),
+      ),
+    }),
+  );
 }
 
-  // ***************
+// ***************
 // Allows for JSON logging
 // ***************
 

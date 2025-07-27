@@ -1,14 +1,6 @@
 {
-  "watch": [
-    "src/server/",
-    "src/",
-    "public/"
-  ],
+  "watch": ["src/server/", "src/", "public/"],
   "ext": "js,json",
-  "ignore": [
-    "client/",
-    "**/*.test.js",
-    "src/config/custom_config.json"
-  ],
+  "ignore": ["client/", "**/*.test.js", "src/config/custom_config.json"],
   "exec": "node src/server/index.js"
 }

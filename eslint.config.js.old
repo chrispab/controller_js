@@ -1,0 +1,56 @@
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import jestPlugin from 'eslint-plugin-jest';
+
+export default [
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...globals.browser, // Include browser globals for frontend files
+        jest: true, // Add jest to global scope for all js files
+      },
+    },
+    plugins: {
+      // Add any necessary plugins here
+    },
+    rules: {
+      ...pluginJs.configs.recommended.rules,
+      'no-unused-vars': 'warn',
+      'no-undef': 'warn',
+    },
+  },
+  {
+    files: ['apps/controller/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      // Specific rules for the controller app
+    },
+  },
+  {
+    files: ['apps/controller/__tests__/**/*.js'],
+    languageOptions: {
+      // Jest tests run in a Node.js environment, but env.jest handles Jest globals
+      globals: globals.node,
+      env: {
+        jest: true,
+      },
+    },
+    ...jestPlugin.configs['flat/recommended'],
+    rules: {
+      // Specific rules for the controller tests
+    },
+  },
+  {
+    ignores: [
+      'node_modules/',
+      'apps/frontend-nextjs/**',
+      'apps/controller/logs/',
+    ],
+  },
+];

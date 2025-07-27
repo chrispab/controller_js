@@ -6,22 +6,34 @@ import logger from './logger.js';
 let wss;
 
 function startWebSocketServer(httpServer) {
-  wss = new WebSocketServer({ server: httpServer });
+  try {
+    wss = new WebSocketServer({ server: httpServer });
 
-  wss.on('connection', (ws) => {
-    logger.info(`Client connected to WebSocket. Total clients: ${wss.clients.size}`);
-    ws.on('close', () => {
-      logger.info(`Client disconnected from WebSocket. Total clients: ${wss.clients.size}`);
+    wss.on('connection', (ws) => {
+      logger.info(
+        `Client connected to WebSocket. Total clients: ${wss.clients.size}`,
+      );
+      ws.on('close', () => {
+        logger.info(
+          `Client disconnected from WebSocket. Total clients: ${wss.clients.size}`,
+        );
+      });
+      ws.on('error', (error) => {
+        logger.error('WebSocket client error:', error);
+      });
+
+      // Mark this client as needing initial data
+      ws.needsInitialData = true;
     });
-    ws.on('error', (error) => logger.error('WebSocket error:', error));
 
-    // Mark this client as needing initial data
-    ws.needsInitialData = true;
-  });
+    wss.on('error', (error) => {
+      logger.error('WebSocket server error:', error);
+    });
 
-  // console.log('WebSocket server is set up and running.');
-  //use logger
-  logger.info('WebSocket server is set up and running.');
+    logger.info('WebSocket server is set up and running.');
+  } catch (error) {
+    logger.error(`Failed to start WebSocket server: ${error.message}`, { stack: error.stack });
+  }
 }
 
 function broadcast(data) {
@@ -29,34 +41,33 @@ function broadcast(data) {
     return;
   }
 
-  const jsonData = JSON.stringify(data);
+  let jsonData;
+  try {
+    jsonData = JSON.stringify(data);
+  } catch (error) {
+    logger.error(`Failed to stringify data for WebSocket broadcast: ${error.message}`, { stack: error.stack, data: data });
+    return; // Stop broadcast if data cannot be stringified
+  }
+
   // logger.warn('web socket broadcast: ' + jsonData + '');
   if (wss.clients.size === 0) {
     // No clients connected, no need to log broadcast or continue
     return;
   }
 
-  logger.warn(`${wss.clients.size} clients to web socket broadcast to: ` + jsonData + `''`);
+  logger.warn(
+    `${wss.clients.size} clients to web socket broadcast to: ` +
+      jsonData +
+      `''`,
+  );
 
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
-      // remove quotes before sending
-      // let formattedData = jsonData.replace(/"/g, '');
-      // formattedData = jsonData;
-
-      // if (client.needsInitialData) {
-      //   // Send initial data and clear the flag
-      //   let versionInfo = getVersionInfo();
-      //   client.send('Version : ' + versionInfo.version);
-      //   client.send('Release Notes : ' + versionInfo.releaseNotes);
-
-      //   client.send('Time ---- [Te]--[Hu]--L-H-F-V-S-VT');
-
-      //   client.needsInitialData = false;
-      //   logger.warn('Sent initial data to client.');
-      // }
-
-      client.send(jsonData);
+      try {
+        client.send(jsonData);
+      } catch (error) {
+        logger.error(`Failed to send data to WebSocket client: ${error.message}`, { stack: error.stack, client: client.url });
+      }
     }
   });
 }

@@ -1,4 +1,3 @@
-
 import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 import logger from '../logger.js';
 import cfg from '../config.js';
@@ -17,9 +16,14 @@ export default function handleOutsideSensor(topic, message) {
     if (typeof temperature !== 'undefined') {
       updateAndBroadcastStatusIfValueChanged('outsideTemperature', temperature);
     } else {
-      logger.error(`MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`);
+      logger.error(
+        `MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`,
+      );
     }
   } catch (e) {
-    logger.error(`MQTT->Outside_Sensor: Failed to parse JSON payload: ${message.toString()}`, e);
+    logger.error(
+      `MQTT->Outside_Sensor: Failed to parse JSON payload: ${message.toString()}`,
+      e,
+    );
   }
 }

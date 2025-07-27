@@ -1,6 +1,6 @@
 const secret = {
-    "user": "caaaaaaaaaaaaaaa@gmail.com",
-    "password": "aaaaaaaaaaaaaaaaa"
-} 
+  user: 'caaaaaaaaaaaaaaa@gmail.com',
+  password: 'aaaaaaaaaaaaaaaaa',
+};
 
-export default secret
+export default secret;

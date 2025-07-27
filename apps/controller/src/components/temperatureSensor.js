@@ -17,8 +17,12 @@ export default class TemperatureSensor {
     this.dhtSensorPin = dhtSensorPin;
     this.temperature = null;
     this.humidity = null;
-    this.sensorReadIntervalMs = cfg.get('temperatureSensor.sensorReadIntervalMs');
-    this.periodicPublishIntervalMs = cfg.get('temperatureSensor.periodicPublishIntervalMs');
+    this.sensorReadIntervalMs = cfg.get(
+      'temperatureSensor.sensorReadIntervalMs',
+    );
+    this.periodicPublishIntervalMs = cfg.get(
+      'temperatureSensor.periodicPublishIntervalMs',
+    );
 
     logger.info(`HostName: ${os.hostname()}`);
     if (os.hostname() !== 'zone3' && os.hostname() !== 'zone1') {
@@ -28,7 +32,10 @@ export default class TemperatureSensor {
     // Start autonomous operation
     this.readSensor(); // Initial read
     setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
-    setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
+    setInterval(
+      () => this.periodicPublication(),
+      this.periodicPublishIntervalMs,
+    );
   }
 
   setName(name) {
@@ -41,39 +48,61 @@ export default class TemperatureSensor {
 
   periodicPublication() {
     if (this.getTemperature() !== null) {
-      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
+      utils.logAndPublishState(
+        'Temperature Sensor P',
+        cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'),
+        `${this.getTemperature()}`,
+      );
     }
     if (this.getHumidity() !== null) {
-      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
+      utils.logAndPublishState(
+        'Temperature Sensor P',
+        cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'),
+        `${this.getHumidity()}`,
+      );
     }
   }
 
   readSensor() {
     try {
-      sensor.read(this.dhtSensorType, this.dhtSensorPin, (err, temperature, humidity) => {
-        if (!err) {
-          const newTemp = parseFloat(temperature.toFixed(1));
-          const newHum = parseFloat(humidity.toFixed(1));
+      sensor.read(
+        this.dhtSensorType,
+        this.dhtSensorPin,
+        (err, temperature, humidity) => {
+          if (!err) {
+            const newTemp = parseFloat(temperature.toFixed(1));
+            const newHum = parseFloat(humidity.toFixed(1));
 
-          if (newTemp !== this.getTemperature()) {
-            const oldTemp = this.getTemperature();
-            this.setTemperature(newTemp);
-            logger.debug(`Temperature changed from ${oldTemp}°C to ${newTemp}°C`);
-            eventEmitter.emit('temperatureChanged', { temperature: newTemp });
-            utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), newTemp);
-          }
+            if (newTemp !== this.getTemperature()) {
+              const oldTemp = this.getTemperature();
+              this.setTemperature(newTemp);
+              logger.debug(
+                `Temperature changed from ${oldTemp}°C to ${newTemp}°C`,
+              );
+              eventEmitter.emit('temperatureChanged', { temperature: newTemp });
+              utils.logAndPublishState(
+                'Temp Sensor',
+                cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'),
+                newTemp,
+              );
+            }
 
-          if (newHum !== this.getHumidity()) {
-            const oldHum = this.getHumidity();
-            this.setHumidity(newHum);
-            logger.debug(`Humidity changed from ${oldHum}% to ${newHum}%`);
-            eventEmitter.emit('humidityChanged', { humidity: newHum });
-            utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), newHum);
+            if (newHum !== this.getHumidity()) {
+              const oldHum = this.getHumidity();
+              this.setHumidity(newHum);
+              logger.debug(`Humidity changed from ${oldHum}% to ${newHum}%`);
+              eventEmitter.emit('humidityChanged', { humidity: newHum });
+              utils.logAndPublishState(
+                'Temp Sensor',
+                cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'),
+                newHum,
+              );
+            }
+          } else {
+            logger.error('Failed to read from DHT sensor: ' + err);
           }
-        } else {
-          logger.error('Failed to read from DHT sensor: ' + err);
-        }
-      });
+        },
+      );
     } catch (error) {
       logger.error(`Error in readSensor: ${error}`);
     }

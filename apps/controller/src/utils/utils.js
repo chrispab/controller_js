@@ -9,8 +9,6 @@ import { dirname, resolve } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-
-
 function getVersionInfo() {
   // Constructs the absolute path to the package.json file.
   // __dirname is the directory of the current module (utils.js).
@@ -22,14 +20,13 @@ function getVersionInfo() {
   return {
     version: packageJson.version,
     releaseNotes: packageJson.releaseNotes || '',
-    description: packageJson.description || ''
+    description: packageJson.description || '',
   };
 }
 
 // const versionInfo = getVersionInfo();
 // console.log(`Version: ${versionInfo.version}`);
 // console.log(`Release Notes: ${versionInfo.releaseNotes}`);
-
 
 function sendEmail(subject, body) {
   const mailOptions = {
@@ -55,7 +52,6 @@ function sendEmail(subject, body) {
   });
 }
 
-
 /**
  * Returns the current time in HH:MM:SS format.
  *
@@ -70,16 +66,15 @@ function getHMSStr() {
   return `${hh}:${mm}:${ss}`;
 }
 
-
 /**
- * Logs a message and publishes a state to an MQTT topic.
+ * Logs a payload and publishes a state to an MQTT topic.
  * @param {string} preComment - A descriptive comment for the log.
  * @param {string} pubToTopic - The MQTT topic to publish to.
- * @param {*} message - The message/state value to publish. It will be converted to a string.
+ * @param {*} payload - The payload/state value to publish. It will be converted to a string.
  */
-const logAndPublishState = (preComment, pubToTopic, message) => {
-  logger.info(`->${preComment}: ${pubToTopic}: ${message}`);
-  mqttAgent.client.publish(pubToTopic, String(message));
+const logAndPublishState = (preComment, pubToTopic, payload) => {
+  logger.info(`->${preComment}: ${pubToTopic}: ${payload}`);
+  mqttAgent.client.publish(pubToTopic, String(payload));
 };
 
 // export utils;

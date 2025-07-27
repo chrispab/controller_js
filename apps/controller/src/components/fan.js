@@ -23,18 +23,26 @@ export default class Fan {
     this.updateState(false); // Ensure initial state is set and published
   }
 
-  
   controlCycle() {
-    const elapsedMs = Date.now() - this.prevStateChangeMs;
+    try {
+      const elapsedMs = Date.now() - this.prevStateChangeMs;
 
-    if (this.getState() === true) { // Fan is ON
-      if (elapsedMs >= this.getOnMs()) {
-        this.updateState(false); // Turn OFF
+      if (this.getState() === true) {
+        // Fan is ON
+        if (elapsedMs >= this.getOnMs()) {
+          this.updateState(false); // Turn OFF
+        }
+      } else {
+        // Fan is OFF
+        if (elapsedMs >= this.getOffMs()) {
+          this.updateState(true); // Turn ON
+        }
       }
-    } else { // Fan is OFF
-      if (elapsedMs >= this.getOffMs()) {
-        this.updateState(true); // Turn ON
-      }
+    } catch (error) {
+      logger.error(
+        `Error in Fan controlCycle for ${this.getName()}: ${error.message}`,
+        { stack: error.stack },
+      );
     }
   }
 
@@ -47,14 +55,27 @@ export default class Fan {
 
       this.IOPin.writeIO(newState ? 1 : 0);
 
-      // logger.log(logLevel, `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
-      // logger.log(logLevel, `--------this.IOPin.writeIO(newState ? 1 : 0) - ${this.getName()} is ${newState ? 1 : 0}`);
+      logger.log(
+        logLevel,
+        `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`,
+      );
+      logger.log(
+        logLevel,
+        `--------this.IOPin.writeIO(newState ? 1 : 0) - ${this.getName()} is ${newState ? 1 : 0}`,
+      );
 
       // Emit event on central bus
-      eventEmitter.emit('fanStateChanged', { name: this.name, state: newState });
+      eventEmitter.emit('fanStateChanged', {
+        name: this.name,
+        state: newState,
+      });
 
       // Publish state change to MQTT
-      utils.logAndPublishState('Fan update', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), newState ? 1 : 0);
+      utils.logAndPublishState(
+        'Fan update',
+        cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
+        newState ? 1 : 0,
+      );
     }
   }
 
@@ -66,9 +87,21 @@ export default class Fan {
     // this.offMs = cfg.get('fan.offMs');
 
     // Publish current state and settings periodically
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
+    utils.logAndPublishState(
+      'Fan P',
+      cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
+      this.getState(),
+    );
+    utils.logAndPublishState(
+      'Fan P',
+      cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'),
+      this.getOnMs() / 1000,
+    );
+    utils.logAndPublishState(
+      'Fan P',
+      cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'),
+      this.getOffMs() / 1000,
+    );
   }
 }
 

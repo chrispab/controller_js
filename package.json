@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "releaseNotes": "node js controller initial version",
   "description": "A monorepo for the greenhouse environment controller and frontends.",
+  "type": "module",
   "workspaces": [
     "apps/*",
     "libs/*"
@@ -14,10 +15,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-prettier": "^5.5.3",
     "globals": "^13.24.0",
     "nodemon": "^3.1.7",
-    "prettier": "3.3.3"
+    "prettier": "^3.3.3"
   },
   "author": "",
   "license": "ISC"

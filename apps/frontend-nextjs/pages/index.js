@@ -11,7 +11,11 @@ export default function Home() {
       <h1 className="text-center mb-4">Available Pages</h1>
       <div className="list-group">
         {pages.map((page) => (
-          <Link key={page.path} href={page.path} className="list-group-item list-group-item-action">
+          <Link
+            key={page.path}
+            href={page.path}
+            className="list-group-item list-group-item-action"
+          >
             {page.name}
           </Link>
         ))}

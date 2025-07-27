@@ -1,9 +1,8 @@
 import { Gpio } from 'onoff';
-import logger from "../../services/logger.js";
+import logger from '../../services/logger.js';
 const logLevel = 'debug';
 
 let IOPinAccessorsMixin = {
-
   setName(name) {
     this.IOPin.name = name;
   },
@@ -56,7 +55,6 @@ let IOPinAccessorsMixin = {
     return this.IOPin.getStateAndClearNewStateFlag();
   },
 
-
   setIODirection(direction) {
     this.IOPin.setIODirection(direction);
   },
@@ -69,13 +67,14 @@ let IOPinAccessorsMixin = {
     this.IOPin.writeIO(value);
   },
 
-
   getTelemetryData() {
     let telemetry = this.IOPin.getBaseTelemetryData();
-    logger.log('debug', `Telemetry for ${this.getName()}: ${JSON.stringify(telemetry)}`);
+    logger.log(
+      'debug',
+      `Telemetry for ${this.getName()}: ${JSON.stringify(telemetry)}`,
+    );
     return telemetry;
-  }
-
+  },
 };
 
 export default IOPinAccessorsMixin;

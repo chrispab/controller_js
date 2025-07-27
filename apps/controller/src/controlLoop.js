@@ -46,14 +46,14 @@ let previousStatus = { ...controllerStatus };
  * Updates the controller status for a given key if the value has changed,
  * logs the change, updates the timestamp, and ws-broadcasts the new status.
  *
- * @param {string} key - The key in the controller status to update.
- * @param {*} value - The new value to set for the specified key.
+ * @param {string} controllerStatusKey - The key in the controller status to update.
+ * @param {*} newValue - The new value to set for the specified key.
  */
-function updateAndBroadcastStatusIfValueChanged(key, value) {
-  logger.warn()
-  if (controllerStatus[key] !== value) {
-    controllerStatus[key] = value;
-    controllerStatus.lastChange = `${key} = ${value}`;
+function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
+  logger.warn();
+  if (controllerStatus[controllerStatusKey] !== newValue) {
+    controllerStatus[controllerStatusKey] = newValue;
+    controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
     controllerStatus.timeStamp = Date.now();
     logger.warn(`State changed: ${controllerStatus.lastChange}`);
     broadcast(controllerStatus);
@@ -66,8 +66,15 @@ function startControlLoop() {
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
   const light = new Light('light', cfg.get('hardware.RC.pin'));
-  const temperatureSensor = new TemperatureSensor('temperature_sensor', cfg.get('hardware.dhtSensor.pin'));
-  const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
+  const temperatureSensor = new TemperatureSensor(
+    'temperature_sensor',
+    cfg.get('hardware.dhtSensor.pin'),
+  );
+  const vent = new Vent(
+    'vent',
+    cfg.get('hardware.vent.pin'),
+    cfg.get('hardware.vent.speedPin'),
+  );
   logger.info('Components initialized.');
 
   updateAndBroadcastStatusIfValueChanged('irrigationPump', false);
@@ -84,7 +91,9 @@ function startControlLoop() {
   eventEmitter.on('lightStateChanged', ({ lightState }) => {
     updateAndBroadcastStatusIfValueChanged('light', lightState);
     // Update setpoint when light state changes
-    const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
+    const newSetpoint = lightState
+      ? cfg.get('zone.highSetpoint')
+      : cfg.get('zone.lowSetpoint');
     updateAndBroadcastStatusIfValueChanged('setpoint', newSetpoint);
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
@@ -106,9 +115,12 @@ function startControlLoop() {
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000); // Check for config changes
   setInterval(() => mqttAgent.process(), 5000); // Process MQTT Agent periodically
-  
 
   logger.info('Event-driven control loop started.');
 }
 
-export { startControlLoop, controllerStatus, updateAndBroadcastStatusIfValueChanged };
+export {
+  startControlLoop,
+  controllerStatus,
+  updateAndBroadcastStatusIfValueChanged,
+};
