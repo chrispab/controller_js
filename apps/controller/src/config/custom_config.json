@@ -1,8 +1,8 @@
 {
   "version": "0.1.0",
   "zone": {
-    "lowSetpoint": 16,
-    "highSetpoint": 24,
+    "lowSetpoint": 15.9,
+    "highSetpoint": 24.2,
     "periodicPublishIntervalMs": 120000,
     "name": "Zone 1",
     "customConfigFilename": "customConfig.json",
@@ -65,11 +65,11 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 215000,
+      "day": 355000,
       "night": 380000
     },
     "offDurationMs": {
-      "day": 80000,
+      "day": 115000,
       "night": 30000
     },
     "speedPercent": 50,
@@ -132,5 +132,5 @@
     "heartbeatTopic": "/HeartBeat"
   },
   "ventOnDurationDaySecs": 380,
-  "ventOffDurationDaySecs": 45
+  "ventOffDurationDaySecs": 250
 }

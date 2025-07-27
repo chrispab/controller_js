@@ -5,19 +5,19 @@ import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 
 
 /**
- * Generic handler for MQTT messages related to vent settings.
- * It parses the message payload as a number, validates it, and then updates the configuration.
+ * Generic handler for MQTT payloads related to vent settings.
+ * It parses the payload payload as a number, validates it, and then updates the configuration.
  * The value is converted from seconds to milliseconds before being stored in the configuration.
- * @param {string} topic - The MQTT topic the message was received on.
- * @param {Buffer} message - The payload of the MQTT message, expected to be a numeric value in seconds.
+ * @param {string} receivedTopic - The MQTT topic the payload was received on.
+ * @param {Buffer} payload - The payload of the MQTT payload, expected to be a numeric value in seconds.
  * @param {string} controllerStatusKey - The configuration path where the value should be stored (e.g., 'vent.onMs').
- * @param {string} topicKey - The MQTT topic key used for logging and publishing the state (e.g., 'mqtt.ventOnDeltaSecsTopic').
+ * @param {string} publishTopicKey - The MQTT topic key used for logging and publishing the state (e.g., 'mqtt.ventOnDeltaSecsTopic').
  */
 function handleVent(receivedTopic, payload, controllerStatusKey, publishTopicKey) {
   const value = Number(payload.toString());
 
   //insert logging statement
-  logger.warn("..........receivedTopic: "+ receivedTopic + " message: " + payload + " configKey: " + controllerStatusKey + " topicKey: " + publishTopicKey);
+  logger.warn("..........receivedTopic: "+ receivedTopic + " payload: " + payload + " configKey: " + controllerStatusKey + " publishTopicKey: " + publishTopicKey);
   
   if (value > 0) {
     utils.logAndPublishState(`${controllerStatusKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), `${value}*1000`);
@@ -30,23 +30,23 @@ function handleVent(receivedTopic, payload, controllerStatusKey, publishTopicKey
 }
 
 /**
- * Handles MQTT messages for setting the vent's various durations in seconds.
- * Converts the received message payload to milliseconds and updates the configuration.
- * @param {string} topic - The MQTT topic the message was received on.
- * @param {Buffer} message - The payload of the MQTT message, representing the duration in seconds.
+ * Handles MQTT payloads for setting the vent's various durations in seconds.
+ * Converts the received payload payload to milliseconds and updates the configuration.
+ * @param {string} receivedTopic - The MQTT topic the payload was received on.
+ * @param {Buffer} payload - The payload of the MQTT payload, representing the duration in seconds.
  */
-export function handleVentOnDurationDaySecsSet(topic, message) {
-  handleVent(topic, message, 'ventOnDurationDaySecs', 'mqtt.ventOnDurationDaySecsTopic');
+export function handleVentOnDurationDaySecsSet(receivedTopic, payload) {
+  handleVent(receivedTopic, payload, 'ventOnDurationDaySecs', 'mqtt.ventOnDurationDaySecsTopic');
 }
 
-export function handleVentOffDurationDaySecsSet(topic, message) {
-  handleVent(topic, message, 'ventOffDurationDaySecs', 'mqtt.ventOffDurationDaySecsTopic');
+export function handleVentOffDurationDaySecsSet(receivedTopic, payload) {
+  handleVent(receivedTopic, payload, 'ventOffDurationDaySecs', 'mqtt.ventOffDurationDaySecsTopic');
 }
 
-export function handleVentOnDurationNightSecsSet(topic, message) {
-  handleVent(topic, message, 'ventOnDurationNightSecs', 'mqtt.ventOnDurationNightSecsTopic');
+export function handleVentOnDurationNightSecsSet(receivedTopic, payload) {
+  handleVent(receivedTopic, payload, 'ventOnDurationNightSecs', 'mqtt.ventOnDurationNightSecsTopic');
 }
 
-export function handleVentOffDurationNightSecsSet(topic, message) {
-  handleVent(topic, message, 'ventOffDurationNightSecs', 'mqtt.ventOffDurationNightSecsTopic');
+export function handleVentOffDurationNightSecsSet(receivedTopic, payload) {
+  handleVent(receivedTopic, payload, 'ventOffDurationNightSecs', 'mqtt.ventOffDurationNightSecsTopic');
 }
