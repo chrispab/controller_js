@@ -729,53 +729,35 @@ export async function getServerSideProps() {
     initialStatus = statusData.message;
 
     // Fetch vent durations for day
-    console.log(
-      `Fetching vent on duration (day) from: ${API_URL}/api/vent/onDurationSecs?period=day`,
-    );
-    const ventOnDayRes = await fetch(
-      `${API_URL}/api/vent/onDurationSecs?period=day`,
-    );
+    console.log(`Fetching vent on duration (day) from: ${API_URL}/api/vent/onDurationSecs?period=day`,);
+    const ventOnDayRes = await fetch(`${API_URL}/api/vent/onDurationSecs?period=day`,);
+    console.log( `vent on duration (day) from response status: ${ventOnDayRes.status}`, );
     const ventOnDayData = await ventOnDayRes.json();
     initialStatus.ventOnDurationDaySecs = ventOnDayData.day; // Assuming the API returns { day: value, night: value }
 
-    console.log(
-      `Fetching vent off duration (day) from: ${API_URL}/api/vent/offDurationSecs?period=day`,
-    );
-    const ventOffDayRes = await fetch(
-      `${API_URL}/api/vent/offDurationSecs?period=day`,
-    );
+    console.log(`Fetching vent off duration (day) from: ${API_URL}/api/vent/offDurationSecs?period=day`, );
+    const ventOffDayRes = await fetch(`${API_URL}/api/vent/offDurationSecs?period=day`, );
+    console.log( `vent off duration (day) response status: ${ventOffDayRes.status}`, );
     const ventOffDayData = await ventOffDayRes.json();
     initialStatus.ventOffDurationDaySecs = ventOffDayData.day; // Assuming the API returns { day: value, night: value }
 
     // Fetch vent durations for night
-    console.log(
-      `Fetching vent on duration (night) from: ${API_URL}/api/vent/onDurationSecs?period=night`,
-    );
-    const ventOnNightRes = await fetch(
-      `${API_URL}/api/vent/onDurationSecs?period=night`,
-    );
+    console.log(`Fetching vent on duration (night) from: ${API_URL}/api/vent/onDurationSecs?period=night`, );
+    const ventOnNightRes = await fetch( `${API_URL}/api/vent/onDurationSecs?period=night`, );
+    console.log( `vent on duration (night) response status: ${ventOnNightRes.status}`, );
     const ventOnNightData = await ventOnNightRes.json();
     initialStatus.ventOnDurationNightSecs = ventOnNightData.night; // Assuming the API returns { day: value, night: value }
 
-    console.log(
-      `Fetching vent off duration (night) from: ${API_URL}/api/vent/offDurationSecs?period=night`,
-    );
-    const ventOffNightRes = await fetch(
-      `${API_URL}/api/vent/offDurationSecs?period=night`,
-    );
+    console.log(`Fetching vent off duration (night) from: ${API_URL}/api/vent/offDurationSecs?period=night`, );
+    const ventOffNightRes = await fetch( `${API_URL}/api/vent/offDurationSecs?period=night`, );
+    console.log( `vent off duration (night) response status: ${ventOffNightRes.status}`, );
     const ventOffNightData = await ventOffNightRes.json();
     initialStatus.ventOffDurationNightSecs = ventOffNightData.night; // Assuming the API returns { day: value, night: value }
 
     //sensor soil moisture raw - 'dryness' reading - not a percentage. e.g something like 1960 to 2020 values
-    console.log(
-      `Fetching sensor Raw soil moisture reading from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`,
-    );
-    const sensorSoilMoistureRaw = await fetch(
-      `${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`,
-    );
-    console.log(
-      `Soil moisture response status: ${sensorSoilMoistureRaw.status}`,
-    );
+    console.log(`Fetching sensor Raw soil moisture reading from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`, );
+    const sensorSoilMoistureRaw = await fetch( `${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`, );
+    console.log( `Soil moisture response status: ${sensorSoilMoistureRaw.status}`, );
     const sensorSoilMoistureRawData = await sensorSoilMoistureRaw.json();
     initialStatus.sensorSoilMoistureRaw = sensorSoilMoistureRawData.message;
 
@@ -812,7 +794,7 @@ export async function getServerSideProps() {
     const outsideTemperatureData = await outsideTemperatureRes.json();
     initialStatus.outsideTemperature = outsideTemperatureData.message;
   } catch (error) {
-    console.error('Failed to fetch initial status:', error);
+    console.error('ZZZZZZZZZZZZZZZZZ  Failed to fetch initial status:', error);
   }
 
   try {

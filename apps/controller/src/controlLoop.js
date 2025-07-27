@@ -7,7 +7,7 @@ import Vent from './components/vent.js';
 
 import cfg from './services/config.js';
 import mqttAgent from './services/mqttAgent.js';
-import { broadcast } from './services/webSocketServer.js';
+import { webSocketBroadcast } from './services/webSocketServer.js';
 import { getVersionInfo } from './utils/utils.js';
 import logger from './services/logger.js';
 import eventEmitter from './services/eventEmitter.js';
@@ -56,7 +56,7 @@ function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
     controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
     controllerStatus.timeStamp = Date.now();
     logger.warn(`State changed: ${controllerStatus.lastChange}`);
-    broadcast(controllerStatus);
+    webSocketBroadcast(controllerStatus);
   }
 }
 

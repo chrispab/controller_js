@@ -32,11 +32,13 @@ function startWebSocketServer(httpServer) {
 
     logger.info('WebSocket server is set up and running.');
   } catch (error) {
-    logger.error(`Failed to start WebSocket server: ${error.message}`, { stack: error.stack });
+    logger.error(`Failed to start WebSocket server: ${error.message}`, {
+      stack: error.stack,
+    });
   }
 }
 
-function broadcast(data) {
+function webSocketBroadcast(data) {
   if (!wss) {
     return;
   }
@@ -45,7 +47,10 @@ function broadcast(data) {
   try {
     jsonData = JSON.stringify(data);
   } catch (error) {
-    logger.error(`Failed to stringify data for WebSocket broadcast: ${error.message}`, { stack: error.stack, data: data });
+    logger.error(
+      `Failed to stringify data for WebSocket broadcast: ${error.message}`,
+      { stack: error.stack, data: data },
+    );
     return; // Stop broadcast if data cannot be stringified
   }
 
@@ -66,10 +71,13 @@ function broadcast(data) {
       try {
         client.send(jsonData);
       } catch (error) {
-        logger.error(`Failed to send data to WebSocket client: ${error.message}`, { stack: error.stack, client: client.url });
+        logger.error(
+          `Failed to send data to WebSocket client: ${error.message}`,
+          { stack: error.stack, client: client.url },
+        );
       }
     }
   });
 }
 
-export { startWebSocketServer, broadcast };
+export { startWebSocketServer, webSocketBroadcast };

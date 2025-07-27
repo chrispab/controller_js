@@ -6,7 +6,7 @@ import process from 'process';
 import path from 'path';
 import {
   startWebSocketServer,
-  broadcast,
+  webSocketBroadcast,
 } from '../services/webSocketServer.js';
 import { startControlLoop, controllerStatus } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
@@ -73,4 +73,4 @@ process.on('unhandledRejection', (reason, promise) => {
   // is not critical and can be handled gracefully.
 });
 
-startControlLoop(broadcast);
+startControlLoop(webSocketBroadcast);
