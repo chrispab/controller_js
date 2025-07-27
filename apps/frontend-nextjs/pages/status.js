@@ -567,8 +567,8 @@ export async function getServerSideProps() {
     const irrigationPumpData = await irrigationPumpRes.json();
     initialStatus.irrigationPump = irrigationPumpData.message;
 
-    console.log(`Fetching outside temperature from: ${API_URL}/api/mqtt/outsideTemperature/temperature`);
-    const outsideTemperatureRes = await fetch(`${API_URL}/api/mqtt/outsideTemperature/temperature`);
+    console.log(`Fetching outside temperature from: ${API_URL}/api/outside-temperature`);
+    const outsideTemperatureRes = await fetch(`${API_URL}/api/outside-temperature`);
     console.log(`Outside temperature response status: ${outsideTemperatureRes.status}`);
     const outsideTemperatureData = await outsideTemperatureRes.json();
     initialStatus.outsideTemperature = outsideTemperatureData.message;

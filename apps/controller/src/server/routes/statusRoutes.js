@@ -1,5 +1,5 @@
 import express from 'express';
-import { controllerStatus } from '../../src/controlLoop.js';
+import { controllerStatus } from '../../controlLoop.js';
 
 const router = express.Router();
 
@@ -17,6 +17,10 @@ router.get('/mqtt/soil1/sensor_method5_batch_moving_average_float', (req, res) =
 
 router.get('/mqtt/irrigationPump/status', (req, res) => {
   res.json({ message: controllerStatus.irrigationPump });
+});
+
+router.get('/outside-temperature', (req, res) => {
+  res.json({ message: controllerStatus.outsideTemperature });
 });
 
 export default router;

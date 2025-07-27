@@ -4,17 +4,17 @@ import cors from 'cors';
 import http from 'http';
 import process from 'process';
 import path from 'path';
-import { startWebSocketServer, broadcast } from '../src/services/webSocketServer.js';
-import { startControlLoop, controllerStatus } from '../src/controlLoop.js';
+import { startWebSocketServer, broadcast } from '../services/webSocketServer.js';
+import { startControlLoop, controllerStatus } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
-import logger from '../src/services/logger.js';
+import logger from '../services/logger.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-import mqttAgent from '../src/services/mqttAgent.js';
-import cfg from '../src/services/config.js';
+import mqttAgent from '../services/mqttAgent.js';
+import cfg from '../services/config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

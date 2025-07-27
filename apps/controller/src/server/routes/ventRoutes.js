@@ -1,8 +1,8 @@
 import express from 'express';
-import { updateAndBroadcastStatusIfValueChanged } from '../../src/controlLoop.js';
-import mqttAgent from '../../src/services/mqttAgent.js';
-import cfg from '../../src/services/config.js';
-import { controllerStatus } from '../../src/controlLoop.js';
+import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import mqttAgent from '../../services/mqttAgent.js';
+import cfg from '../../services/config.js';
+import { controllerStatus } from '../../controlLoop.js';
 
 const router = express.Router();
 

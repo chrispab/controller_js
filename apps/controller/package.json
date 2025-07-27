@@ -2,9 +2,9 @@
   "name": "@greenhouse-project/controller",
   "version": "1.0.0",
   "releaseNotes": "node js controller initial version",
-  "main": "server/index.js",
+  "main": "src/server/index.js",
   "scripts": {
-    "start": "nodemon"
+    "start": "nodemon src/server/index.js"
   },
   "author": "",
   "license": "ISC",

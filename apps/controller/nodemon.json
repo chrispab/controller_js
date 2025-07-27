@@ -1,6 +1,6 @@
 {
   "watch": [
-    "server/",
+    "src/server/",
     "src/",
     "public/"
   ],
@@ -9,5 +9,6 @@
     "client/",
     "**/*.test.js",
     "src/config/custom_config.json"
-  ]
+  ],
+  "exec": "node src/server/index.js"
 }
