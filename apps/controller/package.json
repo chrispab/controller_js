@@ -24,9 +24,9 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "jest": "^27.5.1",
     "@babel/core": "^7.17.0",
-    "babel-jest": "^27.5.1"
+    "babel-jest": "^27.5.1",
+    "jest": "^27.5.1"
   },
   "jest": {
     "testEnvironment": "node",

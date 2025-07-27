@@ -16,8 +16,8 @@
     "@eslint/js": "^8.57.0",
     "eslint": "^8.57.0",
     "globals": "^13.24.0",
-    "prettier": "3.3.3",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "prettier": "3.3.3"
   },
   "author": "",
   "license": "ISC"
