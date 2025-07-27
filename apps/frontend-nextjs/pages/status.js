@@ -733,6 +733,7 @@ export async function getServerSideProps() {
     const ventOnDayRes = await fetch(`${API_URL}/api/vent/onDurationSecs?period=day`,);
     console.log( `vent on duration (day) from response status: ${ventOnDayRes.status}`, );
     const ventOnDayData = await ventOnDayRes.json();
+    console.log( `vent on duration (day) from response ventOnDayData: ${JSON.stringify(ventOnDayData)}`, );
     initialStatus.ventOnDurationDaySecs = ventOnDayData.day; // Assuming the API returns { day: value, night: value }
 
     console.log(`Fetching vent off duration (day) from: ${API_URL}/api/vent/offDurationSecs?period=day`, );
@@ -796,6 +797,9 @@ export async function getServerSideProps() {
   } catch (error) {
     console.error('ZZZZZZZZZZZZZZZZZ  Failed to fetch initial status:', error);
   }
+
+    console.log('Final initialStatus object:', initialStatus);
+
 
   try {
     initialStatus.gitBranch = execSync('git rev-parse --abbrev-ref HEAD')
