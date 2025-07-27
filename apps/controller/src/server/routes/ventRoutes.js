@@ -26,6 +26,11 @@ router.post('/vent/onDurationSecs', (req, res) => {
 });
 
 router.get('/vent/onDurationSecs', (req, res) => {
+  console.log(
+    '...................vent/onDurationSecs:',
+    JSON.stringify(controllerStatus),
+  );
+
   res.json({
     day: controllerStatus.ventOnDurationDaySecs,
     night: controllerStatus.ventOnDurationNightSecs,

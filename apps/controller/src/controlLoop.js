@@ -50,7 +50,7 @@ let previousStatus = { ...controllerStatus };
  * @param {*} newValue - The new value to set for the specified key.
  */
 function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
-  logger.warn();
+  // logger.warn();
   if (controllerStatus[controllerStatusKey] !== newValue) {
     controllerStatus[controllerStatusKey] = newValue;
     controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
@@ -115,6 +115,16 @@ function startControlLoop() {
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000); // Check for config changes
   setInterval(() => mqttAgent.process(), 5000); // Process MQTT Agent periodically
+
+  setInterval(() => {
+    updateAndBroadcastStatusIfValueChanged('ventOnDurationDaySecs', cfg.get('vent.onDurationMs.day') / 1000);
+    updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', cfg.get('vent.offDurationMs.day') / 1000);
+    updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
+    updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
+    updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
+
+  }, 1000);
+
 
   logger.info('Event-driven control loop started.');
 }
