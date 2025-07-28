@@ -29,7 +29,7 @@ const PORT = process.env.PORT || 5678;
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
 app.use(cors()); // Enable CORS for all routes
-app.use(express.static(path.resolve(__dirname, '../public')));
+app.use(express.static(path.resolve(__dirname, '../../public')));
 const server = http.createServer(app);
 
 startWebSocketServer(server);

@@ -77,6 +77,7 @@ function startControlLoop() {
   );
   logger.info('Components initialized.');
 
+  // mark pump as off - dummy setting pump not yet implemented
   updateAndBroadcastStatusIfValueChanged('irrigationPump', false);
 
   // --- Setup Event Listeners to Update Global Status ---
@@ -122,8 +123,13 @@ function startControlLoop() {
     updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
     updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
     // updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
-
   }, 1000);
+
+  //instead listen for events like  ventDurationChanged
+  eventEmitter.on('ventDurationChanged', ({ period, duration }) => {
+    if (period === 'day') {
+  }
+});
 
 
   logger.info('Event-driven control loop started.');
