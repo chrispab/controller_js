@@ -5,12 +5,17 @@ function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
   const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [theme, setTheme] = useState('dark'); // 'light' or 'dark'
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isWsConnected, setIsWsConnected] = useState(false);
   const [showDaySettings, setShowDaySettings] = useState(false);
   const [showNightSettings, setShowNightSettings] = useState(false);
   const [showFanSettings, setShowFanSettings] = useState(false);
+  const [showSetpointSettings, setshowSetpointSettings] = useState(false);
 
   useEffect(() => {
     setMounted(true); // Set mounted to true after initial render on client
@@ -178,19 +183,18 @@ function StatusBootstrapPage({ initialStatus }) {
     }
   };
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const handleUpperSetpointChange = async (event) => {
+  };
+  const handleLowerSetpointChange = async (event) => {
+  };
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const toggleDaySettings = () => setShowDaySettings(!showDaySettings);
   const toggleNightSettings = () => setShowNightSettings(!showNightSettings);
   const toggleFanSettings = () => setShowFanSettings(!showFanSettings);
+  const toggleSetpointSettings = () => setshowSetpointSettings(!showSetpointSettings);
 
   return (
-    <div
-      className={
-        isDarkMode
-          ? 'bg-dark text-light min-vh-100 py-3'
-          : 'bg-light text-dark min-vh-100 py-3'
-      }
-    >
+    <div style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }} className="min-vh-100 py-3">
       <div className="container">
         <h1 className="text-center my-4">
           {data.zoneName} Greenhouse Control Dashboard
@@ -200,9 +204,9 @@ function StatusBootstrapPage({ initialStatus }) {
             className="form-check-input"
             type="checkbox"
             role="switch"
-            id="darkModeSwitch"
-            checked={isDarkMode}
-            onChange={toggleDarkMode}
+            id="themeSwitch"
+            checked={theme === 'dark'}
+            onChange={toggleTheme}
           />
           <label className="form-check-label ms-2" htmlFor="darkModeSwitch">
             Toggle Dark Mode
@@ -222,13 +226,13 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Environmental Readings */}
             <div className="col-md-6">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">Environmental Readings</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Environmental Readings</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Temperature:
                       <span>
@@ -238,7 +242,7 @@ function StatusBootstrapPage({ initialStatus }) {
                       </span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Humidity:
                       <span>
@@ -248,13 +252,13 @@ function StatusBootstrapPage({ initialStatus }) {
                       </span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Outside Temperature:
                       <span>
                         {typeof data.outsideTemperature === 'number'
                           ? `${data.outsideTemperature.toFixed(1)} °C`
-                          : 'N/A'}
+                          : 'Waiting for sensor data...'}
                       </span>
                     </li>
                   </ul>
@@ -265,19 +269,19 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Device Status */}
             <div className="col-md-6">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">Device Status</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Device Status</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Light:
                       <span>{renderIndicator(data.light)}</span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Heater:
                       <span>{renderIndicator(data.heater)}</span>
@@ -290,27 +294,27 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Air Control Card */}
             <div className="col-md-6 mx-auto">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">Air Control</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Air Control</div>
                 <div className="card-body">
                   {/* <p>This is a new card for Air Control.</p> */}
                   <div
-                    className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                    className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
-                    <div className="card-header">
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
                       Vent: {renderIndicator(data.ventPower)}
                     </div>
                     <div className="card-body">
                       <ul className="list-group list-group-flush">
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Vent Speed:
                           <span>{data.ventSpeed ? 'High' : 'Low'}</span>
                         </li>
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Vent Total:
                           <span>
@@ -319,12 +323,12 @@ function StatusBootstrapPage({ initialStatus }) {
                         </li>
                       </ul>
                       <div
-                        className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                       >
                         <div
                           className="card-header"
                           onClick={toggleDaySettings}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
                         >
                           Day Settings {showDaySettings ? '▲' : '▼'}
                         </div>
@@ -334,7 +338,7 @@ function StatusBootstrapPage({ initialStatus }) {
                           <div className="card-body">
                             <ul className="list-group list-group-flush">
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="ventOnDurationDaySecs"
@@ -357,7 +361,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                 <span>{data.ventOnDurationDaySecs || 0}</span>
                               </li>
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="ventOffDurationDaySecs"
@@ -384,12 +388,12 @@ function StatusBootstrapPage({ initialStatus }) {
                         </div>
                       </div>
                       <div
-                        className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                       >
                         <div
                           className="card-header"
                           onClick={toggleNightSettings}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
                         >
                           Night Settings {showNightSettings ? '▲' : '▼'}
                         </div>
@@ -399,7 +403,7 @@ function StatusBootstrapPage({ initialStatus }) {
                           <div className="card-body">
                             <ul className="list-group list-group-flush">
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="ventOnDurationNightSecs"
@@ -422,7 +426,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                 <span>{data.ventOnDurationNightSecs || 0}</span>
                               </li>
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="ventOffDurationNightSecs"
@@ -453,19 +457,19 @@ function StatusBootstrapPage({ initialStatus }) {
                     </div>
                   </div>
                   <div
-                    className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                    className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
-                    <div className="card-header">
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
                       Fan: {renderIndicator(data.fan)}
                     </div>
                     <div className="card-body">
                       <div
-                        className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                       >
                         <div
                           className="card-header"
                           onClick={toggleFanSettings}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
                         >
                           Fan Settings {showFanSettings ? '▲' : '▼'}
                         </div>
@@ -475,7 +479,7 @@ function StatusBootstrapPage({ initialStatus }) {
                           <div className="card-body">
                             <ul className="list-group list-group-flush">
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="fanOnDurationSecs"
@@ -496,7 +500,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                 <span>{data.fanOnDurationSecs || 0}</span>
                               </li>
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
                                   htmlFor="fanOffDurationSecs"
@@ -529,71 +533,79 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Setpoint Control Card */}
             <div className="col-md-6 mx-auto">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">Setpoint Control</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Setpoint Control</div>
                 <div className="card-body">
                   <div
-                    className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                    className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
-                    <div className="card-header">Setpoint: {data.setpoint}</div>
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Setpoint: {data.setpoint} °C</div>
                     <div className="card-body">
                       <div
-                        className={`card mt-3 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                       >
                         <div
                           className="card-header"
-                          onClick={toggleFanSettings}
-                          style={{ cursor: 'pointer' }}
+                          onClick={toggleSetpointSettings}
+                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
                         >
-                          Fan Settings {showFanSettings ? '▲' : '▼'}
+                          Setpoint Settings {showSetpointSettings ? '▲' : '▼'}
                         </div>
                         <div
-                          className={`collapse ${showFanSettings ? 'show' : ''}`}
+                          className={`collapse ${showSetpointSettings ? 'show' : ''}`}
                         >
                           <div className="card-body">
                             <ul className="list-group list-group-flush">
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
-                                  htmlFor="fanOnDurationSecs"
+                                  htmlFor="upperSetpoint"
                                   className="form-label"
                                 >
-                                  On Duration (secs)
+                                  Upper Setpoint °C
                                 </label>
                                 <input
                                   type="range"
                                   className="form-range"
-                                  min="5"
-                                  max="420"
-                                  step="5"
-                                  id="fanOnDurationSecs"
-                                  value={data.fanOnDurationSecs || 0}
-                                  onChange={handleFanOnDurationChange}
+                                  min="10"
+                                  max="30"
+                                  step="0.1"
+                                  value={data.upperSetpoint || 0}
+                                  id="upperSetpoint"
+                                  onChange={handleUpperSetpointChange}
                                 />
-                                <span>{data.fanOnDurationSecs || 0}</span>
+                      <span>
+                        {typeof data.upperSetpoint === 'number'
+                          ? `${data.upperSetpoint.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
                               </li>
                               <li
-                                className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
-                                  htmlFor="fanOffDurationSecs"
+                                  htmlFor="lowerSetpoint"
                                   className="form-label"
                                 >
-                                  Off Duration (secs)
+                                  Lower Setpoint °C
                                 </label>
                                 <input
                                   type="range"
                                   className="form-range"
-                                  min="5"
-                                  max="420"
-                                  step="5"
-                                  id="fanOffDurationSecs"
-                                  value={data.fanOffDurationSecs || 0}
-                                  onChange={handleFanOffDurationChange}
+                                  min="10"
+                                  max="30"
+                                  step="0.1"
+                                  id="lowerSetpoint"
+                                  value={data.lowerSetpoint || 0}
+                                  onChange={handleLowerSetpointChange}
                                 />
-                                <span>{data.fanOffDurationSecs || 0}</span>
+                                                      <span>
+                        {typeof data.lowerSetpoint === 'number'
+                          ? `${data.lowerSetpoint.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
                               </li>
                             </ul>
                           </div>
@@ -608,13 +620,13 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* Water Control */}
             <div className="col-md-6">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">Water Control</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Water Control</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Soil Moisture:
                       <span>
@@ -622,7 +634,7 @@ function StatusBootstrapPage({ initialStatus }) {
                       </span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Irrigation Pump:
                       <span>{renderIndicator(data.irrigationPump)}</span>
@@ -635,15 +647,15 @@ function StatusBootstrapPage({ initialStatus }) {
             {/* System Information */}
             <div className="col-md-6 mx-auto">
               <div
-                className={`card mb-4 ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header">System Information</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>System Information</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
                     {mounted && (
                       <>
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           WebSocket:
                           <span>{renderIndicator(isWsConnected)}</span>
@@ -651,31 +663,31 @@ function StatusBootstrapPage({ initialStatus }) {
                       </>
                     )}
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Version:
                       <span>{data.version}</span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Description:
                       <span className="text-end">{data.description}</span>
                     </li>
                     <li
-                      className={`list-group-item ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Release Notes:
                       <span className="text-end">{data.releaseNotes}</span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Git Branch:
                       <span>{data.gitBranch}</span>
                     </li>
                     <li
-                      className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Last Commit:
                       <span className="text-end">{data.gitCommit}</span>
@@ -683,7 +695,7 @@ function StatusBootstrapPage({ initialStatus }) {
                     {mounted && (
                       <>
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Last Changed:
                           <span>
@@ -693,13 +705,13 @@ function StatusBootstrapPage({ initialStatus }) {
                           </span>
                         </li>
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Last Change:
                           <span>{data ? data.lastChange : ''}</span>
                         </li>
                         <li
-                          className={`list-group-item d-flex justify-content-between align-items-center ${isDarkMode ? 'bg-custom-card-dark text-white' : ''}`}
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Current Time:
                           <span>{new Date().toLocaleTimeString()}</span>

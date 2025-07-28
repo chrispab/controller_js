@@ -10,10 +10,22 @@ body {
   box-sizing: border-box;
 }
 
+/* Light theme variables */
 :root {
-  --bs-card-custom-bg: #395169; /* A slightly lighter dark for the whole card */
+  --background-color: #fff;
+  --text-color: #000;
+  --card-background-color: #f8f9fa;
+  --card-header-background-color: #e9ecef;
+  --card-border-color: #dee2e6;
 }
 
-.bg-custom-card-dark {
-  background-color: var(--bs-card-custom-bg) !important;
+/* Dark theme variables */
+[data-theme='dark'] {
+  --background-color: #080b26;
+  --text-color: #fff;
+  --card-background-color: #110f43;
+  --card-header-background-color: #0b0b38;
+  --card-border-color: #1a537b;
 }
+
+

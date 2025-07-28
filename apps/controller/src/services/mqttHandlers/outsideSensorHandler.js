@@ -4,7 +4,7 @@ import cfg from '../config.js';
 import mqttAgent from '../mqttAgent.js';
 
 export default function handleOutsideSensor(topic, message) {
-  logger.error('MQTT->handleOutsideSensor called with message ',JSON.stringify(message));
+  // logger.error('MQTT->handleOutsideSensor called with message ',JSON.stringify(message));
   if (!message || message.length === 0) {
     logger.error('MQTT->Outside_Sensor: NULL OR EMPTY PAYLOAD RECEIVED');
     return;
@@ -14,7 +14,7 @@ export default function handleOutsideSensor(topic, message) {
     const sensorName = cfg.get('mqtt.outsideSensorName') || 'DS18B20-1';
     const temperature = obj?.[sensorName]?.['Temperature'];
 
-    logger.error(`MQTT->handleOutsideSensor called with message temperature read: ${temperature}`);
+    // logger.error(`MQTT->handleOutsideSensor called with message temperature read: ${temperature}`);
     if (typeof temperature !== 'undefined') {
       updateAndBroadcastStatusIfValueChanged('outsideTemperature', temperature);
     } else {
