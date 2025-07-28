@@ -292,7 +292,7 @@ const topicHandlers = {
   'irrigationPump/status': (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';
     // logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
-  },
+  }
 };
 
 /**

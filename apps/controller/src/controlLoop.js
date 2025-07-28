@@ -121,7 +121,7 @@ function startControlLoop() {
     updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', cfg.get('vent.offDurationMs.day') / 1000);
     updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
     updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
-    updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
+    // updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
 
   }, 1000);
 
