@@ -129,7 +129,10 @@
     "activeSetpointTopic": "/active_setpoint",
     "versionTopic": "/version",
     "outsideSensorName": "DS18B20-1",
-    "heartbeatTopic": "/HeartBeat"
+    "heartbeatTopic": "/HeartBeat",
+    "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
+    "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",
+    "irrigationPumpStateTopic": "irrigationPump/status"
   },
   "ventOnDurationDaySecs": 410,
   "ventOffDurationDaySecs": 25

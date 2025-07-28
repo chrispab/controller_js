@@ -232,9 +232,11 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic'),
-    cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
+    cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
     'openhab/soil_moisture/percentage',
     'irrigationPump/status',
@@ -269,30 +271,24 @@ import * as handlers from './mqttHandlers/index.js';
  */
 const topicHandlers = {
   [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
-  [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]:
-    handlers.handleHighSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]:
-    handlers.handleLowSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic')]:
-    handlers.handleVentOnDurationDaySecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]:
-    handlers.handleVentOffDurationDaySecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]:
-    handlers.handleVentOnDurationNightSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]:
-    handlers.handleVentOffDurationNightSecsSet,
-  'soil1/sensor_method5_batch_moving_average_float': (topic, message) => {
+  [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpointSet,
+  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]:   handlers.handleLowSetpointSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic')]: handlers.handleVentOnDurationDaySecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.sensorSoilMoistureRawTopic')]: (topic, message) => {
     controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
     // logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
-  'openhab/soil_moisture/percentage': (topic, message) => {
+  [cfg.getWithMQTTPrefix('mqtt.soilMoisturePercentTopic')]: (topic, message) => {
     controllerStatus.soilMoisturePercent = parseFloat(message.toString());
     // logger.warn(`XXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
   },
-  'irrigationPump/status': (topic, message) => {
+  [cfg.getWithMQTTPrefix('mqtt.irrigationPumpStateTopic')]: (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';
     // logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
-  }
+  },
 };
 
 /**
