@@ -235,8 +235,8 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
+    cfg.get('mqtt.soilMoisturePercentTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
-    'openhab/soil_moisture/percentage',
     'irrigationPump/status',
   ]);
 
@@ -275,15 +275,15 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.sensorSoilMoistureRawTopic')]: (topic, message) => {
+  [cfg.get('mqtt.sensorSoilMoistureRawTopic')]: (topic, message) => {
     controllerStatus.SensorSoilMoistureRaw = parseFloat(message.toString());
     // logger.warn(`XXX controllerStatus.SensorSoilMoistureRaw soil1/sensor_method5_batch_moving_average_float: ${controllerStatus.SensorSoilMoistureRaw}`);
   },
-  [cfg.getWithMQTTPrefix('mqtt.soilMoisturePercentTopic')]: (topic, message) => {
+  [cfg.get('mqtt.soilMoisturePercentTopic')]: (topic, message) => {
     controllerStatus.soilMoisturePercent = parseFloat(message.toString());
-    // logger.warn(`XXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
+    logger.warn(`XXXXXXXXX openhab controllerStatus.soilMoisturePercent: ${controllerStatus.soilMoisturePercent}`);
   },
-  [cfg.getWithMQTTPrefix('mqtt.irrigationPumpStateTopic')]: (topic, message) => {
+  [cfg.get('mqtt.irrigationPumpStateTopic')]: (topic, message) => {
     controllerStatus.irrigationPump = message.toString() === 'ON';
     // logger.info(`XXX SIrrigation Pump: ${controllerStatus.irrigationPump}`);
   },
