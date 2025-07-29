@@ -19,6 +19,8 @@ let controllerStatus = {
   releaseNotes: getVersionInfo().releaseNotes,
   description: getVersionInfo().description,
   setpoint: null,
+  highSetpoint: null,
+  lowSetpoint: null,
   timeStamp: null,
   temperature: null,
   humidity: null,

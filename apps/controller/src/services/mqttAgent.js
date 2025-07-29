@@ -9,10 +9,7 @@ import * as utils from '../utils/utils.js';
 import secret from '../secret.js';
 
 import nodemailer from 'nodemailer';
-import {
-  controllerStatus,
-  updateAndBroadcastStatusIfValueChanged,
-} from '../controlLoop.js';
+import { controllerStatus, updateAndBroadcastStatusIfValueChanged } from '../controlLoop.js';
 // import { warn } from 'winston';
 
 // const wifi = require('node-wifi');
@@ -41,11 +38,8 @@ class MqttAgent {
       this.logLevel = 'info';
       this.highSetpoint = cfg.get('zone.highSetpoint');
       this.lowSetpoint = cfg.get('zone.lowSetpoint');
-      this.periodicPublishIntervalMs = cfg.get(
-        'zone.periodicPublishIntervalMs',
-      );
-      this.lastPeriodicPublishedMs =
-        Date.now() - this.periodicPublishIntervalMs;
+      this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
+      this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
       this.outsideTemperature = 7;
       this.activeSetpoint = 0;
       this.version = cfg.get('version');
@@ -95,27 +89,16 @@ class MqttAgent {
     try {
       if (this.highSetpoint != cfg.get('zone.highSetpoint')) {
         this.highSetpoint = cfg.get('zone.highSetpoint');
-        utils.logAndPublishState(
-          'mqttAgent R',
-          cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'),
-          `${this.highSetpoint}`,
-        );
+        utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${this.highSetpoint}`);
         logger.debug(`highSetpoint changed to ${this.highSetpoint}`);
       }
       if (this.lowSetpoint != cfg.get('zone.lowSetpoint')) {
         this.lowSetpoint = cfg.get('zone.lowSetpoint');
-        utils.logAndPublishState(
-          'mqttAgent R',
-          cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'),
-          `${this.lowSetpoint}`,
-        );
+        utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${this.lowSetpoint}`);
         logger.debug(`lowSetpoint changed to ${this.lowSetpoint}`);
       }
     } catch (error) {
-      logger.error(
-        `Error in MqttAgent reloadSettingsIfChanged: ${error.message}`,
-        { stack: error.stack },
-      );
+      logger.error(`Error in MqttAgent reloadSettingsIfChanged: ${error.message}`, { stack: error.stack });
     }
   }
 
@@ -124,11 +107,7 @@ class MqttAgent {
       if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
         this.lastTelemetryMs = Date.now();
         const data = this.getTelemetryData(components);
-        utils.logAndPublishState(
-          'mqttdoTelemetry',
-          cfg.getWithMQTTPrefix('mqtt.telemetryTopic'),
-          data,
-        );
+        utils.logAndPublishState('mqttdoTelemetry', cfg.getWithMQTTPrefix('mqtt.telemetryTopic'), data);
       }
     } catch (error) {
       logger.error(`Error in MqttAgent doTelemetry: ${error.message}`, {
@@ -139,35 +118,16 @@ class MqttAgent {
 
   periodicPublication() {
     try {
-      if (
-        Date.now() >=
-        this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs
-      ) {
+      if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
         this.lastPeriodicPublishedMs = Date.now();
         // highSetpoint
-        utils.logAndPublishState(
-          'mqtt P',
-          cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'),
-          `${cfg.get('zone.highSetpoint')}`,
-        );
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
         // lowSetpoint
-        utils.logAndPublishState(
-          'mqtt P',
-          cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'),
-          `${cfg.get('zone.lowSetpoint')}`,
-        );
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
         // activeSetpoint
-        utils.logAndPublishState(
-          'mqtt P',
-          cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'),
-          this.activeSetpoint,
-        );
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'), this.activeSetpoint);
         //version
-        utils.logAndPublishState(
-          'mqtt P',
-          cfg.getWithMQTTPrefix('mqtt.versionTopic'),
-          this.version,
-        );
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.versionTopic'), this.version);
 
         //publish wifi info
         wifi.getCurrentConnections((error, currentConnections) => {
@@ -175,21 +135,13 @@ class MqttAgent {
             // console.log(error);
             logger.error('getCurrentConnections error', { error });
           } else {
-            utils.logAndPublishState(
-              'mqtt P',
-              cfg.getWithMQTTPrefix('mqtt.rssiTopic'),
-              `${currentConnections[0].quality}`,
-            );
+            utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
           }
         });
 
         //send heartbeat mqtt
         // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
-        utils.logAndPublishState(
-          'mqtt P',
-          cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),
-          'GGG',
-        );
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
       }
     } catch (error) {
       logger.error(`Error in MqttAgent periodicPublication: ${error.message}`, {
@@ -206,10 +158,7 @@ class MqttAgent {
         const obj1 = JSON.parse(JSON.stringify(teledata));
         componentData.push(JSON.stringify(obj1));
       } catch (error) {
-        logger.error(
-          `Error getting telemetry data for component: ${component.name || 'unknown'}, Error: ${error.message}`,
-          { stack: error.stack },
-        );
+        logger.error(`Error getting telemetry data for component: ${component.name || 'unknown'}, Error: ${error.message}`, { stack: error.stack });
       }
     }
     return componentData.toString();
@@ -268,13 +217,13 @@ import * as handlers from './mqttHandlers/index.js';
  * @type {Object.<string, Function>}
  */
 const topicHandlers = {
-  [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]:   handlers.handleLowSetpointSet,
+  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpointSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic')]: handlers.handleVentOnDurationDaySecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
+  [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.get('mqtt.sensorSoilMoistureRawTopic')]: handlers.handleSensorSoilMoistureRaw,
   [cfg.get('mqtt.soilMoisturePercentTopic')]: handlers.handleSoilMoisturePercent,
   [cfg.get('mqtt.irrigationPumpStateTopic')]: handlers.handleIrrigationPumpState,
@@ -287,18 +236,13 @@ const topicHandlers = {
  * @param {Buffer} message - The payload of the MQTT message.
  */
 mqttAgent.client.on('message', (topic, message) => {
-  logger.info(
-    `MQTT message received. Topic: ${topic}, Message: ${message.toString()}`,
-  );
+  logger.info(`MQTT message received. Topic: ${topic}, Message: ${message.toString()}`);
   const handler = topicHandlers[topic];
   if (handler) {
     try {
       handler(topic, message);
     } catch (error) {
-      logger.error(
-        `Error handling MQTT message for topic ${topic}: ${error.message}`,
-        { stack: error.stack },
-      );
+      logger.error(`Error handling MQTT message for topic ${topic}: ${error.message}`, { stack: error.stack });
     }
   } else {
     logger.error(`Topic- ${topic} - is not recognised.`);

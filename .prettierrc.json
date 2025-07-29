@@ -2,5 +2,5 @@
   "singleQuote": true,
   "trailingComma": "all",
   "arrowParens": "always",
-  "printWidth": 9999
+  "printWidth": 160
 }

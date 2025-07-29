@@ -1,8 +1,8 @@
 {
   "version": "0.1.0",
   "zone": {
-    "lowSetpoint": 15.9,
-    "highSetpoint": 24,
+    "lowSetpoint": 14.4,
+    "highSetpoint": 24.1,
     "periodicPublishIntervalMs": 120000,
     "name": "Zone 1",
     "customConfigFilename": "customConfig.json",

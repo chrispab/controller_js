@@ -12,39 +12,21 @@ import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
  * @param {string} controllerStatusKey - The configuration path where the value should be stored (e.g., 'vent.onMs').
  * @param {string} publishTopicKey - The MQTT topic key used for logging and publishing the state (e.g., 'mqtt.ventOnDeltaSecsTopic').
  */
-function handleVent(
-  receivedTopic,
-  payload,
-  controllerStatusKey,
-  publishTopicKey,
-) {
+function handleVent(receivedTopic, payload, controllerStatusKey, publishTopicKey) {
   const value = Number(payload.toString());
 
   //insert logging statement
   logger.warn(
-    '..........receivedTopic: ' +
-      receivedTopic +
-      ' payload: ' +
-      payload +
-      ' configKey: ' +
-      controllerStatusKey +
-      ' publishTopicKey: ' +
-      publishTopicKey,
+    '..........receivedTopic: ' + receivedTopic + ' payload: ' + payload + ' configKey: ' + controllerStatusKey + ' publishTopicKey: ' + publishTopicKey,
   );
 
   if (value > 0) {
-    utils.logAndPublishState(
-      `${controllerStatusKey}: `,
-      cfg.getWithMQTTPrefix(publishTopicKey),
-      `${value}*1000`,
-    );
+    utils.logAndPublishState(`${controllerStatusKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), `${value}*1000`);
     cfg.set(controllerStatusKey, value);
     // update controller frontend to show the new value recieved
     updateAndBroadcastStatusIfValueChanged(controllerStatusKey, value);
   } else {
-    logger.error(
-      `MQTT->${controllerStatusKey}/set: INVALID PAYLOAD RECEIVED: ${payload}`,
-    );
+    logger.error(`MQTT->${controllerStatusKey}/set: INVALID PAYLOAD RECEIVED: ${payload}`);
   }
 }
 
@@ -55,37 +37,17 @@ function handleVent(
  * @param {Buffer} payload - The payload of the MQTT payload, representing the duration in seconds.
  */
 export function handleVentOnDurationDaySecsSet(receivedTopic, payload) {
-  handleVent(
-    receivedTopic,
-    payload,
-    'ventOnDurationDaySecs',
-    'mqtt.ventOnDurationDaySecsTopic',
-  );
+  handleVent(receivedTopic, payload, 'ventOnDurationDaySecs', 'mqtt.ventOnDurationDaySecsTopic');
 }
 
 export function handleVentOffDurationDaySecsSet(receivedTopic, payload) {
-  handleVent(
-    receivedTopic,
-    payload,
-    'ventOffDurationDaySecs',
-    'mqtt.ventOffDurationDaySecsTopic',
-  );
+  handleVent(receivedTopic, payload, 'ventOffDurationDaySecs', 'mqtt.ventOffDurationDaySecsTopic');
 }
 
 export function handleVentOnDurationNightSecsSet(receivedTopic, payload) {
-  handleVent(
-    receivedTopic,
-    payload,
-    'ventOnDurationNightSecs',
-    'mqtt.ventOnDurationNightSecsTopic',
-  );
+  handleVent(receivedTopic, payload, 'ventOnDurationNightSecs', 'mqtt.ventOnDurationNightSecsTopic');
 }
 
 export function handleVentOffDurationNightSecsSet(receivedTopic, payload) {
-  handleVent(
-    receivedTopic,
-    payload,
-    'ventOffDurationNightSecs',
-    'mqtt.ventOffDurationNightSecsTopic',
-  );
+  handleVent(receivedTopic, payload, 'ventOffDurationNightSecs', 'mqtt.ventOffDurationNightSecsTopic');
 }

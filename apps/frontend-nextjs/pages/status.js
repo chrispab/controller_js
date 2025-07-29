@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { execSync } from 'child_process';
+import logger from '../../controller/src/services/logger';
 
 function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
@@ -165,6 +166,7 @@ function StatusBootstrapPage({ initialStatus }) {
   };
 
   const handleFanOffDurationChange = async (event) => {
+
     const value = event.target.value;
     setData((prevData) => ({ ...prevData, fanOffDurationSecs: value }));
     try {
@@ -184,9 +186,29 @@ function StatusBootstrapPage({ initialStatus }) {
   };
 
   const handleUpperSetpointChange = async (event) => {
+    //make call to the controller api to set the highSetpoint
+    const value = event.target.value;
+    logger.info(`UUUUUUUUUUUUUUUUUUUUUUUUUUhandleUpperSetpointChange  Setting highSetpoint to ${value}`);
+    setData((prevData) => ({ ...prevData, highSetpoint: value }));
+    try {
+      await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/api/setpoint/highSetpoint`,
+        { 
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ value }),
+        },
+      );
+    } catch (error) {
+      console.error(`Failed to set fanOffDurationSecs:`, error);
+    }
   };
+
   const handleLowerSetpointChange = async (event) => {
   };
+
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const toggleDaySettings = () => setShowDaySettings(!showDaySettings);
   const toggleNightSettings = () => setShowNightSettings(!showNightSettings);
@@ -561,7 +583,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
-                                  htmlFor="upperSetpoint"
+                                  htmlFor="highSetpoint"
                                   className="form-label"
                                 >
                                   Upper Setpoint °C
@@ -572,13 +594,13 @@ function StatusBootstrapPage({ initialStatus }) {
                                   min="10"
                                   max="30"
                                   step="0.1"
-                                  value={data.upperSetpoint || 0}
+                                  value={data.highSetpoint || 0}
                                   id="upperSetpoint"
                                   onChange={handleUpperSetpointChange}
                                 />
                       <span>
-                        {typeof data.upperSetpoint === 'number'
-                          ? `${data.upperSetpoint.toFixed(1)} °C`
+                        {typeof data.highSetpoint === 'number'
+                          ? `${data.highSetpoint.toFixed(1)} °C`
                           : 'N/A'}
                       </span>
                               </li>
@@ -586,7 +608,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                               >
                                 <label
-                                  htmlFor="lowerSetpoint"
+                                  htmlFor="lowSetpoint"
                                   className="form-label"
                                 >
                                   Lower Setpoint °C
@@ -598,12 +620,12 @@ function StatusBootstrapPage({ initialStatus }) {
                                   max="30"
                                   step="0.1"
                                   id="lowerSetpoint"
-                                  value={data.lowerSetpoint || 0}
+                                  value={data.lowSetpoint || 0}
                                   onChange={handleLowerSetpointChange}
                                 />
                                                       <span>
-                        {typeof data.lowerSetpoint === 'number'
-                          ? `${data.lowerSetpoint.toFixed(1)} °C`
+                        {typeof data.lowSetpoint === 'number'
+                          ? `${data.lowSetpoint.toFixed(1)} °C`
                           : 'N/A'}
                       </span>
                               </li>
