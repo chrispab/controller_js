@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import { execSync } from 'child_process';
-import logger from '../../controller/src/services/logger';
 
 function StatusBootstrapPage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
@@ -186,14 +184,14 @@ function StatusBootstrapPage({ initialStatus }) {
   };
 
   const handleUpperSetpointChange = async (event) => {
-    //make call to the controller api to set the highSetpoint
-    const value = event.target.value;
-    logger.info(`UUUUUUUUUUUUUUUUUUUUUUUUUUhandleUpperSetpointChange  Setting highSetpoint to ${value}`);
+    console.log('handleUpperSetpointChange called');
+    const value = parseFloat(event.target.value);
+    console.log(`handleUpperSetpointChange  Setting highSetpoint to ${value}`);
     setData((prevData) => ({ ...prevData, highSetpoint: value }));
     try {
       await fetch(
         process.env.NEXT_PUBLIC_API_URL + `/api/setpoint/highSetpoint`,
-        { 
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -202,11 +200,28 @@ function StatusBootstrapPage({ initialStatus }) {
         },
       );
     } catch (error) {
-      console.error(`Failed to set fanOffDurationSecs:`, error);
+      console.error(`Failed to set highSetpoint:`, error);
     }
   };
 
   const handleLowerSetpointChange = async (event) => {
+    const value = parseFloat(event.target.value);
+    console.log(`handleLowerSetpointChange  Setting lowSetpoint to ${value}`);
+    setData((prevData) => ({ ...prevData, lowSetpoint: value }));
+    try {
+      await fetch(
+        process.env.NEXT_PUBLIC_API_URL + `/api/setpoint/lowSetpoint`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ value }),
+        },
+      );
+    } catch (error) {
+      console.error(`Failed to set lowSetpoint:`, error);
+    }
   };
 
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
@@ -595,7 +610,7 @@ function StatusBootstrapPage({ initialStatus }) {
                                   max="30"
                                   step="0.1"
                                   value={data.highSetpoint || 0}
-                                  id="upperSetpoint"
+                                  id="highSetpoint"
                                   onChange={handleUpperSetpointChange}
                                 />
                       <span>
@@ -753,6 +768,7 @@ function StatusBootstrapPage({ initialStatus }) {
 
 //get initial data from controller api
 export async function getServerSideProps() {
+  const { execSync } = require('child_process');
   let initialStatus = {};
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5678'; // Fallback for development
   try {
@@ -828,6 +844,25 @@ export async function getServerSideProps() {
     );
     const outsideTemperatureData = await outsideTemperatureRes.json();
     initialStatus.outsideTemperature = outsideTemperatureData.message;
+
+    console.log(`Fetching high setpoint from: ${API_URL}/api/setpoint/highSetpoint`);
+    const highSetpointRes = await fetch(`${API_URL}/api/setpoint/highSetpoint`);
+    console.log(`High setpoint response status: ${highSetpointRes.status}`);
+    const highSetpointData = await highSetpointRes.json();
+    initialStatus.highSetpoint = highSetpointData.message;
+
+    console.log(`Fetching low setpoint from: ${API_URL}/api/setpoint/lowSetpoint`);
+    const lowSetpointRes = await fetch(`${API_URL}/api/setpoint/lowSetpoint`);
+    console.log(`Low setpoint response status: ${lowSetpointRes.status}`);
+    const lowSetpointData = await lowSetpointRes.json();
+    initialStatus.lowSetpoint = lowSetpointData.message;
+
+    console.log(`Fetching setpoint from: ${API_URL}/api/setpoint`);
+    const setpointRes = await fetch(`${API_URL}/api/setpoint`);
+    console.log(`Setpoint response status: ${setpointRes.status}`);
+    const setpointData = await setpointRes.json();
+    initialStatus.setpoint = setpointData.message;
+
   } catch (error) {
     console.error('ZZZZZZZZZZZZZZZZZ  Failed to fetch initial status:', error);
   }

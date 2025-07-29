@@ -4,7 +4,7 @@ import { controllerStatus } from '../../controlLoop.js';
 const router = express.Router();
 
 router.get('/status', (req, res) => {
-  res.json({ message: controllerStatus });
+  res.json({ message: { ...controllerStatus, highSetpoint: controllerStatus.highSetpoint, lowSetpoint: controllerStatus.lowSetpoint } });
 });
 
 router.get('/soilMoisturePercent', (req, res) => {

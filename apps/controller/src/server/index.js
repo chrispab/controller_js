@@ -11,6 +11,7 @@ import {
 import { startControlLoop, controllerStatus } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
+import setpointRoutes from './routes/setpointRoutes.js';
 import logger from '../services/logger.js';
 
 import { fileURLToPath } from 'url';
@@ -28,7 +29,7 @@ const PORT = process.env.PORT || 5678;
 
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({ origin: '*' })); // Enable CORS for all routes
 app.use(express.static(path.resolve(__dirname, '../../public')));
 const server = http.createServer(app);
 
@@ -36,6 +37,7 @@ startWebSocketServer(server);
 
 app.use('/api', statusRoutes);
 app.use('/api', ventRoutes);
+app.use('/api', setpointRoutes);
 
 app.get('/api', (req, res) => {
   res.json({ message: 'This is the API' });
