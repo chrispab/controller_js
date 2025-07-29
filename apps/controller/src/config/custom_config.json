@@ -135,5 +135,6 @@
     "irrigationPumpStateTopic": "irrigationPump/status"
   },
   "ventOnDurationDaySecs": 410,
-  "ventOffDurationDaySecs": 25
+  "ventOffDurationDaySecs": 25,
+  "ventOnDurationNightSecs": 400
 }

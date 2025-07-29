@@ -234,8 +234,6 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
     'openhab/soil_moisture/percentage',
