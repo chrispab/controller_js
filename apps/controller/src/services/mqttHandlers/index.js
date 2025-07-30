@@ -3,6 +3,7 @@ export {
   handleHighSetpointSet,
   handleLowSetpointSet,
 } from './setpointHandler.js';
+
 // Export vent-related MQTT message handlers
 export {
   handleVentOnDurationDaySecsSet,
@@ -10,6 +11,13 @@ export {
   handleVentOnDurationNightSecsSet,
   handleVentOffDurationNightSecsSet,
 } from './ventHandler.js';
+
+// Export fan-related MQTT message handlers
+export {
+  handleFanOnDurationSecsSet,
+  handleFanOffDurationSecsSet,
+} from './fanHandler.js';
+
 
 // water and moisture message handlers
 export {

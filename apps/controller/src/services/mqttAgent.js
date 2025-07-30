@@ -230,6 +230,8 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic')]: handlers.handleFanOnDurationSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic')]: handlers.handleFanOffDurationSecsSet,
   [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.get('mqtt.sensorSoilMoistureRawTopic')]: handlers.handleSensorSoilMoistureRaw,
   [cfg.get('mqtt.soilMoisturePercentTopic')]: handlers.handleSoilMoisturePercent,
