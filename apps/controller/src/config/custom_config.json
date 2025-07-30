@@ -1,8 +1,8 @@
 {
   "version": "0.1.0",
   "zone": {
-    "lowSetpoint": 14.4,
-    "highSetpoint": 24.3,
+    "lowSetpoint": 14.9,
+    "highSetpoint": 24.8,
     "periodicPublishIntervalMs": 120000,
     "name": "Zone 1",
     "customConfigFilename": "customConfig.json",
@@ -121,8 +121,6 @@
     "highSetpointTopic": "/high_setpoint",
     "lowSetpointTopic": "/low_setpoint",
     "telemetryTopic": "/telemetry",
-    "fanOnDurationSecsTopic": "/fan_on_delta_secs",
-    "fanOffDurationSecsTopic": "/fan_off_delta_secs",
     "outsideSensorTopic": "Outside_Sensor/tele/SENSOR",
     "highSetpointSetTopic": "/high_setpoint/set",
     "lowSetpointSetTopic": "/low_setpoint/set",
@@ -132,7 +130,11 @@
     "heartbeatTopic": "/HeartBeat",
     "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
     "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",
-    "irrigationPumpStateTopic": "irrigationPump/status"
+    "irrigationPumpStateTopic": "irrigationPump/status",
+    "fanOnDurationSecsTopic": "/fan_on_delta_secs",
+    "fanOffDurationSecsTopic": "/fan_off_delta_secs",
+    "fanOnDurationSecsSetTopic": "/fan_on_delta_secs/set",
+    "fanOffDurationSecsSetTopic": "/fan_off_delta_secs/set"
   },
   "ventOnDurationDaySecs": 410,
   "ventOffDurationDaySecs": 25,

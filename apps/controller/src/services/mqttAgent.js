@@ -169,11 +169,12 @@ class MqttAgent {
 export const mqttAgent = new MqttAgent();
 export default mqttAgent;
 
+/**
+ * Event handler for when the MQTT client connects to the broker.
+ * Subscribes to various MQTT topics and publishes the Last Will and Testament (LWT) message.
+ */
 mqttAgent.client.on('connect', function () {
   logger.info('MQTT client connected:' + JSON.stringify(mqttAgent.options));
-  // client.subscribe("/a", { qos: 0 });
-  // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
-  // client.end();
 
   // mqtt subscriptions
   mqttAgent.client.subscribe([
@@ -183,6 +184,8 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic'),
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     cfg.get('mqtt.soilMoisturePercentTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
@@ -195,6 +198,10 @@ mqttAgent.client.on('connect', function () {
   });
 });
 
+/**
+ * Event handler for when the MQTT client sends a packet.
+ * Currently, this function is mostly a placeholder and logs a warning.
+ */
 mqttAgent.client.on('packetsend', function () {
   // logger.warn(".........published:" + JSON.stringify(options));
   // client.subscribe("/a", { qos: 0 });

@@ -57,7 +57,7 @@ function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
     controllerStatus[controllerStatusKey] = newValue;
     controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
     controllerStatus.timeStamp = Date.now();
-    logger.warn(`State changed: ${controllerStatus.lastChange}`);
+    logger.warn(`State changed, controllerStatus updated, websocket broadcast:.${controllerStatusKey} = ${newValue}`);
     webSocketBroadcast(controllerStatus);
   }
 }
@@ -68,15 +68,8 @@ function startControlLoop() {
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
   const light = new Light('light', cfg.get('hardware.RC.pin'));
-  const temperatureSensor = new TemperatureSensor(
-    'temperature_sensor',
-    cfg.get('hardware.dhtSensor.pin'),
-  );
-  const vent = new Vent(
-    'vent',
-    cfg.get('hardware.vent.pin'),
-    cfg.get('hardware.vent.speedPin'),
-  );
+  const temperatureSensor = new TemperatureSensor('temperature_sensor', cfg.get('hardware.dhtSensor.pin'));
+  const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
   logger.info('Components initialized.');
 
   // mark pump as off - dummy setting pump not yet implemented
@@ -94,9 +87,7 @@ function startControlLoop() {
   eventEmitter.on('lightStateChanged', ({ lightState }) => {
     updateAndBroadcastStatusIfValueChanged('light', lightState);
     // Update setpoint when light state changes
-    const newSetpoint = lightState
-      ? cfg.get('zone.highSetpoint')
-      : cfg.get('zone.lowSetpoint');
+    const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
     updateAndBroadcastStatusIfValueChanged('setpoint', newSetpoint);
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
@@ -130,15 +121,10 @@ function startControlLoop() {
   //instead listen for events like  ventDurationChanged
   eventEmitter.on('ventDurationChanged', ({ period, duration }) => {
     if (period === 'day') {
-  }
-});
-
+    }
+  });
 
   logger.info('Event-driven control loop started.');
 }
 
-export {
-  startControlLoop,
-  controllerStatus,
-  updateAndBroadcastStatusIfValueChanged,
-};
+export { startControlLoop, controllerStatus, updateAndBroadcastStatusIfValueChanged };
