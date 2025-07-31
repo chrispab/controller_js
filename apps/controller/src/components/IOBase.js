@@ -55,13 +55,13 @@ class IOBase {
     }
   }
 
-  getName() {
-    return this.name;
-  }
+  // getName() {
+  //   return this.name;
+  // }
 
-  setName(name) {
-    this.name = name;
-  }
+  // setName(name) {
+  //   this.name = name;
+  // }
 
   setIODirection(direction) {
     if (this.IO && typeof this.IO.setDirection === 'function') {
