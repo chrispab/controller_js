@@ -239,7 +239,7 @@ const topicHandlers = {
 };
 
 /**
- * Event listener for incoming MQTT messages.
+ * MQTT Event handler dispatcher for incoming  messages.
  * It dispatches the message to the appropriate handler function based on the topic.
  * @param {string} topic - The MQTT topic the message was received on.
  * @param {Buffer} message - The payload of the MQTT message.

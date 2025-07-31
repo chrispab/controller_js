@@ -39,10 +39,7 @@ export default class Fan {
         }
       }
     } catch (error) {
-      logger.error(
-        `Error in Fan controlCycle for ${this.getName()}: ${error.message}`,
-        { stack: error.stack },
-      );
+      logger.error(`Error in Fan controlCycle for ${this.getName()}: ${error.message}`, { stack: error.stack });
     }
   }
 
@@ -55,27 +52,25 @@ export default class Fan {
 
       this.IOPin.writeIO(newState ? 1 : 0);
 
-      logger.log(
-        logLevel,
-        `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`,
-      );
-      logger.log(
-        logLevel,
-        `--------this.IOPin.writeIO(newState ? 1 : 0) - ${this.getName()} is ${newState ? 1 : 0}`,
-      );
+      // logger.log(logLevel, `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
+      // logger.log(
+      //   logLevel,
+      //   `--------this.IOPin.writeIO(newState ? 1 : 0) - ${this.getName()} is ${newState ? 1 : 0}`,
+      // );
 
-      // Emit event on central bus
-      eventEmitter.emit('fanStateChanged', {
-        name: this.name,
-        state: newState,
-      });
+      // Emit specific events on the central bus
+      if (newState) {
+        eventEmitter.emit('fan/started', { name: this.getName(), newState: newState });
+      } else {
+        eventEmitter.emit('fan/stopped', { name: this.getName(), newState: newState });
+      }
 
       // Publish state change to MQTT
-      utils.logAndPublishState(
-        'Fan update',
-        cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
-        newState ? 1 : 0,
-      );
+      // utils.logAndPublishState(
+      //   'FFFFFFFFFFF  Fan stateupdate',
+      //   cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
+      //   newState ? 1 : 0,
+      // );
     }
   }
 
@@ -83,27 +78,38 @@ export default class Fan {
     // Reload settings in case they were changed in config file
     this.setOnMs(cfg.get('fan.onMs'));
     this.setOffMs(cfg.get('fan.offMs'));
-    //  = cfg.get('fan.onMs');
-    // this.offMs = cfg.get('fan.offMs');
 
     // Publish current state and settings periodically
-    utils.logAndPublishState(
-      'Fan P',
-      cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
-      this.getState(),
-    );
-    utils.logAndPublishState(
-      'Fan P',
-      cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'),
-      this.getOnMs() / 1000,
-    );
-    utils.logAndPublishState(
-      'Fan P',
-      cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'),
-      this.getOffMs() / 1000,
-    );
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
+    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
   }
 }
 
 import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 Object.assign(Fan.prototype, IOPinAccessorsMixin);
+
+// Override setOnMs and setOffMs to emit events
+const originalSetOnMs = Fan.prototype.setOnMs;
+Fan.prototype.setOnMs = function (newOnMs) {
+  const oldOnMs = this.getOnMs();
+  if (oldOnMs !== newOnMs) {
+    originalSetOnMs.call(this, newOnMs);
+    eventEmitter.emit('fan/on-duration-changed', {
+      name: this.getName(),
+      onMs: newOnMs,
+    });
+  }
+};
+
+const originalSetOffMs = Fan.prototype.setOffMs;
+Fan.prototype.setOffMs = function (newOffMs) {
+  const oldOffMs = this.getOffMs();
+  if (oldOffMs !== newOffMs) {
+    originalSetOffMs.call(this, newOffMs);
+    eventEmitter.emit('fan/off-duration-changed', {
+      name: this.getName(),
+      offMs: newOffMs,
+    });
+  }
+};

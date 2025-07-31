@@ -11,6 +11,7 @@ import { webSocketBroadcast } from './services/webSocketServer.js';
 import { getVersionInfo } from './utils/utils.js';
 import logger from './services/logger.js';
 import eventEmitter from './services/eventEmitter.js';
+import * as utils from './utils/utils.js';
 
 // Application state
 let controllerStatus = {
@@ -57,7 +58,7 @@ function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
     controllerStatus[controllerStatusKey] = newValue;
     controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
     controllerStatus.timeStamp = Date.now();
-    logger.warn(`State change:${controllerStatusKey} = ${newValue}, controllerStatus update, websocket broadcast`);
+    logger.warn(`updateAndBroadcastStatus:${controllerStatusKey} = ${newValue}, controllerStatus update, websocket broadcast`);
     webSocketBroadcast(controllerStatus);
   }
 }
@@ -92,8 +93,26 @@ function startControlLoop() {
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
 
-  eventEmitter.on('fanStateChanged', ({ state }) => {
-    updateAndBroadcastStatusIfValueChanged('fan', state);
+  //fan event handlers
+  eventEmitter.on('fan/started', ({ name }) => {
+    updateAndBroadcastStatusIfValueChanged('fan', true);
+    utils.logAndPublishState('Event fan/started', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 1);
+  });
+
+  eventEmitter.on('fan/stopped', ({ name }) => {
+    updateAndBroadcastStatusIfValueChanged('fan', false);
+    utils.logAndPublishState('Event fan/stopped', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 0);
+  });
+
+  // handle fan duration change
+  eventEmitter.on('fan/on-duration-changed', ({ onMs }) => {
+    updateAndBroadcastStatusIfValueChanged('fanOnDurationSecs', onMs / 1000);
+    utils.logAndPublishState('Event fan/on-duration-changed: ', cfg.getWithMQTTPrefix('fan.onMs'), onMs);
+  });
+
+  eventEmitter.on('fan/off-duration-changed', ({ offMs }) => {
+    updateAndBroadcastStatusIfValueChanged('fanOffDurationSecs', offMs / 1000);
+    utils.logAndPublishState('Event fan/off-duration-changed: ', cfg.getWithMQTTPrefix('fan.offMs'), offMs);
   });
 
   eventEmitter.on('heaterStateChanged', ({ state }) => {

@@ -277,11 +277,18 @@ describe('controlLoop', () => {
         expect.objectContaining({ light: false, setpoint: 20 }),
       );
 
-      // Simulate fanStateChanged event
-      eventEmitter.emit('fanStateChanged', { state: true });
+      // Simulate fan/started event
+      eventEmitter.emit('fan/started', { name: 'fan' });
       expect(controllerStatus.fan).toBe(true);
       expect(broadcast).toHaveBeenCalledWith(
         expect.objectContaining({ fan: true }),
+      );
+
+      // Simulate fan/stopped event
+      eventEmitter.emit('fan/stopped', { name: 'fan' });
+      expect(controllerStatus.fan).toBe(false);
+      expect(broadcast).toHaveBeenCalledWith(
+        expect.objectContaining({ fan: false }),
       );
 
       // Simulate heaterStateChanged event

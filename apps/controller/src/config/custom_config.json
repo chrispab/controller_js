@@ -89,7 +89,7 @@
   },
   "fan": {
     "speedPercent": 50,
-    "onMs": 10000,
+    "onMs": 15000,
     "offMs": 10000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000
@@ -139,6 +139,6 @@
   "ventOnDurationDaySecs": 400,
   "ventOffDurationDaySecs": 25,
   "ventOnDurationNightSecs": 375,
-  "fanOnDurationSecs": 372,
+  "fanOnDurationSecs": 290,
   "fanOffDurationSecs": 26
 }
