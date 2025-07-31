@@ -57,7 +57,7 @@ function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
     controllerStatus[controllerStatusKey] = newValue;
     controllerStatus.lastChange = `${controllerStatusKey} = ${newValue}`;
     controllerStatus.timeStamp = Date.now();
-    logger.warn(`State changed, controllerStatus updated, websocket broadcast:.${controllerStatusKey} = ${newValue}`);
+    logger.warn(`State change:${controllerStatusKey} = ${newValue}, controllerStatus update, websocket broadcast`);
     webSocketBroadcast(controllerStatus);
   }
 }

@@ -6,10 +6,10 @@ import mqtt from 'mqtt';
 
 import * as utils from '../utils/utils.js';
 
-import secret from '../secret.js';
+// import secret from '../secret.js';
 
-import nodemailer from 'nodemailer';
-import { controllerStatus, updateAndBroadcastStatusIfValueChanged } from '../controlLoop.js';
+// import nodemailer from 'nodemailer';
+// import { controllerStatus, updateAndBroadcastStatusIfValueChanged } from '../controlLoop.js';
 // import { warn } from 'winston';
 
 // const wifi = require('node-wifi');
