@@ -14,10 +14,10 @@ function setIrrigationPumpState(topic, value) {
 }
 
 export const handleSensorSoilMoistureRaw = (topic, payload) => 
-  handleMessage(topic, payload, setRawSoilMoisture, 'mqtt.sensorSoilMoistureRawTopic', 'SensorSoilMoistureRaw');
+  handleMessage(topic, payload, setRawSoilMoisture, null, null);
 
 export const handleSoilMoisturePercent = (topic, payload) => 
-  handleMessage(topic, payload, setSoilMoisturePercent, 'mqtt.soilMoisturePercentTopic', 'soilMoisturePercent');
+  handleMessage(topic, payload, setSoilMoisturePercent, null, null);
 
 export const handleIrrigationPumpState = (topic, payload) => 
-  handleMessage(topic, payload, setIrrigationPumpState, 'mqtt.irrigationPumpStateTopic', 'irrigationPump');
+  handleMessage(topic, payload, setIrrigationPumpState, null, null);
