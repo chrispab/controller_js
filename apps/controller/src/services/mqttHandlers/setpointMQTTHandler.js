@@ -1,14 +1,16 @@
 import handleMessage from './genericHandler.js';
-import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { stateManager } from '../../controlLoop.js';
 import logger from '../logger.js';
 import cfg from '../config.js';
+import * as utils from '../../utils/utils.js';
 
-function createSetpointHandler(configKey, statusKey) {
+function createSetpointLogic(configKey, statusKey, publishTopicKey) {
   return function(topic, value) {
     const numericValue = Number(value);
     if (!isNaN(numericValue) && value.length > 0) {
       cfg.set(configKey, numericValue);
-      updateStausAndWSBroadcastStatusIfValueChanged(statusKey, numericValue);
+      stateManager.update({ [statusKey]: numericValue });
+      utils.logAndPublishState(`MQTT->${configKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), numericValue);
     } else {
       logger.error(`MQTT->${configKey}/set: INVALID non-numeric PAYLOAD RECEIVED: ${value}`);
     }
@@ -16,7 +18,7 @@ function createSetpointHandler(configKey, statusKey) {
 }
 
 export const handleHighSetpointSet = (topic, payload) => 
-  handleMessage(topic, payload, createSetpointHandler('zone.highSetpoint', 'highSetpoint'), 'mqtt.highSetpointTopic', 'highSetpoint');
+  handleMessage(topic, payload, createSetpointLogic('zone.highSetpoint', 'highSetpoint', 'mqtt.highSetpointTopic'));
 
 export const handleLowSetpointSet = (topic, payload) => 
-  handleMessage(topic, payload, createSetpointHandler('zone.lowSetpoint', 'lowSetpoint'), 'mqtt.lowSetpointTopic', 'lowSetpoint');
+  handleMessage(topic, payload, createSetpointLogic('zone.lowSetpoint', 'lowSetpoint', 'mqtt.lowSetpointTopic'));

@@ -1,9 +1,9 @@
 import eventEmitter from '../eventEmitter.js';
-import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { stateManager } from '../../controlLoop.js';
 
 function registerHeaterEventHandlers() {
   eventEmitter.on('heaterStateChanged', ({ state }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('heater', state);
+    stateManager.update({ heater: state });
   });
 }
 

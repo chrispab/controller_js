@@ -1,12 +1,15 @@
 import handleMessage from './genericHandler.js';
-import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { stateManager } from '../../controlLoop.js';
 import logger from '../logger.js';
+import cfg from '../config.js';
+import * as utils from '../../utils/utils.js';
 
-function createFanDurationHandler(configKey) {
+function createFanDurationLogic(configKey, publishTopicKey) {
   return function(topic, value) {
     const numericValue = Number(value);
     if (numericValue > 0) {
-      updateStausAndWSBroadcastStatusIfValueChanged(configKey, numericValue);
+      stateManager.update({ [configKey]: numericValue });
+      utils.logAndPublishState(`MQTT->${configKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), numericValue);
     } else {
       logger.error(`MQTT->${configKey}/set: INVALID PAYLOAD RECEIVED: ${value}`);
     }
@@ -14,7 +17,7 @@ function createFanDurationHandler(configKey) {
 }
 
 export const handleFanOnDurationSecsSet = (topic, payload) => 
-  handleMessage(topic, payload, createFanDurationHandler('fanOnDurationSecs'), 'mqtt.fanOnDurationSecsTopic', 'fanOnDurationSecs');
+  handleMessage(topic, payload, createFanDurationLogic('fanOnDurationSecs', 'mqtt.fanOnDurationSecsTopic'));
 
 export const handleFanOffDurationSecsSet = (topic, payload) => 
-  handleMessage(topic, payload, createFanDurationHandler('fanOffDurationSecs'), 'mqtt.fanOffDurationSecsTopic', 'fanOffDurationSecs');
+  handleMessage(topic, payload, createFanDurationLogic('fanOffDurationSecs', 'mqtt.fanOffDurationSecsTopic'));

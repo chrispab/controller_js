@@ -1,25 +1,18 @@
 
 import logger from '../logger.js';
-import cfg from '../config.js';
-import * as utils from '../../utils/utils.js';
-import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 
 /**
- * A generic handler for MQTT messages.
+ * A generic parser for MQTT messages.
+ * It extracts the value from the payload and calls the provided logic.
  *
  * @param {string} topic - The MQTT topic.
  * @param {Buffer} payload - The message payload.
- * @param {Function} logic - The custom logic to execute.
- * @param {string} publishTopicKey - The MQTT topic key for publishing the state.
- * @param {string} controllerStatusKey - The configuration key for not really sure if this is needed.
+ * @param {Function} logic - The custom logic to execute with the parsed value.
  */
-function handleMessage(topic, payload, logic, publishTopicKey, controllerStatusKey) {
+function handleMessage(topic, payload, logic) {
   try {
     const value = payload.toString();
     logic(topic, value);
-    if (publishTopicKey && controllerStatusKey) {
-      utils.logAndPublishState(`${publishTopicKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), value);
-    }
   } catch (error) {
     logger.error(`Error handling MQTT message for topic ${topic}: ${error.message}`, { stack: error.stack });
   }

@@ -8,7 +8,7 @@ import {
   startWebSocketServer,
   webSocketBroadcast,
 } from '../services/webSocketServer.js';
-import { startControlLoop, controllerStatus } from '../controlLoop.js';
+import { startControlLoop } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
 import setpointRoutes from './routes/setpointRoutes.js';

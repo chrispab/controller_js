@@ -1,13 +1,13 @@
 import eventEmitter from '../eventEmitter.js';
-import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { stateManager } from '../../controlLoop.js';
 
 function registerSensorEventHandlers() {
   eventEmitter.on('temperatureChanged', ({ temperature }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('temperature', temperature);
+    stateManager.update({ temperature });
   });
 
   eventEmitter.on('humidityChanged', ({ humidity }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('humidity', humidity);
+    stateManager.update({ humidity });
   });
 }
 

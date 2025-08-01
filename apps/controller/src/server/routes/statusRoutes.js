@@ -1,29 +1,30 @@
 import express from 'express';
-import { controllerStatus } from '../../controlLoop.js';
+import { stateManager } from '../../controlLoop.js';
 
 const router = express.Router();
 
 router.get('/status', (req, res) => {
-  res.json({ message: { ...controllerStatus, highSetpoint: controllerStatus.highSetpoint, lowSetpoint: controllerStatus.lowSetpoint } });
+  const currentState = stateManager.getState();
+  res.json({ message: currentState });
 });
 
 router.get('/soilMoisturePercent', (req, res) => {
-  res.json({ message: controllerStatus.soilMoisturePercent });
+  res.json({ message: stateManager.getState().soilMoisturePercent });
 });
 
 router.get(
   '/mqtt/soil1/sensor_method5_batch_moving_average_float',
   (req, res) => {
-    res.json({ message: controllerStatus.SensorSoilMoistureRaw });
+    res.json({ message: stateManager.getState().SensorSoilMoistureRaw });
   },
 );
 
 router.get('/mqtt/irrigationPump/status', (req, res) => {
-  res.json({ message: controllerStatus.irrigationPump });
+  res.json({ message: stateManager.getState().irrigationPump });
 });
 
 router.get('/outside-temperature', (req, res) => {
-  res.json({ message: controllerStatus.outsideTemperature });
+  res.json({ message: stateManager.getState().outsideTemperature });
 });
 
 export default router;
