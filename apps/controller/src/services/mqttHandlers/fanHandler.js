@@ -1,10 +1,10 @@
 import logger from '../logger.js';
 import cfg from '../config.js';
 import * as utils from '../../utils/utils.js';
-import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 
 /**
- * Generic handler for MQTT payloads related to vent settings.
+ * Generic handler for incoming MQTT payloads related to fan settings.
  * It parses the payload payload as a number, validates it, and then updates the configuration.
  * The value is converted from seconds to milliseconds before being stored in the configuration.
  * @param {string} receivedTopic - The MQTT topic the payload was received on.
@@ -16,15 +16,14 @@ function handleFan(receivedTopic, payload, controllerStatusKey, publishTopicKey)
   const value = Number(payload.toString());
 
   //insert logging statement
-  logger.warn(
-    '..........receivedTopic: ' + receivedTopic + ' payload: ' + payload + ' configKey: ' + controllerStatusKey + ' publishTopicKey: ' + publishTopicKey,
-  );
+  logger.warn('receivedTopic: ' + receivedTopic + ' payload: ' + payload + ' configKey: ' + controllerStatusKey + ' publishTopicKey: ' + publishTopicKey);
 
   if (value > 0) {
+    //log the
     utils.logAndPublishState(`${controllerStatusKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), `${value}*1000`);
-    cfg.set(controllerStatusKey, value);
+    // cfg.set(controllerStatusKey, value);
     // update controller frontend to show the new value recieved
-    updateAndBroadcastStatusIfValueChanged(controllerStatusKey, value);
+    updateStausAndWSBroadcastStatusIfValueChanged(controllerStatusKey, value);
   } else {
     logger.error(`MQTT->${controllerStatusKey}/set: INVALID PAYLOAD RECEIVED: ${payload}`);
   }

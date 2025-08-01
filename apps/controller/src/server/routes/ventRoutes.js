@@ -1,5 +1,5 @@
 import express from 'express';
-import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 import mqttAgent from '../../services/mqttAgent.js';
 import cfg from '../../services/config.js';
 import { controllerStatus } from '../../controlLoop.js';
@@ -15,10 +15,10 @@ router.post('/vent/onDurationSecs', (req, res) => {
 
   // Update controllerStatus and config based on period
   if (period === 'day') {
-    updateAndBroadcastStatusIfValueChanged('ventOnDurationDaySecs', value);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOnDurationDaySecs', value);
     cfg.set('vent.onDurationMs.day', value * 1000);
   } else if (period === 'night') {
-    updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', value);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOnDurationNightSecs', value);
     cfg.set('vent.onDurationMs.night', value * 1000);
   }
 
@@ -46,10 +46,10 @@ router.post('/vent/offDurationSecs', (req, res) => {
 
   // Update controllerStatus and config based on period
   if (period === 'day') {
-    updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', value);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationDaySecs', value);
     cfg.set('vent.offDurationMs.day', value * 1000);
   } else if (period === 'night') {
-    updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', value);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationNightSecs', value);
     cfg.set('vent.offDurationMs.night', value * 1000);
   }
 

@@ -1,4 +1,4 @@
-import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 import logger from '../logger.js';
 import cfg from '../config.js';
 import mqttAgent from '../mqttAgent.js';
@@ -16,7 +16,7 @@ export default function handleOutsideSensor(topic, message) {
 
     // logger.error(`MQTT->handleOutsideSensor called with message temperature read: ${temperature}`);
     if (typeof temperature !== 'undefined') {
-      updateAndBroadcastStatusIfValueChanged('outsideTemperature', temperature);
+      updateStausAndWSBroadcastStatusIfValueChanged('outsideTemperature', temperature);
     } else {
       logger.error(
         `MQTT->Outside_Sensor: Could not extract temperature from payload: ${message.toString()}`,

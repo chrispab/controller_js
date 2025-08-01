@@ -1,5 +1,5 @@
 import express from 'express';
-import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 import mqttAgent from '../../services/mqttAgent.js';
 import cfg from '../../services/config.js';
 import { controllerStatus } from '../../controlLoop.js';
@@ -12,7 +12,7 @@ router.post('/setpoint/highSetpoint', (req, res) => {
   console.log(`Received high setpoint value: ${value}`);
   const topic = cfg.getWithMQTTPrefix(`mqtt.highSetpointTopic`);
   mqttAgent.client.publish(topic, value.toString());
-  updateAndBroadcastStatusIfValueChanged('highSetpoint', value);
+  updateStausAndWSBroadcastStatusIfValueChanged('highSetpoint', value);
   cfg.set('zone.highSetpoint', value);
   res.status(200).send({ message: 'OK' });
 });
@@ -22,7 +22,7 @@ router.post('/setpoint/lowSetpoint', (req, res) => {
   console.log(`Received low setpoint value: ${value}`);
   const topic = cfg.getWithMQTTPrefix(`mqtt.lowSetpointTopic`);
   mqttAgent.client.publish(topic, value.toString());
-  updateAndBroadcastStatusIfValueChanged('lowSetpoint', value);
+  updateStausAndWSBroadcastStatusIfValueChanged('lowSetpoint', value);
   cfg.set('zone.lowSetpoint', value);
   res.status(200).send({ message: 'OK' });
 });
@@ -54,10 +54,10 @@ router.get('/setpoint', (req, res) => {
 
 //   // Update controllerStatus and config based on period
 //   if (period === 'day') {
-//     updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', value);
+//     updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationDaySecs', value);
 //     cfg.set('vent.offDurationMs.day', value * 1000);
 //   } else if (period === 'night') {
-//     updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', value);
+//     updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationNightSecs', value);
 //     cfg.set('vent.offDurationMs.night', value * 1000);
 //   }
 

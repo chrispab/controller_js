@@ -1,7 +1,7 @@
 import logger from '../logger.js';
 import cfg from '../config.js';
 import * as utils from '../../utils/utils.js';
-import { updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 
 /**
  * Generic handler for MQTT payloads related to vent settings.
@@ -24,7 +24,7 @@ function handleVent(receivedTopic, payload, controllerStatusKey, publishTopicKey
     utils.logAndPublishState(`${controllerStatusKey}: `, cfg.getWithMQTTPrefix(publishTopicKey), `${value}*1000`);
     cfg.set(controllerStatusKey, value);
     // update controller frontend to show the new value recieved
-    updateAndBroadcastStatusIfValueChanged(controllerStatusKey, value);
+    updateStausAndWSBroadcastStatusIfValueChanged(controllerStatusKey, value);
   } else {
     logger.error(`MQTT->${controllerStatusKey}/set: INVALID PAYLOAD RECEIVED: ${payload}`);
   }

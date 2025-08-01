@@ -1,7 +1,7 @@
 import logger from '../logger.js';
 import cfg from '../config.js';
 import * as utils from '../../utils/utils.js';
-import { controllerStatus, updateAndBroadcastStatusIfValueChanged } from '../../controlLoop.js';
+import { controllerStatus, updateStausAndWSBroadcastStatusIfValueChanged } from '../../controlLoop.js';
 
 /**
  * Handles MQTT messages for setting a temperature setpoint.
@@ -24,14 +24,14 @@ function handleSetpoint(recievedTopic, payload, configKey, publishTopicKey) {
     //determine if setting hi or low setpoint
     if (configKey === 'zone.highSetpoint') {
       controllerStatus.highSetpoint = value;
-      updateAndBroadcastStatusIfValueChanged('highSetpoint', value);
+      updateStausAndWSBroadcastStatusIfValueChanged('highSetpoint', value);
     } else if (configKey === 'zone.lowSetpoint') {
       controllerStatus.lowSetpoint = value;
-      updateAndBroadcastStatusIfValueChanged('lowSetpoint', value);
+      updateStausAndWSBroadcastStatusIfValueChanged('lowSetpoint', value);
     }
 
     // update controller frontend to show the new value recieved
-    // updateAndBroadcastStatusIfValueChanged('controllerStatusKey', value);
+    // updateStausAndWSBroadcastStatusIfValueChanged('controllerStatusKey', value);
   } else {
     logger.error(`MQTT->${configKey}/set: INVALID non-numeric PAYLOAD RECEIVED: ${payload}`);
   }

@@ -52,7 +52,7 @@ let previousStatus = { ...controllerStatus };
  * @param {string} controllerStatusKey - The key in the controller status to update.
  * @param {*} newValue - The new value to set for the specified key.
  */
-function updateAndBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
+function updateStausAndWSBroadcastStatusIfValueChanged(controllerStatusKey, newValue) {
   // logger.warn();
   if (controllerStatus[controllerStatusKey] !== newValue) {
     controllerStatus[controllerStatusKey] = newValue;
@@ -74,55 +74,55 @@ function startControlLoop() {
   logger.info('Components initialized.');
 
   // mark pump as off - dummy setting pump not yet implemented
-  updateAndBroadcastStatusIfValueChanged('irrigationPump', false);
+  updateStausAndWSBroadcastStatusIfValueChanged('irrigationPump', false);
 
   // --- Setup Event Listeners to Update Global Status ---
   eventEmitter.on('temperatureChanged', ({ temperature }) => {
-    updateAndBroadcastStatusIfValueChanged('temperature', temperature);
+    updateStausAndWSBroadcastStatusIfValueChanged('temperature', temperature);
   });
 
   eventEmitter.on('humidityChanged', ({ humidity }) => {
-    updateAndBroadcastStatusIfValueChanged('humidity', humidity);
+    updateStausAndWSBroadcastStatusIfValueChanged('humidity', humidity);
   });
 
   eventEmitter.on('lightStateChanged', ({ lightState }) => {
-    updateAndBroadcastStatusIfValueChanged('light', lightState);
+    updateStausAndWSBroadcastStatusIfValueChanged('light', lightState);
     // Update setpoint when light state changes
     const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
-    updateAndBroadcastStatusIfValueChanged('setpoint', newSetpoint);
+    updateStausAndWSBroadcastStatusIfValueChanged('setpoint', newSetpoint);
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
 
   //fan event handlers
   eventEmitter.on('fan/started', ({ name }) => {
-    updateAndBroadcastStatusIfValueChanged('fan', true);
+    updateStausAndWSBroadcastStatusIfValueChanged('fan', true);
     utils.logAndPublishState('Event fan/started', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 1);
   });
 
   eventEmitter.on('fan/stopped', ({ name }) => {
-    updateAndBroadcastStatusIfValueChanged('fan', false);
+    updateStausAndWSBroadcastStatusIfValueChanged('fan', false);
     utils.logAndPublishState('Event fan/stopped', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 0);
   });
 
   // handle fan duration change
   eventEmitter.on('fan/on-duration-changed', ({ onMs }) => {
-    updateAndBroadcastStatusIfValueChanged('fanOnDurationSecs', onMs / 1000);
+    updateStausAndWSBroadcastStatusIfValueChanged('fanOnDurationSecs', onMs / 1000);
     utils.logAndPublishState('Event fan/on-duration-changed: ', cfg.getWithMQTTPrefix('fan.onMs'), onMs);
   });
 
   eventEmitter.on('fan/off-duration-changed', ({ offMs }) => {
-    updateAndBroadcastStatusIfValueChanged('fanOffDurationSecs', offMs / 1000);
+    updateStausAndWSBroadcastStatusIfValueChanged('fanOffDurationSecs', offMs / 1000);
     utils.logAndPublishState('Event fan/off-duration-changed: ', cfg.getWithMQTTPrefix('fan.offMs'), offMs);
   });
 
   eventEmitter.on('heaterStateChanged', ({ state }) => {
-    updateAndBroadcastStatusIfValueChanged('heater', state);
+    updateStausAndWSBroadcastStatusIfValueChanged('heater', state);
   });
 
   eventEmitter.on('ventStateChanged', ({ state }) => {
-    updateAndBroadcastStatusIfValueChanged('ventTotal', state);
-    updateAndBroadcastStatusIfValueChanged('ventPower', state > 0 ? 1 : 0);
-    updateAndBroadcastStatusIfValueChanged('ventSpeed', state === 2 ? 1 : 0);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventTotal', state);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventPower', state > 0 ? 1 : 0);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventSpeed', state === 2 ? 1 : 0);
   });
 
   // --- Periodic Services ---
@@ -130,11 +130,11 @@ function startControlLoop() {
   setInterval(() => mqttAgent.process(), 5000); // Process MQTT Agent periodically
 
   setInterval(() => {
-    updateAndBroadcastStatusIfValueChanged('ventOnDurationDaySecs', cfg.get('vent.onDurationMs.day') / 1000);
-    updateAndBroadcastStatusIfValueChanged('ventOffDurationDaySecs', cfg.get('vent.offDurationMs.day') / 1000);
-    updateAndBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
-    updateAndBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
-    // updateAndBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOnDurationDaySecs', cfg.get('vent.onDurationMs.day') / 1000);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationDaySecs', cfg.get('vent.offDurationMs.day') / 1000);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOnDurationNightSecs', cfg.get('vent.onDurationMs.night') / 1000);
+    updateStausAndWSBroadcastStatusIfValueChanged('ventOffDurationNightSecs', cfg.get('vent.offDurationMs.night') / 1000);
+    // updateStausAndWSBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
   }, 1000);
 
   //instead listen for events like  ventDurationChanged
@@ -146,4 +146,4 @@ function startControlLoop() {
   logger.info('Event-driven control loop started.');
 }
 
-export { startControlLoop, controllerStatus, updateAndBroadcastStatusIfValueChanged };
+export { startControlLoop, controllerStatus, updateStausAndWSBroadcastStatusIfValueChanged };
