@@ -13,6 +13,11 @@ function setIrrigationPumpState(topic, value) {
   updateStausAndWSBroadcastStatusIfValueChanged('irrigationPump', value === 'ON');
 }
 
-export const handleSensorSoilMoistureRaw = (topic, payload) => handleMessage(topic, payload, setRawSoilMoisture);
-export const handleSoilMoisturePercent = (topic, payload) => handleMessage(topic, payload, setSoilMoisturePercent);
-export const handleIrrigationPumpState = (topic, payload) => handleMessage(topic, payload, setIrrigationPumpState);
+export const handleSensorSoilMoistureRaw = (topic, payload) => 
+  handleMessage(topic, payload, setRawSoilMoisture, 'mqtt.sensorSoilMoistureRawTopic', 'SensorSoilMoistureRaw');
+
+export const handleSoilMoisturePercent = (topic, payload) => 
+  handleMessage(topic, payload, setSoilMoisturePercent, 'mqtt.soilMoisturePercentTopic', 'soilMoisturePercent');
+
+export const handleIrrigationPumpState = (topic, payload) => 
+  handleMessage(topic, payload, setIrrigationPumpState, 'mqtt.irrigationPumpStateTopic', 'irrigationPump');

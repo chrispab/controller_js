@@ -1,8 +1,8 @@
-export { default as handleOutsideSensor } from './outsideSensorHandler.js';
+export { default as handleOutsideSensor } from './outsideSensorMQTTHandler.js';
 export {
   handleHighSetpointSet,
   handleLowSetpointSet,
-} from './setpointHandler.js';
+} from './setpointMQTTHandler.js';
 
 // Export vent-related MQTT message handlers
 export {
@@ -10,13 +10,13 @@ export {
   handleVentOffDurationDaySecsSet,
   handleVentOnDurationNightSecsSet,
   handleVentOffDurationNightSecsSet,
-} from './ventHandler.js';
+} from './ventMQTTHandler.js';
 
 // Export fan-related MQTT message handlers
 export {
   handleFanOnDurationSecsSet,
   handleFanOffDurationSecsSet,
-} from './fanHandler.js';
+} from './fanMQTTHandler.js';
 
 
 // water and moisture message handlers
@@ -24,4 +24,4 @@ export {
   handleSensorSoilMoistureRaw,
   handleSoilMoisturePercent,
   handleIrrigationPumpState,
-} from './waterHandler.js';
+} from './waterMQTTHandler.js';

@@ -63,6 +63,8 @@ function updateStausAndWSBroadcastStatusIfValueChanged(controllerStatusKey, newV
   }
 }
 
+import registerEventHandlers from './services/eventHandlers/index.js';
+
 function startControlLoop() {
   // --- Initialize Components ---
   // These are now autonomous. They will manage their own state and cycles.
@@ -76,54 +78,8 @@ function startControlLoop() {
   // mark pump as off - dummy setting pump not yet implemented
   updateStausAndWSBroadcastStatusIfValueChanged('irrigationPump', false);
 
-  // --- Setup Event Listeners to Update Global Status ---
-  eventEmitter.on('temperatureChanged', ({ temperature }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('temperature', temperature);
-  });
-
-  eventEmitter.on('humidityChanged', ({ humidity }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('humidity', humidity);
-  });
-
-  eventEmitter.on('lightStateChanged', ({ lightState }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('light', lightState);
-    // Update setpoint when light state changes
-    const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
-    updateStausAndWSBroadcastStatusIfValueChanged('setpoint', newSetpoint);
-    mqttAgent.setactiveSetpoint(newSetpoint);
-  });
-
-  //fan event handlers
-  eventEmitter.on('fan/started', ({ name }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('fan', true);
-    utils.logAndPublishState('Event fan/started', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 1);
-  });
-
-  eventEmitter.on('fan/stopped', ({ name }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('fan', false);
-    utils.logAndPublishState('Event fan/stopped', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 0);
-  });
-
-  // handle fan duration change
-  eventEmitter.on('fan/on-duration-changed', ({ onMs }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('fanOnDurationSecs', onMs / 1000);
-    utils.logAndPublishState('Event fan/on-duration-changed: ', cfg.getWithMQTTPrefix('fan.onMs'), onMs);
-  });
-
-  eventEmitter.on('fan/off-duration-changed', ({ offMs }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('fanOffDurationSecs', offMs / 1000);
-    utils.logAndPublishState('Event fan/off-duration-changed: ', cfg.getWithMQTTPrefix('fan.offMs'), offMs);
-  });
-
-  eventEmitter.on('heaterStateChanged', ({ state }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('heater', state);
-  });
-
-  eventEmitter.on('ventStateChanged', ({ state }) => {
-    updateStausAndWSBroadcastStatusIfValueChanged('ventTotal', state);
-    updateStausAndWSBroadcastStatusIfValueChanged('ventPower', state > 0 ? 1 : 0);
-    updateStausAndWSBroadcastStatusIfValueChanged('ventSpeed', state === 2 ? 1 : 0);
-  });
+  // --- Setup Event Listeners ---
+  registerEventHandlers();
 
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000); // Check for config changes
@@ -137,13 +93,8 @@ function startControlLoop() {
     // updateStausAndWSBroadcastStatusIfValueChanged('outsideTemperature', mqttAgent.outsideTemperature);
   }, 1000);
 
-  //instead listen for events like  ventDurationChanged
-  eventEmitter.on('ventDurationChanged', ({ period, duration }) => {
-    if (period === 'day') {
-    }
-  });
-
   logger.info('Event-driven control loop started.');
 }
+
 
 export { startControlLoop, controllerStatus, updateStausAndWSBroadcastStatusIfValueChanged };
