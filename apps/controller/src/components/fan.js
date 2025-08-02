@@ -52,12 +52,6 @@ export default class Fan {
 
       this.IOPin.writeIO(newState ? 1 : 0);
 
-      // logger.log(logLevel, `>>>>>>>>${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
-      // logger.log(
-      //   logLevel,
-      //   `--------this.IOPin.writeIO(newState ? 1 : 0) - ${this.getName()} is ${newState ? 1 : 0}`,
-      // );
-
       // Emit specific events on the central bus
       if (newState) {
         eventEmitter.emit('fan/started', { name: this.getName(), newState: newState });
@@ -65,12 +59,6 @@ export default class Fan {
         eventEmitter.emit('fan/stopped', { name: this.getName(), newState: newState });
       }
 
-      // Publish state change to MQTT
-      // utils.logAndPublishState(
-      //   'FFFFFFFFFFF  Fan stateupdate',
-      //   cfg.getWithMQTTPrefix('mqtt.fanStateTopic'),
-      //   newState ? 1 : 0,
-      // );
     }
   }
 
