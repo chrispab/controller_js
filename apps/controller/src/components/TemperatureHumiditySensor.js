@@ -2,7 +2,7 @@ import IOBase from './IOBase.js';
 import os from 'os';
 import sensor from 'node-dht-sensor';
 import logger from '../services/logger.js';
-import cfg from '../services/config.js';
+import dataStore from '../services/dataStore.js';
 import * as utils from '../utils/utils.js';
 import eventEmitter from '../services/eventEmitter.js';
 
@@ -10,15 +10,15 @@ const logLevel = 'debug';
 
 export default class TemperatureHumiditySensor {
   constructor(name, dhtSensorPin) {
-    this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
+    this.powerPin = new IOBase(dataStore.get('config.hardware.powerPin.pin'), 'out', 1);
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
-    this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
+    this.dhtSensorType = dataStore.get('config.hardware.dhtSensor.type');
     this.dhtSensorPin = dhtSensorPin;
     this.temperature = null;
     this.humidity = null;
-    this.sensorReadIntervalMs = cfg.get('temperatureSensor.sensorReadIntervalMs');
-    this.periodicPublishIntervalMs = cfg.get('temperatureSensor.periodicPublishIntervalMs');
+    this.sensorReadIntervalMs = dataStore.get('config.temperatureSensor.sensorReadIntervalMs');
+    this.periodicPublishIntervalMs = dataStore.get('config.temperatureSensor.periodicPublishIntervalMs');
 
     logger.info(`HostName: ${os.hostname()}`);
     if (os.hostname() !== 'zone3' && os.hostname() !== 'zone1') {
@@ -41,10 +41,10 @@ export default class TemperatureHumiditySensor {
 
   periodicPublication() {
     if (this.getTemperature() !== null) {
-      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
+      utils.logAndPublishState('Temperature Sensor P', dataStore.getWithMQTTPrefix('config.mqtt.temperatureStateTopic'), `${this.getTemperature()}`);
     }
     if (this.getHumidity() !== null) {
-      utils.logAndPublishState('Temperature Sensor P', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), `${this.getHumidity()}`);
+      utils.logAndPublishState('Temperature Sensor P', dataStore.getWithMQTTPrefix('config.mqtt.humidityStateTopic'), `${this.getHumidity()}`);
     }
   }
 
@@ -61,7 +61,7 @@ export default class TemperatureHumiditySensor {
             logger.debug(`Temperature changed from ${oldTemp}°C to ${newTemp}°C`);
             eventEmitter.emit( 'THSensor/temperature/new-reading', { temperature: newTemp });
             // eventEmitter.emit('fan/on-duration-changed', { name: this.getName(), onMs: newOnMs, });
-            // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), newTemp);
+            // utils.logAndPublishState('Temp Sensor', dataStore.getWithMQTTPrefix('config.mqtt.temperatureStateTopic'), newTemp);
           }
 
           if (newHum !== this.getHumidity()) {
@@ -69,7 +69,7 @@ export default class TemperatureHumiditySensor {
             this.setHumidity(newHum);
             logger.debug(`Humidity changed from ${oldHum}% to ${newHum}%`);
             eventEmitter.emit('THSensor/humidity/new-reading', { humidity: newHum });
-            // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), newHum);
+            // utils.logAndPublishState('Temp Sensor', dataStore.getWithMQTTPrefix('config.mqtt.humidityStateTopic'), newHum);
           }
         } else {
           logger.error('Failed to read from DHT sensor: ' + err);

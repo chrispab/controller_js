@@ -1,12 +1,12 @@
 import eventEmitter from '../eventEmitter.js';
-import { stateManager } from '../../controlLoop.js';
-import cfg from '../config.js';
+import dataStore from '../dataStore.js';
 import mqttAgent from '../mqttAgent.js';
 
 function registerLightEventHandlers() {
   eventEmitter.on('lightStateChanged', ({ lightState }) => {
-    const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
-    stateManager.update({ light: lightState, setpoint: newSetpoint });
+    const newSetpoint = lightState ? dataStore.get('config.zone.highSetpoint') : dataStore.get('config.zone.lowSetpoint');
+    dataStore.set('state.light', lightState);
+    dataStore.set('state.setpoint', newSetpoint);
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
 }

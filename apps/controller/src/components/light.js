@@ -1,6 +1,6 @@
 import IOBase from './IOBase.js';
 import { Gpio } from 'onoff';
-import cfg from '../services/config.js';
+import dataStore from '../services/dataStore.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
 import eventEmitter from '../services/eventEmitter.js';
@@ -17,8 +17,8 @@ export default class Light {
     this.RCLoopCount = 0;
     this.currentlySamplingLightSensor = false;
 
-    this.sensorReadIntervalMs = cfg.get('light.sensorReadIntervalMs');
-    this.periodicPublishIntervalMs = cfg.get('light.periodicPublishIntervalMs');
+    this.sensorReadIntervalMs = dataStore.get('config.light.sensorReadIntervalMs');
+    this.periodicPublishIntervalMs = dataStore.get('config.light.periodicPublishIntervalMs');
 
     // Start autonomous operation
     this.readLightSensorState(); // Initial read
@@ -32,13 +32,13 @@ export default class Light {
       this.setState(newState);
       logger.debug(`Light state changed from ${oldState} to ${newState}`);
       eventEmitter.emit('lightStateChanged', { lightState: newState });
-      utils.logAndPublishState('Light', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), newState ? 1 : 0);
+      utils.logAndPublishState('Light', dataStore.getWithMQTTPrefix('config.mqtt.lightStateTopic'), newState ? 1 : 0);
     }
   }
 
   periodicPublication() {
     if (this.getState() !== null) {
-      utils.logAndPublishState('Light P', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), this.getState());
+      utils.logAndPublishState('Light P', dataStore.getWithMQTTPrefix('config.mqtt.lightStateTopic'), this.getState());
     }
   }
 

@@ -1,5 +1,5 @@
 import IOBase from './IOBase.js';
-import cfg from '../services/config.js';
+import dataStore from '../services/dataStore.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
 import eventEmitter from '../services/eventEmitter.js';
@@ -10,11 +10,11 @@ export default class Fan {
   constructor(name, fanPin) {
     this.IOPin = new IOBase(fanPin, 'out', 0);
     this.setName(name);
-    this.setOnMs(cfg.get('fan.onMs'));
-    this.setOffMs(cfg.get('fan.offMs'));
+    this.setOnMs(dataStore.get('config.fan.onMs'));
+    this.setOffMs(dataStore.get('config.fan.offMs'));
     this.prevStateChangeMs = Date.now() - this.getOffMs(); // Assume it was off before starting
 
-    const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
+    const periodicPublishIntervalMs = dataStore.get('config.fan.periodicPublishIntervalMs');
 
     // Start autonomous operation
     setInterval(() => this.controlCycle(), 1000); // Check every second
@@ -64,13 +64,13 @@ export default class Fan {
 
   periodicPublication() {
     // Reload settings in case they were changed in config file
-    this.setOnMs(cfg.get('fan.onMs'));
-    this.setOffMs(cfg.get('fan.offMs'));
+    this.setOnMs(dataStore.get('config.fan.onMs'));
+    this.setOffMs(dataStore.get('config.fan.offMs'));
 
     // Publish current state and settings periodically
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
+    utils.logAndPublishState('Fan P', dataStore.getWithMQTTPrefix('config.mqtt.fanStateTopic'), this.getState());
+    utils.logAndPublishState('Fan P', dataStore.getWithMQTTPrefix('config.mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
+    utils.logAndPublishState('Fan P', dataStore.getWithMQTTPrefix('config.mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
   }
 }
 

@@ -1,5 +1,5 @@
 import logger from './logger.js';
-import cfg from './config.js';
+import dataStore from './dataStore.js';
 
 import wifi from 'node-wifi';
 import mqtt from 'mqtt';
@@ -25,25 +25,25 @@ class MqttAgent {
       this.name = 'mqttAgent';
       this.options = {
         will: {
-          topic: cfg.getWithMQTTPrefix('mqtt.LWTTopic'),
+          topic: dataStore.getWithMQTTPrefix('config.mqtt.LWTTopic'),
           retain: true,
           qos: 2,
           payload: 'Offline',
         },
       };
-      this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);
+      this.client = mqtt.connect(dataStore.get('config.mqtt.brokerUrl'), this.options);
       this.processCount = 0;
-      this.telemetryIntervalMs = cfg.get('telemetry.interval');
+      this.telemetryIntervalMs = dataStore.get('config.telemetry.interval');
       this.lastTelemetryMs = Date.now() - this.telemetryIntervalMs;
       this.logLevel = 'info';
-      this.highSetpoint = cfg.get('zone.highSetpoint');
-      this.lowSetpoint = cfg.get('zone.lowSetpoint');
-      this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
+      this.highSetpoint = dataStore.get('config.zone.highSetpoint');
+      this.lowSetpoint = dataStore.get('config.zone.lowSetpoint');
+      this.periodicPublishIntervalMs = dataStore.get('config.zone.periodicPublishIntervalMs');
       this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
       this.outsideTemperature = 7;
       this.activeSetpoint = 0;
-      this.version = cfg.get('version');
-      this.zoneName = cfg.get('zone.name');
+      this.version = dataStore.get('config.version');
+      this.zoneName = dataStore.get('config.zone.name');
     } catch (error) {
       logger.error(`Error in MqttAgent constructor: ${error.message}`, {
         stack: error.stack,
@@ -69,7 +69,7 @@ class MqttAgent {
 
       this.reloadSettingsIfChanged();
 
-      if (cfg.get('zone.telemetry.enabled') == true) {
+      if (dataStore.get('config.zone.telemetry.enabled') == true) {
         this.doTelemetry(components);
       } else {
         // logger.info("globally disabled telemetry")
@@ -89,14 +89,14 @@ class MqttAgent {
    */
   reloadSettingsIfChanged() {
     try {
-      if (this.highSetpoint != cfg.get('zone.highSetpoint')) {
-        this.highSetpoint = cfg.get('zone.highSetpoint');
-        utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${this.highSetpoint}`);
+      if (this.highSetpoint != dataStore.get('config.zone.highSetpoint')) {
+        this.highSetpoint = dataStore.get('config.zone.highSetpoint');
+        utils.logAndPublishState('mqttAgent R', dataStore.getWithMQTTPrefix('config.mqtt.highSetpointTopic'), `${this.highSetpoint}`);
         logger.debug(`highSetpoint changed to ${this.highSetpoint}`);
       }
-      if (this.lowSetpoint != cfg.get('zone.lowSetpoint')) {
-        this.lowSetpoint = cfg.get('zone.lowSetpoint');
-        utils.logAndPublishState('mqttAgent R', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${this.lowSetpoint}`);
+      if (this.lowSetpoint != dataStore.get('config.zone.lowSetpoint')) {
+        this.lowSetpoint = dataStore.get('config.zone.lowSetpoint');
+        utils.logAndPublishState('mqttAgent R', dataStore.getWithMQTTPrefix('config.mqtt.lowSetpointTopic'), `${this.lowSetpoint}`);
         logger.debug(`lowSetpoint changed to ${this.lowSetpoint}`);
       }
     } catch (error) {
@@ -109,7 +109,7 @@ class MqttAgent {
       if (this.lastTelemetryMs + this.telemetryIntervalMs < Date.now()) {
         this.lastTelemetryMs = Date.now();
         const data = this.getTelemetryData(components);
-        utils.logAndPublishState('mqttdoTelemetry', cfg.getWithMQTTPrefix('mqtt.telemetryTopic'), data);
+        utils.logAndPublishState('mqttdoTelemetry', dataStore.getWithMQTTPrefix('config.mqtt.telemetryTopic'), data);
       }
     } catch (error) {
       logger.error(`Error in MqttAgent doTelemetry: ${error.message}`, {
@@ -123,13 +123,13 @@ class MqttAgent {
       if (Date.now() >= this.lastPeriodicPublishedMs + this.periodicPublishIntervalMs) {
         this.lastPeriodicPublishedMs = Date.now();
         // highSetpoint
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.highSetpointTopic'), `${cfg.get('zone.highSetpoint')}`);
+        utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.highSetpointTopic'), `${dataStore.get('config.zone.highSetpoint')}`);
         // lowSetpoint
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.lowSetpointTopic'), `${cfg.get('zone.lowSetpoint')}`);
+        utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.lowSetpointTopic'), `${dataStore.get('config.zone.lowSetpoint')}`);
         // activeSetpoint
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.activeSetpointTopic'), this.activeSetpoint);
+        utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.activeSetpointTopic'), this.activeSetpoint);
         //version
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.versionTopic'), this.version);
+        utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.versionTopic'), this.version);
 
         //publish wifi info
         wifi.getCurrentConnections((error, currentConnections) => {
@@ -137,13 +137,13 @@ class MqttAgent {
             // console.log(error);
             logger.error('getCurrentConnections error', { error });
           } else {
-            utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.rssiTopic'), `${currentConnections[0].quality}`);
+            utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.rssiTopic'), `${currentConnections[0].quality}`);
           }
         });
 
         //send heartbeat mqtt
-        // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
+        // this.client.publish(dataStore.getWithMQTTPrefix('config.mqtt.heartbeatTopic'),'GGG');
+        utils.logAndPublishState('mqtt P', dataStore.getWithMQTTPrefix('config.mqtt.heartbeatTopic'), 'GGG');
       }
     } catch (error) {
       logger.error(`Error in MqttAgent periodicPublication: ${error.message}`, {
@@ -184,21 +184,21 @@ mqttAgent.client.on('connect', function () {
 
   // mqtt subscriptions
   mqttAgent.client.subscribe([
-    cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic'),
-    cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic'),
-    cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
-    cfg.get('mqtt.soilMoisturePercentTopic'), //has no zone prefix
+    dataStore.getWithMQTTPrefix('config.mqtt.highSetpointSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.lowSetpointSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.ventOnDurationDaySecsSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.ventOffDurationDaySecsSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.ventOnDurationNightSecsSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.ventOffDurationNightSecsSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.fanOnDurationSecsSetTopic'),
+    dataStore.getWithMQTTPrefix('config.mqtt.fanOffDurationSecsSetTopic'),
+    dataStore.get('config.mqtt.outsideSensorTopic'), //has no zone prefix
+    dataStore.get('config.mqtt.soilMoisturePercentTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
     'irrigationPump/status',
   ]);
 
-  mqttAgent.client.publish(cfg.getWithMQTTPrefix('mqtt.LWTTopic'), 'Online', {
+  mqttAgent.client.publish(dataStore.getWithMQTTPrefix('config.mqtt.LWTTopic'), 'Online', {
     qos: 0,
     retain: true,
   });
@@ -214,7 +214,7 @@ mqttAgent.client.on('packetsend', function () {
   // client.publish("a/", "wss secure connection demo...!", { qos: 0, retain: false });
   // client.end();
   // mqttAgent.client.subscribe(['Zone1/#', 'Zone2/#', 'Zone3/#']);
-  // mqttAgent.client.publish(cfg.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
+  // mqttAgent.client.publish(dataStore.get("mqtt.topicPrefix") + "/LWT", "Online", { qos: 0, retain: true });
 });
 
 mqttAgent.client.on('error', function (err) {
@@ -230,18 +230,18 @@ import * as handlers from './mqttHandlers/index.js';
  * @type {Object.<string, Function>}
  */
 const topicHandlers = {
-  [cfg.getWithMQTTPrefix('mqtt.highSetpointSetTopic')]: handlers.handleHighSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpointSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationDaySecsSetTopic')]: handlers.handleVentOnDurationDaySecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic')]: handlers.handleFanOnDurationSecsSet,
-  [cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic')]: handlers.handleFanOffDurationSecsSet,
-  [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
-  [cfg.get('mqtt.sensorSoilMoistureRawTopic')]: handlers.handleSensorSoilMoistureRaw,
-  [cfg.get('mqtt.soilMoisturePercentTopic')]: handlers.handleSoilMoisturePercent,
-  [cfg.get('mqtt.irrigationPumpStateTopic')]: handlers.handleIrrigationPumpState,
+  [dataStore.getWithMQTTPrefix('config.mqtt.highSetpointSetTopic')]: handlers.handleHighSetpointSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.lowSetpointSetTopic')]: handlers.handleLowSetpointSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.ventOnDurationDaySecsSetTopic')]: handlers.handleVentOnDurationDaySecsSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.ventOffDurationDaySecsSetTopic')]: handlers.handleVentOffDurationDaySecsSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.ventOnDurationNightSecsSetTopic')]: handlers.handleVentOnDurationNightSecsSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.fanOnDurationSecsSetTopic')]: handlers.handleFanOnDurationSecsSet,
+  [dataStore.getWithMQTTPrefix('config.mqtt.fanOffDurationSecsSetTopic')]: handlers.handleFanOffDurationSecsSet,
+  [dataStore.get('config.mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
+  [dataStore.get('config.mqtt.sensorSoilMoistureRawTopic')]: handlers.handleSensorSoilMoistureRaw,
+  [dataStore.get('config.mqtt.soilMoisturePercentTopic')]: handlers.handleSoilMoisturePercent,
+  [dataStore.get('config.mqtt.irrigationPumpStateTopic')]: handlers.handleIrrigationPumpState,
 };
 
 /**

@@ -1,5 +1,5 @@
 import IOBase from './IOBase.js';
-import cfg from '../services/config.js';
+import dataStore from '../services/dataStore.js';
 import logger from '../services/logger.js';
 import { Gpio } from 'onoff';
 import * as utils from '../utils/utils.js';
@@ -14,9 +14,9 @@ export default class Heater {
     this.heatingCycleState = 'INACTIVE'; // INACTIVE, ON, OFF
     this.lastStateChangeMs = 0;
     this.heatOnMs = 0;
-    this.heatOffMs = cfg.get('heater.heatOffMs');
-    this.heater_sp_offset = cfg.get('heater.heater_sp_offset');
-    this.ExternalTDiffMs = cfg.get('heater.ExternalTDiffMs');
+    this.heatOffMs = dataStore.get('config.heater.heatOffMs');
+    this.heater_sp_offset = dataStore.get('config.heater.heater_sp_offset');
+    this.ExternalTDiffMs = dataStore.get('config.heater.ExternalTDiffMs');
 
     // -- Current environmental state --
     this.currentTemp = 20;
@@ -54,7 +54,7 @@ export default class Heater {
       });
       utils.logAndPublishState(
         'Heater',
-        cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'),
+        dataStore.getWithMQTTPrefix('config.mqtt.heaterStateTopic'),
         newState,
       );
     }
@@ -62,8 +62,8 @@ export default class Heater {
 
   controlLogic() {
     const setPoint = this.lightState
-      ? cfg.get('zone.highSetpoint')
-      : cfg.get('zone.lowSetpoint');
+      ? dataStore.get('config.zone.highSetpoint')
+      : dataStore.get('config.zone.lowSetpoint');
     const currentMs = Date.now();
 
     if (this.lightState === true) {
@@ -79,7 +79,7 @@ export default class Heater {
           // Temperature is below setpoint, start a heating cycle
           const externalDiffT =
             (setPoint - this.outsideTemp) * this.ExternalTDiffMs;
-          this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT;
+          this.heatOnMs = dataStore.get('config.heater.heatOnMs') + externalDiffT;
           logger.debug(
             `New heating cycle. Calculated ON time: ${this.heatOnMs}ms`,
           );
