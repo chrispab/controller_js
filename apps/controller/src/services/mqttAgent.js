@@ -44,13 +44,15 @@ class MqttAgent {
       this.activeSetpoint = 0;
       this.version = cfg.get('version');
       this.zoneName = cfg.get('zone.name');
-
-      utils.sendEmail(this.zoneName + ' startup', 'zone startup');
     } catch (error) {
       logger.error(`Error in MqttAgent constructor: ${error.message}`, {
         stack: error.stack,
       });
     }
+  }
+
+  sendStartupEmail() {
+    utils.sendEmail(this.zoneName + ' startup', 'zone startup');
   }
 
   getName() {
@@ -245,7 +247,7 @@ const topicHandlers = {
  * @param {Buffer} message - The payload of the MQTT message.
  */
 mqttAgent.client.on('message', (topic, message) => {
-  logger.info(`MQTT message received. Topic: ${topic}, Message: ${message.toString()}`);
+  // logger.info(`MQTT message received. Topic: ${topic}, Message: ${message.toString()}`);
   const handler = topicHandlers[topic];
   if (handler) {
     try {

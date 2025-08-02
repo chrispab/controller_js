@@ -1,7 +1,7 @@
 import registerFanEventHandlers from './fanEventHandlers.js';
 import registerHeaterEventHandlers from './heaterEventHandlers.js';
 import registerLightEventHandlers from './lightEventHandlers.js';
-import registerSensorEventHandlers from './sensorEventHandlers.js';
+import registerSensorEventHandlers from './temperatureHumiditySensorEventHandlers.js';
 import registerVentEventHandlers from './ventEventHandlers.js';
 
 function registerEventHandlers() {

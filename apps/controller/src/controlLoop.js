@@ -1,6 +1,6 @@
 // src/controlLoop.js
 import Light from './components/light.js';
-import TemperatureSensor from './components/temperatureSensor.js';
+import TemperatureHumiditySensor from './components/TemperatureHumiditySensor.js';
 import Fan from './components/fan.js';
 import Heater from './components/heater.js';
 import Vent from './components/vent.js';
@@ -45,14 +45,15 @@ const initialState = {
 };
 
 export const stateManager = new ImmutableStateManager(initialState);
-
 function startControlLoop() {
   // --- Initialize Components ---
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
   const light = new Light('light', cfg.get('hardware.RC.pin'));
-  const temperatureSensor = new TemperatureSensor('temperature_sensor', cfg.get('hardware.dhtSensor.pin'));
+  const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
+
+  mqttAgent.sendStartupEmail();
   logger.info('Components initialized.');
 
   stateManager.update({ irrigationPump: false });
@@ -62,7 +63,7 @@ function startControlLoop() {
 
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000);
-  setInterval(() => mqttAgent.process(), 5000);
+  // setInterval(() => mqttAgent.process(), 5000);
 
   setInterval(() => {
     stateManager.update({

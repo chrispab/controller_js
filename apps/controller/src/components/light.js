@@ -23,10 +23,7 @@ export default class Light {
     // Start autonomous operation
     this.readLightSensorState(); // Initial read
     setInterval(() => this.readLightSensorState(), this.sensorReadIntervalMs);
-    setInterval(
-      () => this.periodicPublication(),
-      this.periodicPublishIntervalMs,
-    );
+    // setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
   }
 
   updateState(newState) {
@@ -35,21 +32,13 @@ export default class Light {
       this.setState(newState);
       logger.debug(`Light state changed from ${oldState} to ${newState}`);
       eventEmitter.emit('lightStateChanged', { lightState: newState });
-      utils.logAndPublishState(
-        'Light',
-        cfg.getWithMQTTPrefix('mqtt.lightStateTopic'),
-        newState ? 1 : 0,
-      );
+      utils.logAndPublishState('Light', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), newState ? 1 : 0);
     }
   }
 
   periodicPublication() {
     if (this.getState() !== null) {
-      utils.logAndPublishState(
-        'Light P',
-        cfg.getWithMQTTPrefix('mqtt.lightStateTopic'),
-        this.getState(),
-      );
+      utils.logAndPublishState('Light P', cfg.getWithMQTTPrefix('mqtt.lightStateTopic'), this.getState());
     }
   }
 
@@ -92,9 +81,7 @@ export default class Light {
         });
       } else {
         this.RCLoopCount = 111; // Default for demo mode
-        logger.error(
-          `DEMO - Gpio not accessible, returning default RCLoopCount: ${this.RCLoopCount}`,
-        );
+        logger.error(`DEMO - Gpio not accessible, returning default RCLoopCount: ${this.RCLoopCount}`);
         resolve(this.RCLoopCount);
       }
     });
