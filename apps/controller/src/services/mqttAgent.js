@@ -165,6 +165,10 @@ class MqttAgent {
     }
     return componentData.toString();
   }
+
+  publish(topic, message, options) {
+    this.client.publish(topic, message, options);
+  }
 }
 
 //export an instance so single instance can be used

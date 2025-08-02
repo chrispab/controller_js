@@ -1,0 +1,100 @@
+│  > the controller software needs some kind of executive or monitoring function that will do things like initiating periodic MQTT key   │
+│    property publication and performing various other housekeeing functions. Suggest a possible approch that could be used              │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+✦ A good approach would be to create a dedicated systemMonitor.js service. This service would be responsible for handling all periodic
+  and housekeeping tasks, keeping this logic separate from the main control loop and server setup.
+
+  Here's a possible approach:
+
+   1. Create a New Service File:
+      A new file, systemMonitor.js, would be created in apps/controller/src/services/. This keeps it consistent with the existing
+  project structure for services like mqttAgent.js and stateManager.js.
+
+   2. Implement the `SystemMonitor` Class:
+      This class would:
+       * Take dependencies like the mqttAgent and stateManager in its constructor.
+       * Have a start() method to begin its monitoring activities.
+       * Use setInterval to schedule tasks to run at regular intervals.
+
+   3. Define Responsibilities:
+      The SystemMonitor would be responsible for tasks such as:
+       * Periodic MQTT Publishing: On a regular timer (e.g., every 5 minutes), it would fetch the current state from the stateManager and
+         use the mqttAgent to publish key values. This acts as a system heartbeat and ensures external dashboards stay up-to-date.
+       * Health Checks: Periodically check the status of connected hardware or other services.
+       * System Stats Logging: Log key system metrics like memory usage (process.memoryUsage()) or uptime to help diagnose issues.
+
+   4. Integration:
+      The main application entry point (likely apps/controller/src/server/index.js) would be responsible for:
+       * Importing and creating an instance of the SystemMonitor.
+       * Passing the required service instances (like mqttAgent) to its constructor.
+       * Calling the systemMonitor.start() method after all other services have been initialized.
+
+  Here is a conceptual code snippet of what apps/controller/src/services/systemMonitor.js might look like:
+
+    1 import { getLogger } from './logger.js';
+    2 const logger = getLogger('systemMonitor');
+    3 
+    4 const MQTT_PUBLISH_INTERVAL = 300000; // 5 minutes
+    5 const HEALTH_CHECK_INTERVAL = 60000; // 1 minute
+    6 
+    7 class SystemMonitor {
+    8   (mqttAgent, stateManager) {
+    9     this.mqttAgent = mqttAgent;
+   10     this.stateManager = stateManager;
+   11     this.mqttPublishTimer = null;
+   12     this.healthCheckTimer = null;
+   13   }
+   14   r
+   15   start() {
+   16     logger.info('System Monitor starting...');
+   17   t
+   18     // Start periodic MQTT publication
+   19     this.mqttPublishTimer = setInterval(
+   20       () => this.publishMqttState(),
+   21       MQTT_PUBLISH_INTERVAL
+   22     );
+   23 
+   24     // Start periodic health checks
+   25     this.healthCheckTimer = setInterval(
+   26       () => this.performHealthChecks(),
+   27       HEALTH_CHECK_INTERVAL
+   28     );
+   29 
+   30     logger.info('System Monitor started.');
+   31   }
+   32 
+   33   stop() {
+   34     if (this.mqttPublishTimer) {
+   35       clearInterval(this.mqttPublishTimer);
+   36     }
+   37     if (this.healthCheckTimer) {
+   38       clearInterval(this.healthCheckTimer);
+   39     }
+   40     logger.info('System Monitor stopped.');
+   41   }
+   42 
+   43   publishMqttState() {
+   44     const state = this.stateManager.getState();
+   45     logger.info('Publishing full state via MQTT');
+   46     // Example: Publishing heater status
+   47     this.mqttAgent.publish(
+   48       'greenhouse/heater/status',
+   49       JSON.stringify({ isOn: state.heater.isOn })
+   50     );
+   51     // ... publish other key states
+   52   }
+   53 
+   54   performHealthChecks() {
+   55     logger.info('Performing system health checks...');
+   56     // Add logic to check sensor connectivity, etc.
+   57     const memoryUsage = process.memoryUsage();
+   58     logger.info(`Memory Usage: ${Math.round(memoryUsage.rss / 1024 / 1024)} MB`);
+   59   }
+   60 }
+   61 
+   62 export default SystemMonitor;
+
+  This approach encapsulates the monitoring logic, makes it easy to manage, and follows the existing modular design of the application.
+
+  Does this approach sound reasonable? I can create a template for this systemMonitor.js file if you'd like.

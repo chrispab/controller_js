@@ -8,7 +8,7 @@ import {
   startWebSocketServer,
   webSocketBroadcast,
 } from '../services/webSocketServer.js';
-import { startControlLoop } from '../controlLoop.js';
+import { startControlLoop, stateManager } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
 import setpointRoutes from './routes/setpointRoutes.js';
@@ -19,6 +19,8 @@ import { dirname } from 'path';
 
 import mqttAgent from '../services/mqttAgent.js';
 import cfg from '../services/config.js';
+import SystemMonitor from '../services/systemMonitor.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -76,3 +78,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 startControlLoop(webSocketBroadcast);
+
+const systemMonitor = new SystemMonitor(mqttAgent, stateManager);
+systemMonitor.start();
