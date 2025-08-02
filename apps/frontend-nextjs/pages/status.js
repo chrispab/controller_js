@@ -863,6 +863,18 @@ export async function getServerSideProps() {
     const setpointData = await setpointRes.json();
     initialStatus.setpoint = setpointData.message;
 
+    console.log(`Fetching fan on duration from: ${API_URL}/api/fan/onDurationSecs`);
+    const fanOnDurationRes = await fetch(`${API_URL}/api/fan/onDurationSecs`);
+    console.log(`Fan on duration response status: ${fanOnDurationRes.status}`);
+    const fanOnDurationData = await fanOnDurationRes.json();
+    initialStatus.fanOnDurationSecs = fanOnDurationData.message ?? 0;
+
+    console.log(`Fetching fan off duration from: ${API_URL}/api/fan/offDurationSecs`);
+    const fanOffDurationRes = await fetch(`${API_URL}/api/fan/offDurationSecs`);
+    console.log(`Fan off duration response status: ${fanOffDurationRes.status}`);
+    const fanOffDurationData = await fanOffDurationRes.json();
+  initialStatus.fanOffDurationSecs = fanOffDurationData.message ?? 0;
+
   } catch (error) {
     console.error('ZZZZZZZZZZZZZZZZZ  Failed to fetch initial status:', error);
   }

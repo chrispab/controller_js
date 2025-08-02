@@ -42,6 +42,8 @@ const initialState = {
   ventOffDurationNightSecs: null,
   outsideTemperature: null,
   activeSetpoint: null,
+  fanOnDurationSecs: cfg.get('fan.onMs')/1000,
+  fanOffDurationSecs: cfg.get('fan.offMs')/1000,
 };
 
 export const stateManager = new ImmutableStateManager(initialState);
