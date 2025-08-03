@@ -4,10 +4,7 @@ import cors from 'cors';
 import http from 'http';
 import process from 'process';
 import path from 'path';
-import {
-  startWebSocketServer,
-  webSocketBroadcast,
-} from '../services/webSocketServer.js';
+import { startWebSocketServer, webSocketBroadcast } from '../services/webSocketServer.js';
 import { startControlLoop, stateManager } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
@@ -21,7 +18,6 @@ import { dirname } from 'path';
 import mqttAgent from '../services/mqttAgent.js';
 import cfg from '../services/config.js';
 import SystemMonitor from '../services/systemMonitor.js';
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -70,10 +66,7 @@ process.on('uncaughtException', (err) => {
 
 // Catch unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error(
-    `Unhandled Rejection at: ${promise}, reason: ${reason.message || reason}`,
-    { stack: reason.stack || 'No stack trace available' },
-  );
+  logger.error(`Unhandled Rejection at: ${promise}, reason: ${reason.message || reason}`, { stack: reason.stack || 'No stack trace available' });
   // Depending on the application, you might want to exit here as well,
   // but it's often better to let the process continue if the rejection
   // is not critical and can be handled gracefully.

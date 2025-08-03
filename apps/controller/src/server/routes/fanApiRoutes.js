@@ -2,13 +2,15 @@ import express from 'express';
 import { stateManager } from '../../controlLoop.js';
 import mqttAgent from '../../services/mqttAgent.js';
 import cfg from '../../services/config.js';
+import logger from '../../services/logger.js';
 
 const router = express.Router();
 
 //set on
 router.post('/fan/onDurationSecs', (req, res) => {
   const { value } = req.body;
-  console.log(`Received /fan/onDurationSecs value: ${value}`);
+  // console.log(`Received /fan/onDurationSecs value: ${value}`);
+  logger.warn(`api Received /fan/onDurationSecs set value: ${value}`);
 
   const topic = cfg.getWithMQTTPrefix(`mqtt.fanOnDurationSecsTopic`);
   mqttAgent.client.publish(topic, value.toString());
@@ -32,6 +34,8 @@ router.get('/fan/onDurationSecs', (req, res) => {
 //set off
 router.post('/fan/offDurationSecs', (req, res) => {
   const { value } = req.body;
+  logger.warn(`api Received /fan/offDurationSecs set value: ${value}`);
+
   const configKey = `fan.offDurationMs`;
   const statusKey = `fanOffDurationSecs`;
 

@@ -89,12 +89,10 @@
   },
   "fan": {
     "speedPercent": 50,
-    "onMs": 15000,
-    "offMs": 10000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "onDurationMs": 50000,
-    "offDurationMs": 35000
+    "onDurationMs": 30000,
+    "offDurationMs": 10000
   },
   "mqtt": {
     "brokerUrl": "mqtt://192.168.0.100",

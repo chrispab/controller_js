@@ -1,6 +1,6 @@
 import logger from './logger.js';
 
-const MQTT_PUBLISH_INTERVAL = 10000; // 5 minutes
+const MQTT_PUBLISH_INTERVAL = 100000; // 5 minutes
 const HEALTH_CHECK_INTERVAL = 60000; // 1 minute
 
 class SystemMonitor {
@@ -39,6 +39,9 @@ class SystemMonitor {
     // Example: Publishing heater status
     this.mqttAgent.publish('greenhouse/heater/status', JSON.stringify({ isOn: state.heater.isOn }));
     // ... publish other key states
+    //if fan.periodicPublishIntervalMs has passed since lat fan periodic publish mqtt then publish all
+    //fan properties via mqtt
+    
   }
 
   performHealthChecks() {

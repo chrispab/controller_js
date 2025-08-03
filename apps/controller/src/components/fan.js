@@ -1,4 +1,4 @@
-import IOBase from './IOBase.js';
+import IOPin from './IOPin.js';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
@@ -7,34 +7,73 @@ import eventEmitter from '../services/eventEmitter.js';
 const logLevel = 'warn';
 
 export default class Fan {
-  constructor(name, fanPin) {
-    this.IOPin = new IOBase(fanPin, 'out', 0);
-    this.setName(name);
-    this.setOnMs(cfg.get('fan.onMs'));
-    this.setOffMs(cfg.get('fan.offMs'));
-    this.prevStateChangeMs = Date.now() - this.getOffMs(); // Assume it was off before starting
+  #name;
+  #onDurationMs;
+  #offDurationMs;
 
-    const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
+  constructor(name, GPIOfanPinNumber) {
+    this.IOPin = new IOPin(GPIOfanPinNumber, 'out', 0);
+    this.#name = name;
+
+    this.setOnDurationMs(cfg.get('fan.onDurationMs'));
+    this.setOffDurationMs(cfg.get('fan.offDurationMs'));
+
+    this.lastStateChangeMs = Date.now() - this.getOffDurationMs(); // Assume it was off before starting
+    // this.onDurationMs = cfg.get('fan.onDurationMs');
+    // this.offDurationMs = cfg.get('fan.offDurationMs');
+
+    // const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
 
     // Start autonomous operation
     setInterval(() => this.controlCycle(), 1000); // Check every second
-    setInterval(() => this.periodicPublication(), periodicPublishIntervalMs);
+    // setInterval(() => this.periodicPublication(), periodicPublishIntervalMs);
 
     this.updateState(false); // Ensure initial state is set and published
   }
 
+
+  setOnDurationMs(newOnDurationMs) {
+    const currentOnDurationMs = this.getOnDurationMs();
+    if (currentOnDurationMs !== newOnDurationMs) {
+      this.#onDurationMs = newOnDurationMs;
+      eventEmitter.emit('fan/on-duration-changed', {
+        name: this.getName(),
+        onMs: newOnDurationMs,
+      });
+    }
+  }
+
+  getOnDurationMs() {
+    return this.#onDurationMs;
+  }
+  
+  setOffDurationMs(newOffDurationMs) {
+    const currentOffDurationMs = this.getOffDurationMs();
+    if (currentOffDurationMs !== newOffDurationMs) {
+      this.#offDurationMs = newOffDurationMs;
+      eventEmitter.emit('fan/off-duration-changed', {
+        name: this.getName(),
+        onMs: newOffDurationMs,
+      });
+    }
+  }
+
+  getOffDurationMs() {
+    return this.#offDurationMs;
+  }
+
   controlCycle() {
     try {
-      const elapsedMs = Date.now() - this.prevStateChangeMs;
+      const elapsedMs = Date.now() - this.lastStateChangeMs;
 
       if (this.getState() === true) {
         // Fan is ON
-        if (elapsedMs >= this.getOnMs()) {
+        if (elapsedMs >= this.getOnDurationMs()) {
           this.updateState(false); // Turn OFF
         }
       } else {
         // Fan is OFF
-        if (elapsedMs >= this.getOffMs()) {
+        if (elapsedMs >= this.getOffDurationMs()) {
           this.updateState(true); // Turn ON
         }
       }
@@ -43,61 +82,57 @@ export default class Fan {
     }
   }
 
+  setName(name) {
+    this.#name = name;
+  }
+
+  getName() {
+    return this.#name;
+  }
+
+
+  setState(newState) {
+    this.IOPin.setState(newState);
+  }
+
+  getState() {
+    return this.IOPin.getState();
+  }
+
+
   updateState(newState) {
-    const oldState = this.getState();
-    if (newState !== oldState) {
-      // This now calls the mixin's setState, which updates the IOPin's state
-      this.setState(newState);
-      this.prevStateChangeMs = Date.now();
+    const currentState = this.getState();
+
+    if (newState !== currentState) {
 
       this.IOPin.writeIO(newState ? 1 : 0);
+      this.setState(newState ? 1 : 0);
+      this.lastStateChangeMs = Date.now();
 
-      // Emit specific events on the central bus
+
+      // Emit fan/ events on the central bus
       if (newState) {
         eventEmitter.emit('fan/started', { name: this.getName(), newState: newState });
       } else {
         eventEmitter.emit('fan/stopped', { name: this.getName(), newState: newState });
       }
-
     }
   }
 
-  periodicPublication() {
-    // Reload settings in case they were changed in config file
-    this.setOnMs(cfg.get('fan.onMs'));
-    this.setOffMs(cfg.get('fan.offMs'));
+  // periodicPublication() {
+  //   // Reload settings in case they were changed in config file
+  //   this.setOnDurationMs(cfg.get('fan.onMs'));
+  //   this.setOffDurationMs(cfg.get('fan.offMs'));
 
-    // Publish current state and settings periodically
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnMs() / 1000);
-    utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffMs() / 1000);
-  }
+  //   // Publish current state and settings periodically
+  //   utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), this.getState());
+  //   utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsTopic'), this.getOnDurationMs() / 1000);
+  //   utils.logAndPublishState('Fan P', cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsTopic'), this.getOffDurationMs() / 1000);
+  // }
+
+
 }
 
-import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
-Object.assign(Fan.prototype, IOPinAccessorsMixin);
+// import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
+// Object.assign(Fan.prototype, IOPinAccessorsMixin);
 
-// Override setOnMs and setOffMs to emit events
-const originalSetOnMs = Fan.prototype.setOnMs;
-Fan.prototype.setOnMs = function (newOnMs) {
-  const oldOnMs = this.getOnMs();
-  if (oldOnMs !== newOnMs) {
-    originalSetOnMs.call(this, newOnMs);
-    eventEmitter.emit('fan/on-duration-changed', {
-      name: this.getName(),
-      onMs: newOnMs,
-    });
-  }
-};
-
-const originalSetOffMs = Fan.prototype.setOffMs;
-Fan.prototype.setOffMs = function (newOffMs) {
-  const oldOffMs = this.getOffMs();
-  if (oldOffMs !== newOffMs) {
-    originalSetOffMs.call(this, newOffMs);
-    eventEmitter.emit('fan/off-duration-changed', {
-      name: this.getName(),
-      offMs: newOffMs,
-    });
-  }
-};
