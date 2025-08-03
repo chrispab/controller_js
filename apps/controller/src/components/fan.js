@@ -15,12 +15,10 @@ export default class Fan {
     this.IOPin = new IOPin(GPIOfanPinNumber, 'out', 0);
     this.#name = name;
 
-    this.setOnDurationMs(cfg.get('fan.onDurationMs'));
-    this.setOffDurationMs(cfg.get('fan.offDurationMs'));
+    this.#onDurationMs=cfg.get('fan.onDurationMs');
+    this.#offDurationMs=cfg.get('fan.offDurationMs');
 
     this.lastStateChangeMs = Date.now() - this.getOffDurationMs(); // Assume it was off before starting
-    // this.onDurationMs = cfg.get('fan.onDurationMs');
-    // this.offDurationMs = cfg.get('fan.offDurationMs');
 
     // const periodicPublishIntervalMs = cfg.get('fan.periodicPublishIntervalMs');
 
@@ -46,7 +44,7 @@ export default class Fan {
   getOnDurationMs() {
     return this.#onDurationMs;
   }
-  
+
   setOffDurationMs(newOffDurationMs) {
     const currentOffDurationMs = this.getOffDurationMs();
     if (currentOffDurationMs !== newOffDurationMs) {
@@ -106,7 +104,7 @@ export default class Fan {
     if (newState !== currentState) {
 
       this.IOPin.writeIO(newState ? 1 : 0);
-      this.setState(newState ? 1 : 0);
+      // this.setState(newState ? 1 : 0);
       this.lastStateChangeMs = Date.now();
 
 

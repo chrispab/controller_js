@@ -67,6 +67,7 @@ class IOPin {
   writeIO(value) {
     if (this.IO && typeof this.IO.writeSync === 'function') {
       this.IO.writeSync(value);
+      this.setState(value ? 1 : 0);
     } else {
       logger.error('IO write operation is not supported.');
     }
@@ -105,7 +106,7 @@ class IOPin {
     if (newState !== this.state) {
       this.state = newState;
       this.newStateFlag = true;
-      this.setPrevStateChangeMs(Date.now());
+      // this.setPrevStateChangeMs(Date.now());
     }
   }
 
