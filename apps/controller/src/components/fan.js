@@ -89,9 +89,9 @@ export default class Fan {
   }
 
 
-  setState(newState) {
-    this.IOPin.setState(newState);
-  }
+  // setState(newState) {
+  //   this.IOPin.setState(newState);
+  // }
 
   getState() {
     return this.IOPin.getState();
