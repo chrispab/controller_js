@@ -26,7 +26,7 @@ export default class Fan {
     setInterval(() => this.controlCycle(), 1000); // Check every second
     // setInterval(() => this.periodicPublication(), periodicPublishIntervalMs);
 
-    this.updateState(false); // Ensure initial state is set and published
+    this.updateState(0); // Ensure initial state is set and published
   }
 
 
@@ -64,15 +64,15 @@ export default class Fan {
     try {
       const elapsedMs = Date.now() - this.lastStateChangeMs;
 
-      if (this.getState() === true) {
+      if (this.getState() === 1) {
         // Fan is ON
         if (elapsedMs >= this.getOnDurationMs()) {
-          this.updateState(false); // Turn OFF
+          this.updateState(0); // Turn OFF
         }
       } else {
         // Fan is OFF
         if (elapsedMs >= this.getOffDurationMs()) {
-          this.updateState(true); // Turn ON
+          this.updateState(1); // Turn ON
         }
       }
     } catch (error) {
@@ -103,19 +103,22 @@ export default class Fan {
 
     if (newState !== currentState) {
 
-      this.IOPin.writeIO(newState ? 1 : 0);
-      // this.setState(newState ? 1 : 0);
+      
+      this.IOPin.writeIO(newState ? 1 : 0);//also updates IOPin state prop
       this.lastStateChangeMs = Date.now();
-
 
       // Emit fan/ events on the central bus
       if (newState) {
-        eventEmitter.emit('fan/started', { name: this.getName(), newState: newState });
+        eventEmitter.emit('fan/started', { name: this.getName(), newState: newState ? 1 : 0 });
       } else {
-        eventEmitter.emit('fan/stopped', { name: this.getName(), newState: newState });
+        eventEmitter.emit('fan/stopped', { name: this.getName(), newState: newState ? 1 : 0 });
       }
     }
   }
+
+  // get current state of all fan props used in controller
+  // return 
+
 
   // periodicPublication() {
   //   // Reload settings in case they were changed in config file

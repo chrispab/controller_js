@@ -5,12 +5,12 @@ import cfg from '../config.js';
 
 function registerFanEventHandlers() {
   eventEmitter.on('fan/started', ({ name }) => {
-    stateManager.update({ fan: true });
+    stateManager.update({ fan: 1 });
     utils.logAndPublishState('Event fan/started', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 1);
   });
 
   eventEmitter.on('fan/stopped', ({ name }) => {
-    stateManager.update({ fan: false });
+    stateManager.update({ fan: 0 });
     utils.logAndPublishState('Event fan/stopped', cfg.getWithMQTTPrefix('mqtt.fanStateTopic'), 0);
   });
 

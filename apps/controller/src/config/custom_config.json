@@ -91,7 +91,7 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "onDurationMs": 30000,
+    "onDurationMs": 85000,
     "offDurationMs": 10000
   },
   "mqtt": {

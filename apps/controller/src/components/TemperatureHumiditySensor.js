@@ -10,11 +10,13 @@ const logLevel = 'debug';
 
 export default class TemperatureHumiditySensor {
   constructor(name, dhtSensorPin) {
+    this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
+    this.dhtSensorPin = dhtSensorPin;
+
     this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
     this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
-    this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
-    this.dhtSensorPin = dhtSensorPin;
+
     this.temperature = null;
     this.humidity = null;
     this.sensorReadIntervalMs = cfg.get('temperatureSensor.sensorReadIntervalMs');

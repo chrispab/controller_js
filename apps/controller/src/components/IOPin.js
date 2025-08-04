@@ -2,8 +2,9 @@ import { Gpio } from 'onoff';
 import logger from '../services/logger.js';
 
 class IOPin {
+  #state;
   constructor(GPIOPinNumber, direction, initialState = 0) {
-    this.state = initialState;
+    this.#state = initialState;
     this.newStateFlag = false;
     this.prevStateChangeMs = Date.now();
     this.onMs = 5 * 1000;
@@ -64,6 +65,11 @@ class IOPin {
     }
   }
 
+  /**
+   * Writes a value to the GPIO pin and updates the internal state.
+   * @param {number} value - The value to write (0 for low, 1 for high).
+   * @returns {void}
+   */
   writeIO(value) {
     if (this.IO && typeof this.IO.writeSync === 'function') {
       this.IO.writeSync(value);
@@ -93,7 +99,7 @@ class IOPin {
   // }
 
   getState() {
-    return this.state;
+    return this.#state;
   }
 
   /**
@@ -103,8 +109,8 @@ class IOPin {
    * @return {undefined}
    */
   setState(newState) {
-    if (newState !== this.state) {
-      this.state = newState;
+    if (newState !== this.#state) {
+      this.#state = newState;
       this.newStateFlag = true;
       // this.setPrevStateChangeMs(Date.now());
     }
