@@ -1,6 +1,7 @@
 import logger from './logger.js';
+import * as utils from '../utils/utils.js';
 
-const MQTT_PUBLISH_INTERVAL = 100000; // 5 minutes
+const MQTT_PUBLISH_INTERVAL = 30000; // 5 minutes
 const HEALTH_CHECK_INTERVAL = 60000; // 1 minute
 
 class SystemMonitor {
@@ -12,7 +13,7 @@ class SystemMonitor {
   }
 
   start() {
-    logger.warn('System Monitor starting...');
+    logger.warn('...........System Monitor starting...');
 
     // Start periodic MQTT publication
     this.mqttPublishTimer = setInterval(() => this.publishMqttState(), MQTT_PUBLISH_INTERVAL);
@@ -35,12 +36,13 @@ class SystemMonitor {
 
   publishMqttState() {
     const state = this.stateManager.getState();
-    logger.info('Publishing full state via MQTT');
+    logger.info('................Publishing full state via MQTT');
     // Example: Publishing heater status
-    this.mqttAgent.publish('greenhouse/heater/status', JSON.stringify({ isOn: state.heater.isOn }));
+    // this.mqttAgent.publish('greenhouse/heater/status', JSON.stringify({ isOn: state.heater.isOn }));
     // ... publish other key states
     //if fan.periodicPublishIntervalMs has passed since lat fan periodic publish mqtt then publish all
     //fan properties via mqtt
+    this.mqttAgent.periodicPublication();
     
   }
 
@@ -50,6 +52,10 @@ class SystemMonitor {
     const memoryUsage = process.memoryUsage();
     logger.info(`Memory Usage: ${Math.round(memoryUsage.rss / 1024 / 1024)} MB`);
   }
+
+    sendStartupEmail() {
+      utils.sendEmail(this.zoneName + ' startup', 'zone startup');
+    }
 }
 
 export default SystemMonitor;

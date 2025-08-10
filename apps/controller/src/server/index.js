@@ -72,7 +72,8 @@ process.on('unhandledRejection', (reason, promise) => {
   // is not critical and can be handled gracefully.
 });
 
-startControlLoop(webSocketBroadcast);
+// startControlLoop(webSocketBroadcast);
+startControlLoop();
 
 const systemMonitor = new SystemMonitor(mqttAgent, stateManager);
 systemMonitor.start();

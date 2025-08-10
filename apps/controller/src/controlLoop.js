@@ -55,7 +55,9 @@ function startControlLoop() {
   const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
-  mqttAgent.sendStartupEmail();
+  // mqttAgent.sendStartupEmail();
+  utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');
+  
   logger.info('Components initialized.');
 
   stateManager.update({ irrigationPump: false });
@@ -67,14 +69,18 @@ function startControlLoop() {
   setInterval(() => cfg.process(), 1000);
   // setInterval(() => mqttAgent.process(), 5000);
 
-  setInterval(() => {
-    stateManager.update({
-      ventOnDurationDaySecs: cfg.get('vent.onDurationMs.day') / 1000,
-      ventOffDurationDaySecs: cfg.get('vent.offDurationMs.day') / 1000,
-      ventOnDurationNightSecs: cfg.get('vent.onDurationMs.night') / 1000,
-      ventOffDurationNightSecs: cfg.get('vent.offDurationMs.night') / 1000,
-    });
-  }, 1000);
+  // setInterval(() => {
+  //   stateManager.update({
+  //     ventOnDurationDaySecs: cfg.get('vent.onDurationMs.day') / 1000,
+  //     ventOffDurationDaySecs: cfg.get('vent.offDurationMs.day') / 1000,
+  //     ventOnDurationNightSecs: cfg.get('vent.onDurationMs.night') / 1000,
+  //     ventOffDurationNightSecs: cfg.get('vent.offDurationMs.night') / 1000,
+  //   });
+  // }, 1000);
+
+  // setInterval(() => {
+  //    mqttAgent.periodicPublication();
+  // },10000);
 
   logger.info('Event-driven control loop started.');
 }
