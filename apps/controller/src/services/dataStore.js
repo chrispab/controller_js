@@ -91,7 +91,7 @@ class DataStore {
       this.saveConfig();
     }
 
-    logger.info(`Data updated: ${path} = ${value}`);
+    logger.warn(`......datastore set() webSocketBroadcast  ..Data updated: ${path} = ${value}`);
     webSocketBroadcast(this.get('state'));
   }
 

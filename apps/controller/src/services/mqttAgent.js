@@ -38,7 +38,7 @@ class MqttAgent {
       this.logLevel = 'info';
       this.highSetpoint = cfg.get('zone.highSetpoint');
       this.lowSetpoint = cfg.get('zone.lowSetpoint');
-      this.periodicPublishIntervalMs = cfg.get('zone.periodicPublishIntervalMs');
+      this.periodicPublishIntervalMs = cfg.get('mqtt.periodicPublishIntervalMs');
       this.lastPeriodicPublishedMs = Date.now() - this.periodicPublishIntervalMs;
       this.outsideTemperature = 7;
       this.activeSetpoint = 0;
@@ -51,8 +51,12 @@ class MqttAgent {
     }
   }
 
-  sendStartupEmail() {
-    utils.sendEmail(this.zoneName + ' startup', 'zone startup');
+  // sendStartupEmail() {
+  //   utils.sendEmail(this.zoneName + ' startup', 'zone startup');
+  // }
+
+  getPeriodicPublishIntervalMs() {
+    return this.periodicPublishIntervalMs;
   }
 
   getName() {

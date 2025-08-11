@@ -5,6 +5,11 @@ import logger from './logger.js';
 
 let wss;
 
+/**
+ * Initializes and starts the WebSocket server.
+ * It attaches the WebSocket server to the provided HTTP server.
+ * @param {http.Server} httpServer - The HTTP server instance to attach the WebSocket server to.
+ */
 function startWebSocketServer(httpServer) {
   try {
     wss = new WebSocketServer({ server: httpServer });
@@ -38,6 +43,11 @@ function startWebSocketServer(httpServer) {
   }
 }
 
+/**
+ * Broadcasts data to all connected WebSocket clients.
+ * The data is stringified to JSON before sending.
+ * @param {Object} data - The data object to be broadcasted.
+ */
 function webSocketBroadcast(data) {
   if (!wss) {
     return;
@@ -61,7 +71,7 @@ function webSocketBroadcast(data) {
   }
 
   logger.warn(
-    `${wss.clients.size} clients to web socket broadcast to: ` +
+    `webSocketBroadcast(data).....${wss.clients.size} clients to web socket broadcast to: ` +
       jsonData +
       `''`,
   );

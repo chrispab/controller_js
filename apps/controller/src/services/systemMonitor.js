@@ -1,7 +1,7 @@
 import logger from './logger.js';
 import * as utils from '../utils/utils.js';
 
-const MQTT_PUBLISH_INTERVAL = 30000; // 5 minutes
+// const MQTT_PUBLISH_INTERVAL = 30000; // 5 minutes
 const HEALTH_CHECK_INTERVAL = 60000; // 1 minute
 
 class SystemMonitor {
@@ -15,13 +15,14 @@ class SystemMonitor {
   start() {
     logger.warn('...........System Monitor starting...');
 
-    // Start periodic MQTT publication
-    this.mqttPublishTimer = setInterval(() => this.publishMqttState(), MQTT_PUBLISH_INTERVAL);
+    // Start periodic MQTT publication of data
+    // this.mqttPublishTimer = setInterval(() => this.publishMqttState(), MQTT_PUBLISH_INTERVAL);
+    this.mqttPublishTimer = setInterval(() => this.publishMqttState(), this.mqttAgent.getPeriodicPublishIntervalMs());
 
     // Start periodic health checks
     this.healthCheckTimer = setInterval(() => this.performHealthChecks(), HEALTH_CHECK_INTERVAL);
 
-    logger.info('System Monitor started.');
+    logger.info('class SystemMonitor started.');
   }
 
   stop() {
@@ -36,7 +37,7 @@ class SystemMonitor {
 
   publishMqttState() {
     const state = this.stateManager.getState();
-    logger.info('................Publishing full state via MQTT');
+    logger.warn('SystemMonitor.publishMqttState()................periodicPublication state via MQTT');
     // Example: Publishing heater status
     // this.mqttAgent.publish('greenhouse/heater/status', JSON.stringify({ isOn: state.heater.isOn }));
     // ... publish other key states

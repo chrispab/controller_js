@@ -3,7 +3,6 @@
   "zone": {
     "lowSetpoint": 14.9,
     "highSetpoint": 24,
-    "periodicPublishIntervalMs": 120000,
     "name": "Zone 1",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
@@ -95,6 +94,7 @@
     "offDurationMs": 10000
   },
   "mqtt": {
+    "periodicPublishIntervalMs": 30000,
     "brokerUrl": "mqtt://192.168.0.100",
     "username": "pi",
     "password": "raspberry",
@@ -135,10 +135,6 @@
     "fanOffDurationSecsTopic": "fanOffDurationSecs",
     "fanOnDurationSecsSetTopic": "fanOnDurationSecs/set",
     "fanOffDurationSecsSetTopic": "fanOffDurationSecs/set"
-  },
-  "ventOnDurationDaySecs": 400,
-  "ventOffDurationDaySecs": 25,
-  "ventOnDurationNightSecs": 375,
-  "fanOnDurationSecs": 290,
-  "fanOffDurationSecs": 26
+  }
+
 }

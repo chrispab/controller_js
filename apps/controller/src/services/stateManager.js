@@ -50,7 +50,7 @@ class ImmutableStateManager {
     this.#status = newState;
 
     // Logging and broadcasting are now responsibilities of the manager
-    logger.info(`State updated: ${JSON.stringify(updates)}`);
+    logger.warn(`ImmutableStateManager....State updated, webSocketBroadcast: ${JSON.stringify(updates)}`);
     webSocketBroadcast(this.#status);
   }
 }
