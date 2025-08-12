@@ -69,7 +69,7 @@
     },
     "offDurationMs": {
       "day": 15000,
-      "night": 15000
+      "night": 5000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
@@ -136,5 +136,4 @@
     "fanOnDurationSecsSetTopic": "fanOnDurationSecs/set",
     "fanOffDurationSecsSetTopic": "fanOffDurationSecs/set"
   }
-
 }

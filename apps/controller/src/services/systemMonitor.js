@@ -36,7 +36,7 @@ class SystemMonitor {
   }
 
   publishMqttState() {
-    const state = this.stateManager.getState();
+    // const state = this.stateManager.getState();
     logger.warn('SystemMonitor.publishMqttState()................periodicPublication state via MQTT');
     // Example: Publishing heater status
     // this.mqttAgent.publish('greenhouse/heater/status', JSON.stringify({ isOn: state.heater.isOn }));

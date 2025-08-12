@@ -6,13 +6,14 @@ import Heater from './components/heater.js';
 import Vent from './components/vent.js';
 
 import cfg from './services/config.js';
-import mqttAgent from './services/mqttAgent.js';
+// import mqttAgent from './services/mqttAgent.js';
 import { getVersionInfo } from './utils/utils.js';
 import logger from './services/logger.js';
-import eventEmitter from './services/eventEmitter.js';
+// import eventEmitter from './services/eventEmitter.js';
 import * as utils from './utils/utils.js';
 import ImmutableStateManager from './services/stateManager.js';
 import registerEventHandlers from './services/eventHandlers/index.js';
+// import { webSocketBroadcast } from './services/webSocketServer.js';
 
 // --- Initialize State Manager ---
 const initialState = {
@@ -36,10 +37,10 @@ const initialState = {
   soilMoisturePercent: null,
   irrigationPump: null,
   lastChange: null,
-  ventOnDurationDaySecs: null,
-  ventOffDurationDaySecs: null,
-  ventOnDurationNightSecs: null,
-  ventOffDurationNightSecs: null,
+  ventOnDurationDaySecs: cfg.get('vent.onDurationMs.day') / 1000,
+  ventOffDurationDaySecs: cfg.get('vent.offDurationMs.day') / 1000,
+  ventOnDurationNightSecs: cfg.get('vent.onDurationMs.night') / 1000,
+  ventOffDurationNightSecs: cfg.get('vent.offDurationMs.night') / 1000,
   outsideTemperature: null,
   activeSetpoint: null,
   fanOnDurationSecs: cfg.get('fan.onDurationMs')/1000,
@@ -55,7 +56,6 @@ function startControlLoop() {
   const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
-  // mqttAgent.sendStartupEmail();
   utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');
   
   logger.info('Components initialized.');
@@ -67,20 +67,6 @@ function startControlLoop() {
 
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000);
-  // setInterval(() => mqttAgent.process(), 5000);
-
-  // setInterval(() => {
-  //   stateManager.update({
-  //     ventOnDurationDaySecs: cfg.get('vent.onDurationMs.day') / 1000,
-  //     ventOffDurationDaySecs: cfg.get('vent.offDurationMs.day') / 1000,
-  //     ventOnDurationNightSecs: cfg.get('vent.onDurationMs.night') / 1000,
-  //     ventOffDurationNightSecs: cfg.get('vent.offDurationMs.night') / 1000,
-  //   });
-  // }, 1000);
-
-  // setInterval(() => {
-  //    mqttAgent.periodicPublication();
-  // },10000);
 
   logger.info('Event-driven control loop started.');
 }

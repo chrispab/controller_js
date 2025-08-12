@@ -4,7 +4,7 @@ import cors from 'cors';
 import http from 'http';
 import process from 'process';
 import path from 'path';
-import { startWebSocketServer, webSocketBroadcast } from '../services/webSocketServer.js';
+import { startWebSocketServer } from '../services/webSocketServer.js';
 import { startControlLoop, stateManager } from '../controlLoop.js';
 import statusRoutes from './routes/statusRoutes.js';
 import ventRoutes from './routes/ventRoutes.js';
@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 import mqttAgent from '../services/mqttAgent.js';
-import cfg from '../services/config.js';
+// import cfg from '../services/config.js';
 import SystemMonitor from '../services/systemMonitor.js';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -87,9 +87,11 @@ class MqttAgent {
   }
 
   /**
-   * Reloads vent settings from the configuration if they have changed.
-   * This includes `ventOnDarkMs`, `ventOffDarkMs`, `onMs`, and `offMs`.
-   * Logs a debug message if a setting is reloaded.
+   * Checks for and applies changes to the high and low temperature setpoints from the configuration.
+   * If a change in `zone.highSetpoint` or `zone.lowSetpoint` is detected in the configuration,
+   * this method updates the agent's internal state and publishes the new value to the
+   * respective MQTT topic. It ensures the agent's settings remain synchronized with the
+   * application's dynamic configuration.
    */
   reloadSettingsIfChanged() {
     try {
