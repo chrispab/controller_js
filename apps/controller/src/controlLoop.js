@@ -7,20 +7,19 @@ import Vent from './components/vent.js';
 
 import cfg from './services/config.js';
 // import mqttAgent from './services/mqttAgent.js';
-import { getVersionInfo } from './utils/utils.js';
+import { getPackageInfo } from './utils/utils.js';
 import logger from './services/logger.js';
 // import eventEmitter from './services/eventEmitter.js';
 import * as utils from './utils/utils.js';
 import ImmutableStateManager from './services/stateManager.js';
 import registerEventHandlers from './services/eventHandlers/index.js';
-// import { webSocketBroadcast } from './services/webSocketServer.js';
 
 // --- Initialize State Manager ---
 const initialState = {
-  zoneName: cfg.get('zone.name'),
-  version: getVersionInfo().version,
-  releaseNotes: getVersionInfo().releaseNotes,
-  description: getVersionInfo().description,
+  // zoneName: cfg.get('zone.name'),
+  // version: getPackageInfo().version,
+  // releaseNotes: getPackageInfo().releaseNotes,
+  // description: getPackageInfo().description,
   setpoint: null,
   highSetpoint: cfg.get('zone.highSetpoint'),
   lowSetpoint: cfg.get('zone.lowSetpoint'),
@@ -35,7 +34,7 @@ const initialState = {
   ventTotal: null,
   SensorSoilMoistureRaw: null,
   soilMoisturePercent: null,
-  irrigationPump: null,
+  irrigationPump: 0,
   lastChange: null,
   ventOnDurationDaySecs: cfg.get('vent.onDurationMs.day') / 1000,
   ventOffDurationDaySecs: cfg.get('vent.offDurationMs.day') / 1000,
@@ -56,11 +55,12 @@ function startControlLoop() {
   const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
-  utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');
-  
+  // utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');
+  utils.sendEmail(cfg.get('zone.name') + ' is starting up', 'zone startup');
+
   logger.info('Components initialized.');
 
-  stateManager.update({ irrigationPump: false });
+  // stateManager.update({ irrigationPump: false });
 
   // --- Setup Event Listeners ---
   registerEventHandlers();

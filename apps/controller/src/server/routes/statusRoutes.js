@@ -1,5 +1,6 @@
 import express from 'express';
 import { stateManager } from '../../controlLoop.js';
+import { getPackageInfo } from '../../utils/utils.js';
 
 const router = express.Router();
 
@@ -26,5 +27,21 @@ router.get('/mqtt/irrigationPump/status', (req, res) => {
 router.get('/outside-temperature', (req, res) => {
   res.json({ message: stateManager.getState().outsideTemperature });
 });
+
+router.get('/packageInfo', (req, res) => {
+  res.json({ message: getPackageInfo() });
+} );
+
+// router.get('/version', (req, res) => {
+//   res.json({ message: getPackageInfo().version });
+// });
+
+// router.get('/release-notes', (req, res) => {
+//   res.json({ message: getPackageInfo().releaseNotes });
+// });
+
+// router.get('/description', (req, res) => {
+//   res.json({ message: getPackageInfo().description });
+// }); 
 
 export default router;

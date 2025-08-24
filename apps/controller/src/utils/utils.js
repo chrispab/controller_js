@@ -9,7 +9,12 @@ import { dirname, resolve } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-function getVersionInfo() {
+/**
+ * Retrieves version information from the package.json file.
+ *
+ * @returns {object} An object containing the version, release notes, and description.
+ */
+function getPackageInfo() {
   // Constructs the absolute path to the package.json file.
   // __dirname is the directory of the current module (utils.js).
   // '../../package.json' navigates up two directories to the project root and then to package.json.
@@ -24,7 +29,7 @@ function getVersionInfo() {
   };
 }
 
-// const versionInfo = getVersionInfo();
+// const versionInfo = getPackageInfo();
 // console.log(`Version: ${versionInfo.version}`);
 // console.log(`Release Notes: ${versionInfo.releaseNotes}`);
 
@@ -78,4 +83,4 @@ const logAndPublishState = (preComment, pubToTopic, payload) => {
 };
 
 // export utils;
-export { logAndPublishState, getHMSStr, sendEmail, getVersionInfo };
+export { logAndPublishState, getHMSStr, sendEmail, getPackageInfo };

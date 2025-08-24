@@ -772,11 +772,19 @@ export async function getServerSideProps() {
   let initialStatus = {};
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5678'; // Fallback for development
   try {
-    console.log(`Fetching status from: ${API_URL}/api/status`);
+    console.log(`Fetching current states status from: ${API_URL}/api/status`);
     const statusRes = await fetch(`${API_URL}/api/status`);
     console.log(`Status response status: ${statusRes.status}`);
     const statusData = await statusRes.json();
     initialStatus = statusData.message;
+
+    // package info
+    console.log(`Fetching package information from: ${API_URL}/api/packageInfo`);
+    const packageInfoRes = await fetch(`${API_URL}/api/packageInfo`);
+    console.log(`package information response: ${packageInfoRes.status}`);
+    const packageInfoData = await packageInfoRes.json();
+    initialStatus = packageInfoData.message;
+
 
     // Fetch vent durations for day
     console.log(`Fetching vent on duration (day) from: ${API_URL}/api/vent/onDurationSecs?period=day`,);
