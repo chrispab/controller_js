@@ -150,6 +150,11 @@ class MqttAgent {
         //send heartbeat mqtt
         // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
         utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
+
+        // resend lwt
+        // this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.LWTTopic'), 'Online');
+
       }
     } catch (error) {
       logger.error(`Error in MqttAgent periodicPublication: ${error.message}`, {
