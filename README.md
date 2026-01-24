@@ -40,6 +40,32 @@ controller_js/
     ```bash
     npm install
     ```
+on a fresh sd card
+
+install raspbian lite latest
+
+install webmin
+https://webmin.com/download/
+
+install nfs-server
+
+install nodejs
+https://raspberrytips.com/node-js-raspberry-pi/
+sudo apt update
+sudo apt install nodejs
+
+sudo apt install npm
+
+
+https://nodejs.org/en/download
+
+To start the application, run the following command:
+
+```bash
+cd apps/controller
+
+npm start
+```
 
 ## Development Workflow
 
