@@ -1,5 +1,4 @@
 import IOBase from './IOBase.js';
-import { Gpio } from 'onoff';
 import cfg from '../services/config.js';
 import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
@@ -61,22 +60,23 @@ export default class Light {
       }
 
       this.RCLoopCount = 0;
-      if (Gpio.accessible) {
+      if (1) {
         this.currentlySamplingLightSensor = true;
         // Discharge capacitor
-        this.IOPin.setIODirection('out');
-        this.IOPin.writeIO(0);
+        this.IOPin.setIODirection('output');
+        this.IOPin.writeIO(false);
 
         wait(50).then(() => {
-          this.IOPin.setIODirection('in');
+          this.IOPin.setIODirection('input');
+          // wait for capacitor to charge
           while (this.IOPin.readIO() == 0 && this.RCLoopCount < 999999) {
             this.RCLoopCount++;
           }
           // Discharge capacitor again for next reading
-          this.IOPin.setIODirection('out');
-          this.IOPin.writeIO(0);
+          this.IOPin.setIODirection('output');
+          this.IOPin.writeIO(false);
           this.currentlySamplingLightSensor = false;
-          // logger.warn(`New RCLoopCount: ${this.RCLoopCount}`);
+          logger.warn(`New RCLoopCount: ${this.RCLoopCount}`);
           resolve(this.RCLoopCount);
         });
       } else {

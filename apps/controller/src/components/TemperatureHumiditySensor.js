@@ -14,7 +14,7 @@ export default class TemperatureHumiditySensor {
     this.dhtSensorPin = dhtSensorPin;
 
     this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
-    this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
+    // this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
 
     this.temperature = null;
@@ -28,7 +28,7 @@ export default class TemperatureHumiditySensor {
     }
 
     // Start autonomous operation
-    this.readSensor(); // Initial read
+    // this.readSensor(); // Initial read
     setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
     // setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
   }
@@ -101,6 +101,14 @@ export default class TemperatureHumiditySensor {
   getSensorStr() {
     return `temperature: ${this.getTemperature()}°C, humidity: ${this.getHumidity()}%`;
   }
+
+  getTelemetryData() {
+    const data = {};
+    data[this.getName()] = {
+      temperature: this.getTemperature(),
+      humidity: this.getHumidity(),
+      time: Date.now(),
+    };
+    return data;
+  }
 }
-import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
-Object.assign(TemperatureHumiditySensor.prototype, IOPinAccessorsMixin);

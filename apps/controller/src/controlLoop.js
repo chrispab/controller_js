@@ -1,6 +1,6 @@
 // src/controlLoop.js
-import Light from './components/light.js';
 import TemperatureHumiditySensor from './components/TemperatureHumiditySensor.js';
+import Light from './components/light.js';
 import Fan from './components/fan.js';
 import Heater from './components/heater.js';
 import Vent from './components/vent.js';
@@ -49,10 +49,10 @@ const initialState = {
 export const stateManager = new ImmutableStateManager(initialState);
 function startControlLoop() {
   // --- Initialize Components ---
+  const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
   const light = new Light('light', cfg.get('hardware.RC.pin'));
-  const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
   // utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');

@@ -15,10 +15,12 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "mqtt": "^5.10.1",
-    "node-dht-sensor": "^0.4.3",
+    "node-dht-sensor": "^0.4.5",
     "node-wifi": "^2.0.16",
     "nodemailer": "^6.9.16",
     "onoff": "^6.0.3",
+    "opengpio": "^2.0.2",
+    "rpi-io": "^2.0.7",
     "winston": "^3.15.0",
     "winston-daily-rotate-file": "^5.0.0",
     "ws": "^8.18.3"

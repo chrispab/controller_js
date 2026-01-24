@@ -1,100 +1,74 @@
-import { Gpio } from 'onoff';
+// import {RIO, traceCfg, log, sleep, ctrlC, lineNumber} from "rpi-io"
+import { RaspberryPi_2B, Bias} from 'opengpio';
 import logger from '../services/logger.js';
 
 class IOBase {
-  constructor(IOPin, direction, initialValue = 0) {
+  constructor(GPIOPinName, direction, initialValue = 0) {
     this.state = initialValue;
     this.newStateFlag = false;
     this.prevStateChangeMs = Date.now();
     this.onMs = 5 * 1000;
     this.offMs = 5 * 1000;
-    this.IOPin = IOPin;
+    this.GPIOPinName = GPIOPinName;
     this.name = 'not yet set-IOBase';
     this.newOnMsFlag = false;
     this.newOffMsFlag = false;
+    this.IO = null;
     // this.prevOnMsChangeMs = Date.now();
     // this.prevOffMsChangeMs = Date.now();
     //log constructor parameters
-    // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
-    this.GPIOAccessible = Gpio.accessible;
-    if (direction === 'out') {
-      this.IO = Gpio.accessible
-        ? new Gpio(this.IOPin, 'out')
-        : {
-            writeSync: (value) => {
-              logger.log('warn', 'virtual OP set to: ' + value + this.name);
-            },
-          };
-      if (
-        this.IO &&
-        typeof this.IO.writeSync === 'function' &&
-        this.GPIOAccessible
-      ) {
-        this.IO.setDirection('out');
-        this.IO.writeSync(initialValue);
+    // logger.info(`IOBase(${GPIOPinName}, ${direction}, ${initialValue})`);
+    // this.GPIOAccessible = Gpio.accessible;
+    // this.GPIOAccessible = Gpio.accessible;
+    try {
+          // const line = lineNumber(GPIOPinName)
+      if (direction === 'out' || direction === 'output') {
+        this.IO = RaspberryPi_2B.output(GPIOPinName);
+        // this.setIODirection('output');
+        this.IO.value = initialValue;
+        // new RIO(line, "output", {value: initialValue})
+      } else if (direction === 'in' || direction === 'input') {
+        this.IO = RaspberryPi_2B.input(GPIOPinName);
+        // this.setIODirection('input');
       }
-    } else if (direction === 'in') {
-      this.IO = Gpio.accessible
-        ? new Gpio(this.IOPin, 'in')
-        : {
-            readSync: (value) => {
-              logger.log('warn', 'virtual IP now uses value: ' + value);
-            },
-          };
-      if (
-        this.IO &&
-        typeof this.IO.readSync === 'function' &&
-        this.GPIOAccessible
-      ) {
-        this.IO.setDirection('in');
-      }
-    } else if (direction === 'disabled') {
-      logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
-    } else {
-      logger.warn(`Invalid IO direction value given. Direction: ${direction}`);
+    } catch (error) {
+      logger.error(`Failed to initialize IOBase for pin ${GPIOPinName}: ${error.message}`);
+      this.IO = null;
     }
   }
-
-  // getName() {
-  //   return this.name;
-  // }
-
-  // setName(name) {
-  //   this.name = name;
-  // }
 
   setIODirection(direction) {
-    if (this.IO && typeof this.IO.setDirection === 'function') {
-      this.IO.setDirection(direction);
-    } else {
-      logger.error('IO direction operation is not supported.');
+    try {
+      if (direction === 'out' || direction === 'output') {
+        this.IO.stop();
+        this.IO = RaspberryPi_2B.output(this.GPIOPinName);
+        // this.IO.value = this.state;
+      } else if (direction === 'in' || direction === 'input') {
+        this.IO.stop();
+        this.IO = RaspberryPi_2B.input(this.GPIOPinName, { bias: Bias.Disabled});
+      }
+    } catch (error) {
+      logger.error(`IO direction operation failed for pin ${this.GPIOPinName}: ${error.message}`);
     }
   }
 
-  // setIOPin(IOPin) {
-  //     if (typeof IOPin === 'number' && IOPin >= 0) {
-  //         this.IOPin = IOPin;
-  //     } else {
-  //         logger.error("Invalid IOPin value.");
-  //     }
-  // }
-  // getIOPin() {
-  //     return this.IOPin;
-  // }
+  setName(name) {
+    this.name = name;
+  }
+
   readIO() {
-    if (this.IO && typeof this.IO.readSync === 'function') {
-      return this.IO.readSync();
-    } else {
-      logger.error('IO read operation is not supported.');
-      return null;
+    if (this.IO) {
+      return this.IO.value;
     }
+    logger.error(`IO read operation failed: IO not initialized for pin ${this.GPIOPinName}`);
+    return null;
   }
 
-  writeIO(value) {
-    if (this.IO && typeof this.IO.writeSync === 'function') {
-      this.IO.writeSync(value);
+  writeIO(writeValue) {
+    if (this.IO) {
+      this.IO.value = writeValue;
     } else {
-      logger.error('IO write operation is not supported.');
+      logger.error(`IO write operation failed: IO not initialized for pin ${this.GPIOPinName}`);
     }
   }
 

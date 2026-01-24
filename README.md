@@ -56,6 +56,12 @@ sudo apt install nodejs
 
 sudo apt install npm
 
+install
+https://www.npmjs.com/package/rpi-io
+
+
+
+
 
 https://nodejs.org/en/download
 

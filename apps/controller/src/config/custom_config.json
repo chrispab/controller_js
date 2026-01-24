@@ -2,8 +2,8 @@
   "version": "0.1.2",
   "zone": {
     "lowSetpoint": 14.9,
-    "highSetpoint": 24,
-    "name": "Zone 1",
+    "highSetpoint": 25.1,
+    "name": "Zone 3",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
       "enabled": false,
@@ -27,29 +27,35 @@
   },
   "hardware": {
     "dhtSensor": {
-      "pin": 515,
+      "pin": 3,
       "type": "22"
     },
     "fan": {
       "gpiopin": 13,
-      "pin": 525,
+      "pin": "GPIO13",
+      "gpio_w_offset": 525,
       "physicalPin": 33
     },
     "heater": {
-      "pin": 517,
+      "pin": 5,
+      "gpio_w_offset": 517,
       "physicalPin": 29
     },
     "powerPin": {
-      "pin": 514
+      "pin": "GPIO2",
+      "gpio_w_offset": 514
     },
     "vent": {
-      "pin": 538,
+      "pin": 26,
+      "gpio_w_offset": 538,
       "physicalPin": 37,
-      "speedPin": 518,
+      "speedPin": "GPIO6",
+      "speedGpio_w_offset": 518,
       "speedPhysicalPin": 31
     },
     "RC": {
-      "pin": 539,
+      "pin": 27,
+      "gpio_w_offset": 539,
       "physicalPin": 13
     }
   },
@@ -98,7 +104,7 @@
     "brokerUrl": "mqtt://192.168.0.100",
     "username": "pi",
     "password": "raspberry",
-    "topicPrefix": "Zone1",
+    "topicPrefix": "Zone3",
     "LWTTopic": "LWT",
     "rssiTopic": "rssi",
     "lightStateTopic": "LightStatus",
