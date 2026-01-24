@@ -10,7 +10,11 @@
     "libs/*"
   ],
   "scripts": {
+    "start:controller": "npm start --workspace=@greenhouse-project/controller",
+    "dev:frontend": "npm run dev --workspace=apps/frontend-nextjs",
+    "test": "npm test --workspaces --if-present",
     "lint": "eslint .",
+    "lint:json": "eslint . --ext .json",
     "prettier": "prettier --write ."
   },
   "devDependencies": {
@@ -18,6 +22,7 @@
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^28.6.0",
+    "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.5.3",
     "globals": "^13.24.0",
     "nodemon": "^3.1.7",

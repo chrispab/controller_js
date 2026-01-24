@@ -12,78 +12,70 @@ This Node.js application is designed to control and monitor a greenhouse or othe
 
 ## Project Structure
 
+This project is a monorepo using npm workspaces.
+
 ```
 controller_js/
-├── client/                 # Frontend application (not fully implemented)
-│   └── public/
-│       └── websocket_test.html # A simple page to test the WebSocket server
-├── server/
-│   ├── index.js            # Main entry point of the application
-│   └── webSocketServer.js  # WebSocket server implementation
-├── src/
-│   ├── components/         # Hardware components (fan, heater, etc.)
-│   ├── config/             # Configuration files
-│   ├── services/           # Services like MQTT, logging, etc.
-│   └── controlLoop.js      # Core control logic for the application
-├── package.json            # Project dependencies and scripts
+├── apps/
+│   ├── controller/         # The main Node.js controller application
+│   └── frontend-nextjs/    # The Next.js frontend application
+├── libs/
+│   ├── shared-types/       # Shared TypeScript types
+│   └── shared-utils/       # Shared utility functions
+├── package.json            # Root package.json with workspace configuration
 └── README.md               # This file
 ```
 
 ## Installation
 
-1. **Clone the repository:**
+1.  **Clone the repository:**
 
-   ```bash
-   git clone <repository-url>
-   ```
+    ```bash
+    git clone <repository-url>
+    ```
 
-2. **Install dependencies:**
+2.  **Install dependencies:**
 
-   ```bash
-   npm install
-   ```
-
-## Usage
-
-To start the application, run the following command:
-
-```bash
-npm start
-```
-
-This will start the main control loop, the Express server, and the WebSocket server.
-
-### Testing the WebSocket Server
-
-1. Start the application.
-2. Open your browser and navigate to `http://<your-raspberry-pi-ip-address>:8081/websocket_test.html`.
-
-This page will display the real-time status of the fan and vent.
+    From the root directory, install all dependencies for all workspaces:
+    ```bash
+    npm install
+    ```
 
 ## Development Workflow
 
-For front-end development, it is recommended to use the React development server, which provides features like hot-reloading.
+To run the applications, use the `npm run` commands from the root directory.
 
-1. **Start the Node.js backend server:**
-   In the project root directory (`controller_js/`):
+1.  **Start the Controller Backend:**
 
-   ```bash
-   node server/index.js
-   ```
+    ```bash
+    npm run start:controller
+    ```
+    This will start the Node.js server for the controller on port `5678`.
 
-   This server will run on port `5678` and handle API requests.
+2.  **Start the Frontend Dev Server:**
 
-2. **Start the React development server:**
-   In a separate terminal, navigate to the `client/` directory:
+    ```bash
+    npm run dev:frontend
+    ```
+    This will start the Next.js development server, typically on port `3000`.
 
-   ```bash
-   cd client
-   npm start
-   ```
+### Running Tests
 
-   This will typically open the React application in your browser at `http://localhost:3000` (or another available port). The React development server is configured to proxy API requests to the Node.js backend.
+To run the tests for the controller application:
+```bash
+npm test --workspace=@greenhouse-project/controller
+```
 
-   **Important:** When using the development server, changes to the React code will be automatically reflected in your browser without needing to rebuild the client or restart the Node.js server.
+### Linting and Formatting
+
+To check the code against the style guidelines and automatically fix issues:
+```bash
+# Run ESLint
+npm run lint
+
+# Run Prettier to format files
+npm run prettier
+```
 
 ## Running as a System Service (systemd)
 
