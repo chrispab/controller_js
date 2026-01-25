@@ -27,7 +27,6 @@ class IOPin {
             },
           };
       if (this.IO && typeof this.IO.writeSync === 'function' && this.GPIOAccessible) {
-        this.IO.setDirection('out');
         this.IO.writeSync(initialState);
       }
     } else if (direction === 'in') {
@@ -39,7 +38,6 @@ class IOPin {
             },
           };
       if (this.IO && typeof this.IO.readSync === 'function' && this.GPIOAccessible) {
-        this.IO.setDirection('in');
       }
     } else if (direction === 'disabled') {
       logger.warn(`Disabled IO direction value given. Direction: ${direction}`);

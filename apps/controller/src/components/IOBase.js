@@ -2,24 +2,24 @@ import { Gpio } from 'onoff';
 import logger from '../services/logger.js';
 
 class IOBase {
-  constructor(IOPin, direction, initialValue = 0) {
+  constructor(GPIOPinNumber, direction, initialValue = 0) {
     this.state = initialValue;
     this.newStateFlag = false;
     this.prevStateChangeMs = Date.now();
     this.onMs = 5 * 1000;
     this.offMs = 5 * 1000;
-    this.IOPin = IOPin;
+    this.GPIOPinNumber = GPIOPinNumber;
     this.name = 'not yet set-IOBase';
     this.newOnMsFlag = false;
     this.newOffMsFlag = false;
     // this.prevOnMsChangeMs = Date.now();
     // this.prevOffMsChangeMs = Date.now();
     //log constructor parameters
-    // logger.info(`IOBase(${IOPin}, ${direction}, ${initialValue})`);
+    // logger.info(`IOBase(${GPIOPinNumber}, ${direction}, ${initialValue})`);
     this.GPIOAccessible = Gpio.accessible;
     if (direction === 'out') {
       this.IO = Gpio.accessible
-        ? new Gpio(this.IOPin, 'out')
+        ? new Gpio(this.GPIOPinNumber, 'out')
         : {
             writeSync: (value) => {
               logger.log('warn', 'virtual OP set to: ' + value + this.name);
@@ -30,24 +30,16 @@ class IOBase {
         typeof this.IO.writeSync === 'function' &&
         this.GPIOAccessible
       ) {
-        this.IO.setDirection('out');
         this.IO.writeSync(initialValue);
       }
     } else if (direction === 'in') {
       this.IO = Gpio.accessible
-        ? new Gpio(this.IOPin, 'in')
+        ? new Gpio(this.GPIOPinNumber, 'in')
         : {
             readSync: (value) => {
               logger.log('warn', 'virtual IP now uses value: ' + value);
             },
           };
-      if (
-        this.IO &&
-        typeof this.IO.readSync === 'function' &&
-        this.GPIOAccessible
-      ) {
-        this.IO.setDirection('in');
-      }
     } else if (direction === 'disabled') {
       logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
     } else {
@@ -71,16 +63,6 @@ class IOBase {
     }
   }
 
-  // setIOPin(IOPin) {
-  //     if (typeof IOPin === 'number' && IOPin >= 0) {
-  //         this.IOPin = IOPin;
-  //     } else {
-  //         logger.error("Invalid IOPin value.");
-  //     }
-  // }
-  // getIOPin() {
-  //     return this.IOPin;
-  // }
   readIO() {
     if (this.IO && typeof this.IO.readSync === 'function') {
       return this.IO.readSync();

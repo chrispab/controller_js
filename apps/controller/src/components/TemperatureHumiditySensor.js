@@ -32,8 +32,12 @@ export default class TemperatureHumiditySensor {
     // Delay initial read to allow the sensor to stabilize after power-on.
     // The DHT22 datasheet recommends at least 2 seconds between reads.
     // setTimeout(() => this.readSensor(), 2000);
-    setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
+    // setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
     // setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
+        setTimeout(() => {
+      this.readSensor();
+      setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
+    }, 12000);
   }
 
   setName(name) {
