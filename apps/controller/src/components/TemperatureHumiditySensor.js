@@ -14,11 +14,12 @@ export default class TemperatureHumiditySensor {
     this.dhtSensorPin = dhtSensorPin;
 
     this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
-    this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
+    // this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
     this.setName(name);
 
     this.temperature = null;
     this.humidity = null;
+    this.isReading = false;
     this.sensorReadIntervalMs = cfg.get('temperatureSensor.sensorReadIntervalMs');
     this.periodicPublishIntervalMs = cfg.get('temperatureSensor.periodicPublishIntervalMs');
 
@@ -28,7 +29,9 @@ export default class TemperatureHumiditySensor {
     }
 
     // Start autonomous operation
-    this.readSensor(); // Initial read
+    // Delay initial read to allow the sensor to stabilize after power-on.
+    // The DHT22 datasheet recommends at least 2 seconds between reads.
+    // setTimeout(() => this.readSensor(), 2000);
     setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
     // setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
   }
@@ -51,8 +54,15 @@ export default class TemperatureHumiditySensor {
   }
 
   readSensor() {
+    if (this.isReading) {
+      logger.warn('DHT sensor read already in progress. Skipping this cycle.');
+      return;
+    }
+    this.isReading = true;
+
     try {
       sensor.read(this.dhtSensorType, this.dhtSensorPin, (err, temperature, humidity) => {
+        this.isReading = false; // Reset the flag once the read is complete
         if (!err) {
           const newTemp = parseFloat(temperature.toFixed(1));
           const newHum = parseFloat(humidity.toFixed(1));
@@ -61,8 +71,7 @@ export default class TemperatureHumiditySensor {
             const oldTemp = this.getTemperature();
             this.setTemperature(newTemp);
             logger.debug(`Temperature changed from ${oldTemp}°C to ${newTemp}°C`);
-            eventEmitter.emit( 'THSensor/temperature/new-reading', { temperature: newTemp });
-            // eventEmitter.emit('fan/on-duration-changed', { name: this.getName(), onMs: newOnMs, });
+            eventEmitter.emit('temperatureChanged', { temperature: newTemp });
             // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), newTemp);
           }
 
@@ -70,7 +79,7 @@ export default class TemperatureHumiditySensor {
             const oldHum = this.getHumidity();
             this.setHumidity(newHum);
             logger.debug(`Humidity changed from ${oldHum}% to ${newHum}%`);
-            eventEmitter.emit('THSensor/humidity/new-reading', { humidity: newHum });
+            eventEmitter.emit('humidityChanged', { humidity: newHum });
             // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), newHum);
           }
         } else {
@@ -78,6 +87,7 @@ export default class TemperatureHumiditySensor {
         }
       });
     } catch (error) {
+      this.isReading = false; // Ensure flag is reset on synchronous error too
       logger.error(`Error in readSensor: ${error}`);
     }
   }
@@ -101,6 +111,16 @@ export default class TemperatureHumiditySensor {
   getSensorStr() {
     return `temperature: ${this.getTemperature()}°C, humidity: ${this.getHumidity()}%`;
   }
+
+  getTelemetryData() {
+    return {
+      [this.getName()]: {
+        temperature: this.getTemperature(),
+        humidity: this.getHumidity(),
+        time: Date.now(),
+      },
+    };
+  }
 }
-import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
-Object.assign(TemperatureHumiditySensor.prototype, IOPinAccessorsMixin);
+// import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
+// Object.assign(TemperatureHumiditySensor.prototype, IOPinAccessorsMixin);

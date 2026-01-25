@@ -3,7 +3,7 @@
   "zone": {
     "lowSetpoint": 14.9,
     "highSetpoint": 24,
-    "name": "Zone 1",
+    "name": "Zone 3",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
       "enabled": false,
@@ -98,7 +98,7 @@
     "brokerUrl": "mqtt://192.168.0.100",
     "username": "pi",
     "password": "raspberry",
-    "topicPrefix": "Zone1",
+    "topicPrefix": "Zone3",
     "LWTTopic": "LWT",
     "rssiTopic": "rssi",
     "lightStateTopic": "LightStatus",
