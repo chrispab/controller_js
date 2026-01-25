@@ -4,7 +4,7 @@ import logger from '../services/logger.js';
 import * as utils from '../utils/utils.js';
 import eventEmitter from '../services/eventEmitter.js';
 
-const logLevel = 'debug';
+// const logLevel = 'debug';
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default class Light {

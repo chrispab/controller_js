@@ -54,7 +54,7 @@
       "speedPhysicalPin": 31
     },
     "RC": {
-      "pin": 27,
+      "pin": "GPIO27",
       "gpio_w_offset": 539,
       "physicalPin": 13
     }
@@ -134,6 +134,7 @@
     "versionTopic": "version",
     "outsideSensorName": "DS18B20-1",
     "heartbeatTopic": "HeartBeat",
+    "heartBeatPayload": "SSS",
     "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
     "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",
     "irrigationPumpStateTopic": "irrigationPump/status",

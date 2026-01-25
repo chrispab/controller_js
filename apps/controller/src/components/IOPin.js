@@ -3,7 +3,7 @@ import { RaspberryPi_2B } from 'opengpio';
 
 class IOPin {
   #state;
-  constructor(GPIOPinNumber, direction, initialState = 0) {
+  constructor(GPIOPinNumber, direction, initialState = false) {
     this.#state = initialState;
     this.newStateFlag = false;
     this.prevStateChangeMs = Date.now();
@@ -14,10 +14,10 @@ class IOPin {
     this.newOnMsFlag = false;
     this.newOffMsFlag = false;
     try {
-      if (direction === 'out') {
+      if (direction === 'output') {
         this.IO = RaspberryPi_2B.output(GPIOPinNumber.toString());
         this.IO.value = initialState;
-      } else if (direction === 'in') {
+      } else if (direction === 'input') {
         this.IO = RaspberryPi_2B.input(GPIOPinNumber.toString());
       }
     } catch (error) {

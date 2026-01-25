@@ -3,7 +3,7 @@ import { RaspberryPi_2B, Bias} from 'opengpio';
 import logger from '../services/logger.js';
 
 class IOBase {
-  constructor(GPIOPinName, direction, initialValue = 0) {
+  constructor(GPIOPinName, direction, initialValue = false) {
     this.state = initialValue;
     this.newStateFlag = false;
     this.prevStateChangeMs = Date.now();

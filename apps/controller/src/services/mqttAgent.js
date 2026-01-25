@@ -149,7 +149,7 @@ class MqttAgent {
 
         //send heartbeat mqtt
         // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), cfg.get('mqtt.heartBeatPayload'));
 
         // resend lwt
         // this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);

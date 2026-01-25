@@ -26,6 +26,8 @@ controller_js/
 └── README.md               # This file
 ```
 
+To identify the model of your Raspberry Pi, you can run the command cat /proc/device-tree/model
+
 ## Installation
 
 1.  **Clone the repository:**
@@ -57,18 +59,21 @@ sudo apt install nodejs
 sudo apt install npm
 
 install
-https://www.npmjs.com/package/rpi-io
 
+opengpio
+https://www.npmjs.com/package/opengpio
 
 
 
 
 https://nodejs.org/en/download
 
-To start the application, run the following command:
+cd controller_js/apps/controller
+To start the controller application, run the following command:
 
 ```bash
-cd apps/controller
+cd
+cd controller_js/apps/controller
 
 npm start
 ```
@@ -83,6 +88,9 @@ To run the applications, use the `npm run` commands from the root directory.
     npm run start:controller
     ```
     This will start the Node.js server for the controller on port `5678`.
+    
+http://192.168.0.155:5678
+
 
 2.  **Start the Frontend Dev Server:**
 
@@ -90,6 +98,8 @@ To run the applications, use the `npm run` commands from the root directory.
     npm run dev:frontend
     ```
     This will start the Next.js development server, typically on port `3000`.
+
+http://192.168.0.155:3000/status
 
 ### Running Tests
 

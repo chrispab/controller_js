@@ -29,5 +29,8 @@
     "prettier": "^3.3.3"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "opengpio": "^2.0.2"
+  }
 }
