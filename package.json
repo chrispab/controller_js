@@ -25,6 +25,7 @@
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.5.3",
     "globals": "^13.24.0",
+    "node-gyp": "^12.1.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   },

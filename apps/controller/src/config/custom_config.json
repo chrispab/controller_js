@@ -32,7 +32,7 @@
     },
     "fan": {
       "gpiopin": 13,
-      "pin": 525,
+      "pin": 13,
       "physicalPin": 33
     },
     "heater": {

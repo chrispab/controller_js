@@ -1,5 +1,9 @@
-import { Gpio } from 'onoff';
 import logger from '../services/logger.js';
+import { Chip, Line } from "node-libgpiod";
+
+// Initialize the chip at module level, not global.
+// This assumes Chip 0 is always the target for this controller.
+const chip = new Chip(0);
 
 class IOBase {
   constructor(GPIOPinNumber, direction, initialValue = 0) {
@@ -12,34 +16,14 @@ class IOBase {
     this.name = 'not yet set-IOBase';
     this.newOnMsFlag = false;
     this.newOffMsFlag = false;
-    // this.prevOnMsChangeMs = Date.now();
-    // this.prevOffMsChangeMs = Date.now();
-    //log constructor parameters
-    // logger.info(`IOBase(${GPIOPinNumber}, ${direction}, ${initialValue})`);
-    this.GPIOAccessible = Gpio.accessible;
+    this.emptyValue = null;
+
     if (direction === 'out') {
-      this.IO = Gpio.accessible
-        ? new Gpio(this.GPIOPinNumber, 'out')
-        : {
-            writeSync: (value) => {
-              logger.log('warn', 'virtual OP set to: ' + value + this.name);
-            },
-          };
-      if (
-        this.IO &&
-        typeof this.IO.writeSync === 'function' &&
-        this.GPIOAccessible
-      ) {
-        this.IO.writeSync(initialValue);
-      }
+      this.IO = new Line(chip, GPIOPinNumber);
+      this.IO.requestOutputMode();
     } else if (direction === 'in') {
-      this.IO = Gpio.accessible
-        ? new Gpio(this.GPIOPinNumber, 'in')
-        : {
-            readSync: (value) => {
-              logger.log('warn', 'virtual IP now uses value: ' + value);
-            },
-          };
+      this.IO = new Line(chip, GPIOPinNumber);
+      this.IO.requestInputMode();
     } else if (direction === 'disabled') {
       logger.warn(`Disabled IO direction value given. Direction: ${direction}`);
     } else {
@@ -47,25 +31,27 @@ class IOBase {
     }
   }
 
-  // getName() {
-  //   return this.name;
-  // }
-
-  // setName(name) {
-  //   this.name = name;
-  // }
+  getName() {
+    return this.name;
+  }
 
   setIODirection(direction) {
-    if (this.IO && typeof this.IO.setDirection === 'function') {
-      this.IO.setDirection(direction);
+    if (this.IO ) {
+      if (direction === 'out') {
+        this.IO.requestOutputMode();
+      } else if (direction === 'in') {
+        this.IO.requestInputMode();
+      } else {
+        logger.warn(`Invalid IO direction value given. Direction: ${direction}`);
+      }
     } else {
       logger.error('IO direction operation is not supported.');
     }
   }
 
   readIO() {
-    if (this.IO && typeof this.IO.readSync === 'function') {
-      return this.IO.readSync();
+    if (this.IO) {
+      return this.IO.getValue();
     } else {
       logger.error('IO read operation is not supported.');
       return null;
@@ -73,8 +59,8 @@ class IOBase {
   }
 
   writeIO(value) {
-    if (this.IO && typeof this.IO.writeSync === 'function') {
-      this.IO.writeSync(value);
+    if (this.IO) {
+      this.IO.setValue(value);
     } else {
       logger.error('IO write operation is not supported.');
     }
@@ -136,7 +122,6 @@ class IOBase {
     if (newOnMs !== this.getOnMs()) {
       this.onMs = newOnMs;
       this.newOnMsFlag = true;
-      // this.setPrevOnMsChangeMs(Date.now());
     }
   }
 
@@ -144,7 +129,6 @@ class IOBase {
     if (newOffMs !== this.getOffMs()) {
       this.offMs = newOffMs;
       this.newOffMsFlag = true;
-      // this.setPrevOffMsChangeMs(Date.now());
     }
   }
 
@@ -155,22 +139,6 @@ class IOBase {
   getOffMs() {
     return this.offMs;
   }
-
-  // getPrevOnMsChangeMs() {
-  //     return this.prevOnMsChangeMs;
-  // }
-
-  // setPrevOnMsChangeMs(newPrevOnMsChangeMs) {
-  //     this.prevOnMsChangeMs = newPrevOnMsChangeMs;
-  // }
-
-  // getPrevOffMsChangeMs() {
-  //     return this.prevOffMsChangeMs;
-  // }
-
-  // setPrevOffMsChangeMs(newPrevOffMsChangeMs) {
-  //     this.prevOffMsChangeMs = newPrevOffMsChangeMs;
-  // }
 
   hasNewOnMsAvailable() {
     return this.newStateFlag;
@@ -201,7 +169,6 @@ class IOBase {
 
     let data = {};
     var key = this.getName();
-    // data[key] = "something";
     data[key] = {
       state: this.getState(),
       onMs: this.getOnMs(),
