@@ -27,7 +27,10 @@
   },
   "hardware": {
     "dhtSensor": {
-      "pin": 515,
+      "pin": 3,
+      "alt_pin": 515,
+      "gpiopin": "GPIO3",
+      "physicalPin": 5,
       "type": "22"
     },
     "fan": {
@@ -40,10 +43,15 @@
       "physicalPin": 29
     },
     "powerPin": {
-      "pin": 514
+      "pin": 514,
+      "alt_pin": 514,
+      "gpiopin": "GPIO2",
+      "physicalPin": 3
     },
     "vent": {
       "pin": 538,
+      "alt_pin": 538,
+      "gpiopin": "GPIO26",
       "physicalPin": 37,
       "speedPin": 518,
       "speedPhysicalPin": 31

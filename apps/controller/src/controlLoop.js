@@ -52,7 +52,7 @@ function startControlLoop() {
   const fan = new Fan('fan', cfg.get('hardware.fan.pin'));
   const heater = new Heater('heater', cfg.get('hardware.heater.pin'));
   const light = new Light('light', cfg.get('hardware.RC.pin'));
-  const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor', cfg.get('hardware.dhtSensor.pin'));
+  const temperatureHumiditySensor = new TemperatureHumiditySensor('temperatureHumiditySensor');
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
   // utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');

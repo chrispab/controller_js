@@ -1,4 +1,8 @@
 // server/index.js
+// const SegfaultHandler = require('segfault-handler');
+import SegfaultHandler from 'segfault-handler';
+SegfaultHandler.registerHandler('crash.log');
+
 import express from 'express';
 import cors from 'cors';
 import http from 'http';

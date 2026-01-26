@@ -1,10 +1,10 @@
 # Zone Controller
 
-This Node.js application is designed to control and monitor a greenhouse or other enclosed environment. It manages a fan, a vent, a heater, and a light based on temperature readings and a configurable setpoint. The application also provides a web interface with a WebSocket server to broadcast the real-time status of the fan and vent.
+This project contains the software for controlling and monitoring a greenhouse environment. It consists of a Node.js backend controller and a Next.js frontend.
 
 ## Features
 
-- **Temperature-based control:** The application reads from a temperature sensor and controls a heater, fan, and vent to maintain a desired temperature range.
+- **Temperature-based control:** The controller reads from a temperature sensor and manages a heater, fan, and vent to maintain desired temperature setpoints.
 - **Day/Night Setpoints:** Different temperature setpoints can be configured for when the lights are on or off.
 - **MQTT Integration:** The application uses MQTT to publish sensor data and device states, and to receive commands.
 - **Web Server:** An Express server provides a simple API and serves a test page.
@@ -132,8 +132,8 @@ WantedBy=multi-user.target
 
 ````
 
-    *   **Note:** Adjust `ExecStart` if your `npm` path is different or if you are not using `nvm`.
-    *   **Note:** Ensure `WorkingDirectory` points to the absolute path of your project.
+    *   **Note:** The Node.js version `v22.17.0` in `ExecStart` appears to be a placeholder or typo. Adjust this path to match the version you installed with `nvm`. You can find the correct path by running `which node`.
+    *   **Note:** The `WorkingDirectory` should point to the controller's workspace directory (`apps/controller`) so that the script can correctly resolve its dependencies.
 
 2.  **Reload systemd:**
 
@@ -270,4 +270,3 @@ cd apps/frontend-nextjs && npm run dev
 
 npm run lint
 npm run prettier
-

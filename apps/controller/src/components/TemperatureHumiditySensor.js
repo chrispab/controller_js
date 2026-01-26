@@ -9,9 +9,9 @@ import eventEmitter from '../services/eventEmitter.js';
 const logLevel = 'debug';
 
 export default class TemperatureHumiditySensor {
-  constructor(name, dhtSensorPin) {
+  constructor(name) {
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
-    this.dhtSensorPin = dhtSensorPin;
+    this.dhtSensorPin = cfg.get('hardware.dhtSensor.pin');
 
     this.powerPin = new IOBase(cfg.get('hardware.powerPin.pin'), 'out', 1);
     // this.IOPin = new IOBase(dhtSensorPin, 'in', 0);
