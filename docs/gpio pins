@@ -1,4 +1,4 @@
-chris@zone3:~/controller_js $ cat /sys/kernel/debug/gpio
+$ cat /sys/kernel/debug/gpio
 gpiochip0: GPIOs 512-565, parent: platform/3f200000.gpio, pinctrl-bcm2835:
  gpio-512 (ID_SDA              )
  gpio-513 (ID_SCL              )

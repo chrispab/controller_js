@@ -34,9 +34,10 @@
       "type": "22"
     },
     "fan": {
-      "gpiopin": 13,
+      "gpiopin": "GPIO13",
       "pin": 525,
-      "physicalPin": 33
+      "alt_pin": 525,
+      "physicalPin": 23
     },
     "heater": {
       "pin": 517,
@@ -98,8 +99,8 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "onDurationMs": 60000,
-    "offDurationMs": 60000
+    "onDurationMs": 10000,
+    "offDurationMs": 10000
   },
   "mqtt": {
     "periodicPublishIntervalMs": 30000,
