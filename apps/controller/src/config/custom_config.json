@@ -62,7 +62,7 @@
     }
   },
   "temperatureSensor": {
-    "sensorReadIntervalMs": 15000,
+    "sensorReadIntervalMs": 10000,
     "periodicPublishIntervalMs": 30000
   },
   "light": {

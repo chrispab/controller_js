@@ -8,6 +8,9 @@ import eventEmitter from '../services/eventEmitter.js';
 
 const logLevel = 'debug';
 
+logger
+
+
 export default class TemperatureHumiditySensor {
   constructor(name) {
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
@@ -37,7 +40,7 @@ export default class TemperatureHumiditySensor {
         setTimeout(() => {
       this.readSensor();
       setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
-    }, 12000);
+    }, 15000);
   }
 
   setName(name) {
@@ -58,6 +61,7 @@ export default class TemperatureHumiditySensor {
   }
 
   readSensor() {
+    logger.warn('Reading DHT sensor...');
     if (this.isReading) {
       logger.warn('DHT sensor read already in progress. Skipping this cycle.');
       return;
@@ -70,11 +74,12 @@ export default class TemperatureHumiditySensor {
         if (!err) {
           const newTemp = parseFloat(temperature.toFixed(1));
           const newHum = parseFloat(humidity.toFixed(1));
-
+          logger.warn(`DHT Sensor Readings - Temp: ${newTemp}°C, Humidity: ${newHum}%`);
+          
           if (newTemp !== this.getTemperature()) {
             const oldTemp = this.getTemperature();
             this.setTemperature(newTemp);
-            logger.debug(`Temperature changed from ${oldTemp}°C to ${newTemp}°C`);
+            logger.warn(`Temperature changed from ${oldTemp}°C to ${newTemp}°C`);
             eventEmitter.emit('temperatureChanged', { temperature: newTemp });
             // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.temperatureStateTopic'), newTemp);
           }
@@ -82,7 +87,7 @@ export default class TemperatureHumiditySensor {
           if (newHum !== this.getHumidity()) {
             const oldHum = this.getHumidity();
             this.setHumidity(newHum);
-            logger.debug(`Humidity changed from ${oldHum}% to ${newHum}%`);
+            logger.warn(`Humidity changed from ${oldHum}% to ${newHum}%`);
             eventEmitter.emit('humidityChanged', { humidity: newHum });
             // utils.logAndPublishState('Temp Sensor', cfg.getWithMQTTPrefix('mqtt.humidityStateTopic'), newHum);
           }
