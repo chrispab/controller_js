@@ -6,7 +6,7 @@
     "name": "Zone 3",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
-      "enabled": false,
+      "enabled": true,
       "interval": 300000
     }
   },
@@ -41,6 +41,8 @@
     },
     "heater": {
       "pin": 517,
+      "alt_pin": 517,
+      "gpiopin": "GPIO5",
       "physicalPin": 29
     },
     "powerPin": {
@@ -55,11 +57,21 @@
       "gpiopin": "GPIO26",
       "physicalPin": 37,
       "speedPin": 518,
+      "speedAltPin": 518,
+      "speedGpioPin": "GPIO6",
       "speedPhysicalPin": 31
     },
     "RC": {
       "pin": 539,
+      "alt_pin": 539,
+      "gpiopin": "GPIO27",
       "physicalPin": 13
+    },
+    "alive": {
+      "pin": 534,
+      "alt_pin": 534,
+      "gpiopin": "GPIO22",
+      "physicalPin": 15
     }
   },
   "temperatureSensor": {
@@ -137,6 +149,8 @@
     "versionTopic": "version",
     "outsideSensorName": "DS18B20-1",
     "heartbeatTopic": "HeartBeat",
+    "heartBeatMessage": "SSS",
+    "heartBeatIntervalMs": 60000,
     "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
     "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",
     "irrigationPumpStateTopic": "irrigationPump/status",

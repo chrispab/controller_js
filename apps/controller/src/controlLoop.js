@@ -4,6 +4,8 @@ import TemperatureHumiditySensor from './components/TemperatureHumiditySensor.js
 import Fan from './components/fan.js';
 import Heater from './components/heater.js';
 import Vent from './components/vent.js';
+import IOBase from './components/IOBase.js';
+import { Gpio } from 'onoff';
 
 import cfg from './services/config.js';
 // import mqttAgent from './services/mqttAgent.js';
@@ -65,6 +67,8 @@ function startControlLoop() {
   // --- Setup Event Listeners ---
   registerEventHandlers();
 
+  //-- enable board op master control ---
+  const alivePin = new IOBase(cfg.get('hardware.alive.pin'), 'out', 1);
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000);
 

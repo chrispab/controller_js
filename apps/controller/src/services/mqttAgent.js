@@ -44,6 +44,8 @@ class MqttAgent {
       this.activeSetpoint = 0;
       this.version = cfg.get('version');
       this.zoneName = cfg.get('zone.name');
+      this.periodicPublication();
+      setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
     } catch (error) {
       logger.error(`Error in MqttAgent constructor: ${error.message}`, {
         stack: error.stack,
@@ -78,7 +80,7 @@ class MqttAgent {
       } else {
         // logger.info("globally disabled telemetry")
       }
-      this.periodicPublication();
+      // this.periodicPublication();
     } catch (error) {
       logger.error(`Error in MqttAgent process method: ${error.message}`, {
         stack: error.stack,
@@ -149,7 +151,7 @@ class MqttAgent {
 
         //send heartbeat mqtt
         // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), 'GGG');
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), cfg.get('mqtt.heartBeatMessage'));
 
         // resend lwt
         // this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);
