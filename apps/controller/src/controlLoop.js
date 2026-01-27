@@ -58,7 +58,7 @@ function startControlLoop() {
   const vent = new Vent('vent', cfg.get('hardware.vent.pin'), cfg.get('hardware.vent.speedPin'));
 
   // utils.sendEmail(stateManager.getState().zoneName + ' is starting up', 'zone startup');
-  utils.sendEmail(cfg.get('zone.name') + ' is starting up', 'zone startup');
+  utils.sendEmail(cfg.get('zone.name') + cfg.get('zoneId') + ' is starting up', 'zone startup');
 
   logger.info('Components initialized.');
 

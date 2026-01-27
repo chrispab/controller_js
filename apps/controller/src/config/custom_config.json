@@ -1,9 +1,10 @@
 {
   "version": "0.1.2",
+  "zoneId": 3,
   "zone": {
     "lowSetpoint": 14.9,
     "highSetpoint": 24,
-    "name": "Zone 3",
+    "name": "Zone",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
       "enabled": true,
@@ -119,7 +120,7 @@
     "brokerUrl": "mqtt://192.168.0.100",
     "username": "pi",
     "password": "raspberry",
-    "topicPrefix": "Zone3",
+    "topicPrefix": "Zone",
     "LWTTopic": "LWT",
     "rssiTopic": "rssi",
     "lightStateTopic": "LightStatus",
@@ -149,7 +150,9 @@
     "versionTopic": "version",
     "outsideSensorName": "DS18B20-1",
     "heartbeatTopic": "HeartBeat",
-    "heartBeatMessage": "SSS",
+    "zone1HeartBeatMessage": "GGG",
+    "zone2HeartBeatMessage": "CCC",
+    "zone3HeartBeatMessage": "SSS",
     "heartBeatIntervalMs": 60000,
     "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
     "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",

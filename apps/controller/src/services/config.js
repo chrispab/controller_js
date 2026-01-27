@@ -94,7 +94,7 @@ class ConfigHandler {
    */
   getWithMQTTPrefix(stringkey) {
     let value = getValueByPath(this.config, stringkey);
-    const prefix = getValueByPath(this.config, 'mqtt.topicPrefix');
+    const prefix = getValueByPath(this.config, 'mqtt.topicPrefix') + getValueByPath(this.config, 'zoneId');
     if (value === undefined || prefix === undefined) {
       logger.log('error', 'config: ' + stringkey + ' does not exist');
       throw new Error(stringkey + ' does not exist');

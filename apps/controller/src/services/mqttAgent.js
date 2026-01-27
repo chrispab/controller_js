@@ -43,8 +43,9 @@ class MqttAgent {
       this.outsideTemperature = 7;
       this.activeSetpoint = 0;
       this.version = cfg.get('version');
-      this.zoneName = cfg.get('zone.name');
-      this.periodicPublication();
+      this.zoneName = cfg.get('zone.name')+cfg.get('zoneId');
+      // Delay initial publication to allow module initialization to complete and avoid circular dependency issues with utils
+      setTimeout(() => this.periodicPublication(), 10000);
       setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
     } catch (error) {
       logger.error(`Error in MqttAgent constructor: ${error.message}`, {
@@ -151,7 +152,7 @@ class MqttAgent {
 
         //send heartbeat mqtt
         // this.client.publish(cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'),'GGG');
-        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), cfg.get('mqtt.heartBeatMessage'));
+        utils.logAndPublishState('mqtt P', cfg.getWithMQTTPrefix('mqtt.heartbeatTopic'), cfg.get('mqtt.' + this.zoneName.toLowerCase() + 'HeartBeatMessage'));
 
         // resend lwt
         // this.client = mqtt.connect(cfg.get('mqtt.brokerUrl'), this.options);
