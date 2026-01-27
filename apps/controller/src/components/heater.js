@@ -37,6 +37,8 @@ export default class Heater {
       this.controlLogic();
     });
 
+    //initil state
+    utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), this.getState() ? 1 : 0);
     // Start autonomous cycle checking
     setInterval(() => this.controlLogic(), 1000); // Re-evaluate every second
   }
