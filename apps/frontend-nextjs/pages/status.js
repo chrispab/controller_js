@@ -776,42 +776,34 @@ export async function getServerSideProps() {
     const statusRes = await fetch(`${API_URL}/api/status`);
     console.log(`Status response status: ${statusRes.status}`);
     const statusData = await statusRes.json();
-    initialStatus = statusData.message;
+    initialStatus = statusData.message || {};
 
     // package info
     console.log(`Fetching package information from: ${API_URL}/api/packageInfo`);
     const packageInfoRes = await fetch(`${API_URL}/api/packageInfo`);
     console.log(`package information response: ${packageInfoRes.status}`);
     const packageInfoData = await packageInfoRes.json();
-    initialStatus = packageInfoData.message;
+    Object.assign(initialStatus, packageInfoData.message);
 
+    // zone name
+    console.log(`Fetching zone name from: ${API_URL}/api/zoneName`);
+    const zoneNameRes = await fetch(`${API_URL}/api/zoneName`);
+    console.log(`zone name response status: ${zoneNameRes.status}`);
+    const zoneNameData = await zoneNameRes.json();
+    initialStatus.zoneName = zoneNameData.message || null;
 
-    // Fetch vent durations for day
-    console.log(`Fetching vent on duration (day) from: ${API_URL}/api/vent/onDurationSecs?period=day`,);
-    const ventOnDayRes = await fetch(`${API_URL}/api/vent/onDurationSecs?period=day`,);
-    console.log( `vent on duration (day) from response status: ${ventOnDayRes.status}`, );
-    const ventOnDayData = await ventOnDayRes.json();
-    console.log( `vent on duration (day) from response ventOnDayData: ${JSON.stringify(ventOnDayData)}`, );
-    initialStatus.ventOnDurationDaySecs = ventOnDayData.day; // Assuming the API returns { day: value, night: value }
+    // Fetch vent durations
+    console.log(`Fetching vent on durations from: ${API_URL}/api/vent/onDurationSecs`);
+    const ventOnRes = await fetch(`${API_URL}/api/vent/onDurationSecs`);
+    const ventOnData = await ventOnRes.json();
+    initialStatus.ventOnDurationDaySecs = ventOnData.day;
+    initialStatus.ventOnDurationNightSecs = ventOnData.night;
 
-    console.log(`Fetching vent off duration (day) from: ${API_URL}/api/vent/offDurationSecs?period=day`, );
-    const ventOffDayRes = await fetch(`${API_URL}/api/vent/offDurationSecs?period=day`, );
-    console.log( `vent off duration (day) response status: ${ventOffDayRes.status}`, );
-    const ventOffDayData = await ventOffDayRes.json();
-    initialStatus.ventOffDurationDaySecs = ventOffDayData.day; // Assuming the API returns { day: value, night: value }
-
-    // Fetch vent durations for night
-    console.log(`Fetching vent on duration (night) from: ${API_URL}/api/vent/onDurationSecs?period=night`, );
-    const ventOnNightRes = await fetch( `${API_URL}/api/vent/onDurationSecs?period=night`, );
-    console.log( `vent on duration (night) response status: ${ventOnNightRes.status}`, );
-    const ventOnNightData = await ventOnNightRes.json();
-    initialStatus.ventOnDurationNightSecs = ventOnNightData.night; // Assuming the API returns { day: value, night: value }
-
-    console.log(`Fetching vent off duration (night) from: ${API_URL}/api/vent/offDurationSecs?period=night`, );
-    const ventOffNightRes = await fetch( `${API_URL}/api/vent/offDurationSecs?period=night`, );
-    console.log( `vent off duration (night) response status: ${ventOffNightRes.status}`, );
-    const ventOffNightData = await ventOffNightRes.json();
-    initialStatus.ventOffDurationNightSecs = ventOffNightData.night; // Assuming the API returns { day: value, night: value }
+    console.log(`Fetching vent off durations from: ${API_URL}/api/vent/offDurationSecs`);
+    const ventOffRes = await fetch(`${API_URL}/api/vent/offDurationSecs`);
+    const ventOffData = await ventOffRes.json();
+    initialStatus.ventOffDurationDaySecs = ventOffData.day;
+    initialStatus.ventOffDurationNightSecs = ventOffData.night;
 
     //sensor soil moisture raw - 'dryness' reading - not a percentage. e.g something like 1960 to 2020 values
     console.log(`Fetching sensor Raw soil moisture reading from: ${API_URL}/api/mqtt/soil1/sensor_method5_batch_moving_average_float`, );

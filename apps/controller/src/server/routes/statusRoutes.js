@@ -4,6 +4,12 @@ import { getPackageInfo } from '../../utils/utils.js';
 
 const router = express.Router();
 
+//get the zoneName from the state manager
+router.get('/zoneName', (req, res) => {
+  res.json({ message: stateManager.getState().zoneName });
+});
+
+//get the version from the state manager
 router.get('/status', (req, res) => {
   const currentState = stateManager.getState();
   res.json({ message: currentState });

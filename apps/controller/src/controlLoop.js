@@ -18,7 +18,7 @@ import registerEventHandlers from './services/eventHandlers/index.js';
 
 // --- Initialize State Manager ---
 const initialState = {
-  // zoneName: cfg.get('zone.name'),
+  zoneName: cfg.get('zone.name')+cfg.get('zoneId'),
   // version: getPackageInfo().version,
   // releaseNotes: getPackageInfo().releaseNotes,
   // description: getPackageInfo().description,

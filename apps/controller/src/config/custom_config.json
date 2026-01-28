@@ -86,12 +86,12 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 420000,
-      "night": 420000
+      "day": 145000,
+      "night": 155000
     },
     "offDurationMs": {
-      "day": 15000,
-      "night": 5000
+      "day": 30000,
+      "night": 70000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
@@ -112,8 +112,8 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "onDurationMs": 10000,
-    "offDurationMs": 10000
+    "onDurationMs": 60000,
+    "offDurationMs": 25000
   },
   "mqtt": {
     "periodicPublishIntervalMs": 30000,

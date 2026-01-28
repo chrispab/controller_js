@@ -9,7 +9,7 @@ const logLevel = 'debug';
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
-    this.IOPin = new IOBase(ventPowerPin, 'dummy vent', 0);
+    this.IOPin = new IOBase(ventPowerPin, 'dummy-virtual-out', 0);
     this.setState(false); //0, 1 or 2. 0%, 50%, 100%. off,medium,full
     this.setName(name);
     // two Pins, on/off and speed 50-100%
