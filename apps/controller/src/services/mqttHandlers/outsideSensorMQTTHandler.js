@@ -2,6 +2,7 @@ import handleMessage from './genericHandler.js';
 import { stateManager } from '../../controlLoop.js';
 import logger from '../logger.js';
 import cfg from '../config.js';
+import eventEmitter from '../eventEmitter.js';
 
 function setOutsideTemperature(topic, value) {
   if (!value || value.length === 0) {
@@ -15,6 +16,7 @@ function setOutsideTemperature(topic, value) {
 
     if (typeof temperature !== 'undefined') {
       stateManager.update({ outsideTemperature: temperature });
+      eventEmitter.emit('outsideTemperatureChanged', { outsideTemperature: temperature });
     } else {
       logger.error(
         `MQTT->Outside_Sensor: Could not extract temperature from payload: ${value}`,

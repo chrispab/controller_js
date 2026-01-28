@@ -6,7 +6,7 @@ import mqttAgent from '../mqttAgent.js';
 function registerLightEventHandlers() {
   eventEmitter.on('lightStateChanged', ({ lightState }) => {
     const newSetpoint = lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
-    stateManager.update({ light: lightState, setpoint: newSetpoint });
+    stateManager.update({ light: lightState ? 1 : 0, setpoint: newSetpoint });
     mqttAgent.setactiveSetpoint(newSetpoint);
   });
 }

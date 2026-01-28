@@ -8,9 +8,6 @@ import eventEmitter from '../services/eventEmitter.js';
 
 const logLevel = 'debug';
 
-logger
-
-
 export default class TemperatureHumiditySensor {
   constructor(name) {
     this.dhtSensorType = cfg.get('hardware.dhtSensor.type');
@@ -37,7 +34,7 @@ export default class TemperatureHumiditySensor {
     // setTimeout(() => this.readSensor(), 2000);
     // setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
     setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
-        setTimeout(() => {
+    setTimeout(() => {
       this.readSensor();
       setInterval(() => this.readSensor(), this.sensorReadIntervalMs);
     }, 15000);
