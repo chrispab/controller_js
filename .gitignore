@@ -10,6 +10,9 @@ dist/
 # Secrets - ignore secret.js file in any src directory
 **/src/secret.js
 
+# zoneInfo configuration files
+**/src/config/zoneInfo.js
+
 # Log files
 *.log
 
