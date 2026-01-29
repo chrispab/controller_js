@@ -61,6 +61,10 @@ export default class Fan {
   }
 
   controlCycle() {
+    // Refresh settings from config in case they changed
+    this.setOnDurationMs(cfg.get('fan.onDurationMs'));
+    this.setOffDurationMs(cfg.get('fan.offDurationMs'));
+
     try {
       const elapsedMs = Date.now() - this.lastStateChangeMs;
 
@@ -136,4 +140,3 @@ export default class Fan {
 
 // import IOPinAccessorsMixin from './mixins/IOPinAccessorsMixin.js';
 // Object.assign(Fan.prototype, IOPinAccessorsMixin);
-

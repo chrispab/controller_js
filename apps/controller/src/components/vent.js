@@ -25,6 +25,10 @@ export default class Vent {
     this.currentTemp = 20;
     this.lightState = false;
 
+    // -- Duration Settings --
+    this.onDurationMs = 0;
+    this.offDurationMs = 0;
+
     // -- Event Listeners --
     eventEmitter.on('temperatureChanged', ({ temperature }) => {
       this.currentTemp = temperature;
@@ -37,7 +41,8 @@ export default class Vent {
 
     // Start autonomous operation
     setInterval(() => this.controlCycle(), 1000); // Main control loop runs every second
-    // setInterval(() => this.periodicPublication(), cfg.get('vent.periodicPublishIntervalMs'));
+    this.periodicPublication();
+    setInterval(() => this.periodicPublication(), cfg.get('vent.periodicPublishIntervalMs'));
   }
   updateState(newState) {
     const oldState = this.getState();
@@ -71,6 +76,34 @@ export default class Vent {
     return 0;
   }
 
+  setOnDurationMs(newOnDurationMs) {
+    if (this.onDurationMs !== newOnDurationMs) {
+      this.onDurationMs = newOnDurationMs;
+      eventEmitter.emit('vent/on-duration-changed', {
+        name: this.getName(),
+        onMs: newOnDurationMs,
+      });
+    }
+  }
+
+  getOnDurationMs() {
+    return this.onDurationMs;
+  }
+
+  setOffDurationMs(newOffDurationMs) {
+    if (this.offDurationMs !== newOffDurationMs) {
+      this.offDurationMs = newOffDurationMs;
+      eventEmitter.emit('vent/off-duration-changed', {
+        name: this.getName(),
+        offMs: newOffDurationMs,
+      });
+    }
+  }
+
+  getOffDurationMs() {
+    return this.offDurationMs;
+  }
+
   controlCycle() {
     const setPoint = this.lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
     const elapsedMs = Date.now() - this.lastStateChangeMs;
@@ -100,8 +133,8 @@ export default class Vent {
 
     // --- Regular Day/Night Cycle Logic ---
     const dayOrNight = this.lightState ? 'day' : 'night';
-    const onMs = cfg.get(`vent.onDurationMs.${dayOrNight}`);
-    const offMs = cfg.get(`vent.offDurationMs.${dayOrNight}`);
+    this.setOnDurationMs(cfg.get(`vent.onDurationMs.${dayOrNight}`));
+    this.setOffDurationMs(cfg.get(`vent.offDurationMs.${dayOrNight}`));
 
     switch (this.cycleState) {
       case 'inactive':
@@ -111,14 +144,14 @@ export default class Vent {
         break;
 
       case 'ON':
-        if (elapsedMs >= onMs) {
+        if (elapsedMs >= this.getOnDurationMs()) {
           this.cycleState = 'OFF';
           this.updateState(0);
         }
         break;
 
       case 'OFF':
-        if (elapsedMs >= offMs) {
+        if (elapsedMs >= this.getOffDurationMs()) {
           this.cycleState = 'ON';
           this.updateState(1); // 50% speed
         }
