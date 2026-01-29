@@ -98,7 +98,7 @@ function StatusBootstrapPage({ initialStatus }) {
 
   const renderSoilMoisture = (value) => {
     if (value === null || value === undefined) {
-      return <span className="text-muted">Loading...</span>;
+      return <span >Waiting for sensor data...</span>;
     }
     const badgeColor = value >= 30 ? 'bg-success' : 'bg-danger';
     return <span className={`badge ${badgeColor}`}>{value.toFixed(1)} %</span>;

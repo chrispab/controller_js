@@ -12,7 +12,7 @@ export default class Light {
   constructor(name, LDRPin) {
     this.IOPin = new IOBase(LDRPin, 'out', 0);
     this.setName(name);
-    this.setState(false);
+    this.setState(null); // true=ON, false=OFF
 
     this.RCLoopCount = 0;
     this.currentlySamplingLightSensor = false;
@@ -24,6 +24,16 @@ export default class Light {
     this.readLightSensorState(); // Initial read
     setInterval(() => this.readLightSensorState(), this.sensorReadIntervalMs);
     // setInterval(() => this.periodicPublication(), this.periodicPublishIntervalMs);
+  }
+  readLightSensorState() {
+    this.initiateGetRCChargeLoopCount()
+      .then((rcCount) => {
+        const newState = rcCount <= 1000; // ON if count is low, OFF if high
+        this.updateState(newState);
+      })
+      .catch((error) => {
+        logger.error('Error reading light sensor:', error);
+      });
   }
 
   updateState(newState) {
@@ -42,16 +52,6 @@ export default class Light {
     }
   }
 
-  readLightSensorState() {
-    this.initiateGetRCChargeLoopCount()
-      .then((rcCount) => {
-        const newState = rcCount <= 1000; // ON if count is low, OFF if high
-        this.updateState(newState);
-      })
-      .catch((error) => {
-        logger.error('Error reading light sensor:', error);
-      });
-  }
 
   initiateGetRCChargeLoopCount() {
     return new Promise((resolve, reject) => {
