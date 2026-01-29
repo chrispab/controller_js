@@ -1,0 +1,165 @@
+{
+  "version": "0.1.2",
+  "zoneId": 3,
+  "zone": {
+    "lowSetpoint": 14.9,
+    "highSetpoint": 24,
+    "name": "Zone",
+    "customConfigFilename": "customConfig.json",
+    "telemetry": {
+      "enabled": true,
+      "interval": 300000
+    }
+  },
+  "config": {
+    "delayBeforeConfigSaveMs": 5000
+  },
+  "system": {
+    "name": "system_1"
+  },
+  "telemetry": {
+    "name": "telemetry_1",
+    "enabled": true,
+    "interval": 300000
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info"
+  },
+  "hardware": {
+    "dhtSensor": {
+      "pin": 3,
+      "alt_pin": 515,
+      "gpiopin": "GPIO3",
+      "physicalPin": 5,
+      "type": "22"
+    },
+    "fan": {
+      "gpiopin": "GPIO13",
+      "pin": 525,
+      "alt_pin": 525,
+      "physicalPin": 23
+    },
+    "heater": {
+      "pin": 517,
+      "alt_pin": 517,
+      "gpiopin": "GPIO5",
+      "physicalPin": 29
+    },
+    "powerPin": {
+      "pin": 514,
+      "alt_pin": 514,
+      "gpiopin": "GPIO2",
+      "physicalPin": 3
+    },
+    "vent": {
+      "pin": 538,
+      "alt_pin": 538,
+      "gpiopin": "GPIO26",
+      "physicalPin": 37,
+      "speedPin": 518,
+      "speedAltPin": 518,
+      "speedGpioPin": "GPIO6",
+      "speedPhysicalPin": 31
+    },
+    "RC": {
+      "pin": 539,
+      "alt_pin": 539,
+      "gpiopin": "GPIO27",
+      "physicalPin": 13
+    },
+    "alive": {
+      "pin": 534,
+      "alt_pin": 534,
+      "gpiopin": "GPIO22",
+      "physicalPin": 15
+    }
+  },
+  "temperatureSensor": {
+    "sensorReadIntervalMs": 10000,
+    "periodicPublishIntervalMs": 30000
+  },
+  "light": {
+    "sensorReadIntervalMs": 9000,
+    "publishStateIntervalMs": 60000,
+    "periodicPublishIntervalMs": 120000
+  },
+  "vent": {
+    "onDurationMs": {
+      "day": 145000,
+      "night": 155000
+    },
+    "offDurationMs": {
+      "day": 30000,
+      "night": 70000
+    },
+    "speedPercent": 50,
+    "periodicPublishIntervalMs": 30000,
+    "lightOnSetpointOffset": 0,
+    "ventOverridePulseOnDelta": 5000
+  },
+  "heater": {
+    "onMs": 10000,
+    "offMs": 60000,
+    "periodicPublishIntervalMs": 300000,
+    "publishStateIntervalMs": 60000,
+    "heater_sp_offset": 0,
+    "ExternalTDiffMs": 300,
+    "heatOnMs": 10000,
+    "heatOffMs": 10000
+  },
+  "fan": {
+    "speedPercent": 50,
+    "periodicPublishIntervalMs": 300000,
+    "publishStateIntervalMs": 60000,
+    "onDurationMs": 60000,
+    "offDurationMs": 25000
+  },
+  "mqtt": {
+    "periodicPublishIntervalMs": 30000,
+    "brokerUrl": "mqtt://192.168.0.100",
+    "username": "pi",
+    "password": "raspberry",
+    "topicPrefix": "Zone",
+    "LWTTopic": "LWT",
+    "rssiTopic": "rssi",
+    "lightStateTopic": "LightStatus",
+    "temperatureStateTopic": "TemperatureStatus",
+    "humidityStateTopic": "HumidityStatus",
+    "ventStateTopic": "VentStatus",
+    "ventSpeedStateTopic": "VentSpeedStatus",
+    "ventSpeedPercentTopic": "VentPercent",
+    "ventValueTopic": "VentValue",
+    "ventOnDurationDaySecsTopic": "vent_on_delta_secs",
+    "ventOffDurationDaySecsTopic": "vent_off_delta_secs",
+    "ventOnDurationDaySecsSetTopic": "vent_on_delta_secs/set",
+    "ventOffDurationDaySecsSetTopic": "vent_off_delta_secs/set",
+    "ventOnDurationNightSecsTopic": "vent_on_delta_dark_secs",
+    "ventOffDurationNightSecsTopic": "vent_off_delta_dark_secs",
+    "ventOnDurationNightSecsSetTopic": "vent_on_delta_dark_secs/set",
+    "ventOffDurationNightSecsSetTopic": "vent_off_delta_dark_secs/set",
+    "fanStateTopic": "FanStatus",
+    "heaterStateTopic": "HeaterStatus",
+    "highSetpointTopic": "high_setpoint",
+    "lowSetpointTopic": "low_setpoint",
+    "telemetryTopic": "telemetry",
+    "outsideSensorTopic": "Outside_Sensor/tele/SENSOR",
+    "highSetpointSetTopic": "high_setpoint/set",
+    "lowSetpointSetTopic": "low_setpoint/set",
+    "activeSetpointTopic": "active_setpoint",
+    "versionTopic": "version",
+    "outsideSensorName": "DS18B20-1",
+    "heartbeatTopic": "HeartBeat",
+    "zone1HeartBeatMessage": "GGG",
+    "zone2HeartBeatMessage": "CCC",
+    "zone3HeartBeatMessage": "SSS",
+    "heartBeatIntervalMs": 60000,
+    "sensorSoilMoistureRawTopic": "soil1/sensor_method5_batch_moving_average_float",
+    "soilMoisturePercentTopic": "openhab/soil_moisture/percentage",
+    "irrigationPumpStateTopic": "irrigationPump/status",
+    "fanOnDurationSecsTopic": "fanOnDurationSecs",
+    "fanOffDurationSecsTopic": "fanOffDurationSecs",
+    "fanOnDurationSecsSetTopic": "fanOnDurationSecs/set",
+    "fanOffDurationSecsSetTopic": "fanOffDurationSecs/set"
+  }
+}

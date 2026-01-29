@@ -2,16 +2,17 @@ import logger from './logger.js';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import zoneInfo from '../config/zoneInfo.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Construct absolute paths to the configuration files to avoid issues with the current working directory.
 const defaultPath = resolve(__dirname, '../config/default.json');
-const customPath = resolve(__dirname, '../config/custom_config.json');
+const customPath = resolve(__dirname, '../config/' + zoneInfo.configFileName);
 
 class ConfigHandler {
   constructor() {
-    this.config = this.load();
+    this.config = this.loadConfigFromFile(customPath);
     this.configHasChanged = false;
     this.delayBeforeConfigSaveMs = this.get('config.delayBeforeConfigSaveMs');
     this.configChangedTime = Date.now() - this.delayBeforeConfigSaveMs;
@@ -39,14 +40,14 @@ class ConfigHandler {
    * or falls back to the default configuration file.
    * @returns {object} The parsed configuration object.
    */
-  load() {
+  loadConfigFromFile(configFilePath) {
     // Initialize file_content to null
     var file_content = null;
     // Check if the custom configuration file exists
-    if (fs.existsSync(customPath)) {
-      logger.log('info', `custom configuration file ${customPath} exists`);
+    if (fs.existsSync(configFilePath)) {
+      logger.log('info', `custom configuration file ${configFilePath} exists`);
       // If it exists, read its content
-      file_content = fs.readFileSync(customPath);
+      file_content = fs.readFileSync(configFilePath);
     } else {
       // If not, read the content of the default configuration file
       file_content = fs.readFileSync(defaultPath);
