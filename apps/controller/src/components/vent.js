@@ -39,7 +39,6 @@ export default class Vent {
     setInterval(() => this.controlCycle(), 1000); // Main control loop runs every second
     // setInterval(() => this.periodicPublication(), cfg.get('vent.periodicPublishIntervalMs'));
   }
-
   updateState(newState) {
     const oldState = this.getState();
     if (newState !== oldState) {

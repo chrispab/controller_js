@@ -4,7 +4,9 @@
 const zoneInfo = {
     "name": "zone3",
     "id": 3,
-    "configFileName": "zone3_config.json"
+    "configFileName": "zone3_config.json",
+    "apiUrl": "http://192.168.0.155:5678",
+    "websocketUrl": "ws://192.168.0.155:5678"
 }
 
 export default zoneInfo;

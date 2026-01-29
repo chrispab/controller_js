@@ -120,12 +120,12 @@ Description=Zone Controller Node.js Application
 After=network.target
 
 [Service]
-ExecStart=/home/pi/.nvm/versions/node/v22.17.0/bin/node /home/pi/controller_js/apps/controller/server/index.js
-WorkingDirectory=/home/pi/controller_js
+ExecStart=node /home/chris/controller_js/apps/controller/src/server/index.js
+WorkingDirectory=/home/chris/controller_js
 Restart=always
-User=pi
-Group=pi
-Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/pi/.nvm/versions/node/v22.17.0/bin
+User=chris
+Group=chris
+Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
 
 [Install]
 WantedBy=multi-user.target
@@ -212,12 +212,12 @@ Description=Next.js Frontend Application
 After=network.target
 
 [Service]
-User=pi
-WorkingDirectory=/home/pi/controller_js/apps/frontend-nextjs
-ExecStart=/home/pi/.nvm/versions/node/v22.17.0/bin/npm run dev
+User=chris
+WorkingDirectory=/home/chris/controller_js/apps/frontend-nextjs
+ExecStart=npm run dev
 Restart=always
 Environment=NODE_ENV=development
-Environment="PATH=/home/pi/.nvm/versions/node/v22.17.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 [Install]
 WantedBy=multi-user.target
