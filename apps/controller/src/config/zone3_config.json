@@ -80,14 +80,14 @@
     "periodicPublishIntervalMs": 30000
   },
   "light": {
-    "sensorReadIntervalMs": 9000,
+    "sensorReadIntervalMs": 10000,
     "publishStateIntervalMs": 60000,
     "periodicPublishIntervalMs": 120000
   },
   "vent": {
     "onDurationMs": {
       "day": 5000,
-      "night": 5000
+      "night": 20000
     },
     "offDurationMs": {
       "day": 5000,
@@ -112,8 +112,8 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "onDurationMs": 5000,
-    "offDurationMs": 10000,
+    "onDurationMs": 155000,
+    "offDurationMs": 5000,
     "onMs": 60000,
     "offMs": 10000
   },

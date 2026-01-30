@@ -1,0 +1,56 @@
+1. The "Power Nap" Problem
+
+Most USB Wi-Fi dongles used with the Pi 2 have an aggressive power-management feature. It tries to save energy by turning off the radio when it thinks it’s idle, but it often forgets to wake back up.
+
+The Fix: You need to disable power management. Open your terminal and run: sudo nano /etc/modprobe.d/8192cu.conf (Note: If that file is empty, your dongle might use a different driver, but this is the most common one.)
+
+Add this line to the file:
+
+    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
+
+Save (Ctrl+O) and Exit (Ctrl+X), then reboot.
+=================================================
+
+
+To keep your Pi 2 from falling asleep on the job, we’ll set up a simple "watchdog" script. This script checks for a connection and, if it finds the Pi is offline, it kicks the network interface to wake it back up.
+Step 1: Create the Script
+
+Open your terminal and create a new script file: sudo nano /usr/local/bin/wifi_rebooter.sh
+
+Now, copy and paste the following code into that file:
+Bash
+
+#!/bin/bash
+
+# The IP of your router (usually 192.168.1.1 or 192.168.0.1)
+SERVER=192.168.1.1
+
+# Ping the router once. If it fails ($? != 0), restart the wifi
+ping -c2 ${SERVER} > /dev/null
+
+if [ $? != 0 ]
+then
+    echo "Wi-Fi connection down! Attempting reconnection..."
+    ifconfig wlan0 down
+    sleep 5
+    ifconfig wlan0 up
+fi
+
+    Note: Make sure the SERVER IP matches your actual router's IP address. If you aren't sure, type ip route in the terminal; it’s usually the "default via" address.
+
+Step 2: Make it Executable
+
+You need to give the Pi permission to run this file. Run this command: sudo chmod +x /usr/local/bin/wifi_rebooter.sh
+Step 3: Schedule the "Heartbeat"
+
+We’ll use Crontab to make this script run automatically every 5 minutes.
+
+    Open the crontab editor: sudo crontab -e
+
+    Scroll to the bottom of the file and add this line: */5 * * * * /usr/local/bin/wifi_rebooter.sh
+
+    Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+How it works
+
+Every 5 minutes, your Pi will "whisper" to your router. If the router doesn't whisper back, the Pi assumes the USB dongle has hung and resets the wlan0 interface. This is often the most reliable "brute force" fix for older Pi hardware.
