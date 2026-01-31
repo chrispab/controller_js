@@ -86,11 +86,11 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 30000,
+      "day": 210000,
       "night": 20000
     },
     "offDurationMs": {
-      "day": 5000,
+      "day": 25000,
       "night": 5000
     },
     "speedPercent": 50,

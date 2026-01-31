@@ -52,13 +52,9 @@ export default class Heater {
       logger.log(logLevel, `${this.getName()} is ${newState ? 'ON' : 'OFF'}`);
       eventEmitter.emit('heaterStateChanged', {
         name: this.name,
-        state: newState,
+        state: newState ? 1 : 0,
       });
-      utils.logAndPublishState(
-        'Heater',
-        cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'),
-        newState,
-      );
+      utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), newState ? 1 : 0);
     }
   }
 

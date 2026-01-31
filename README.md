@@ -173,6 +173,12 @@ WantedBy=multi-user.target
     sudo systemctl status zone_controller.service
     ```
 
+restart
+    ```bash
+    sudo systemctl restart zone_controller.service
+    ```
+
+
     You can also view the logs:
 
     ```bash
@@ -267,3 +273,6 @@ cd apps/frontend-nextjs && npm run dev
 
 npm run lint
 npm run prettier
+
+
+

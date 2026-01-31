@@ -292,10 +292,10 @@ describe('controlLoop', () => {
       );
 
       // Simulate heaterStateChanged event
-      eventEmitter.emit('heaterStateChanged', { state: true });
-      expect(controllerStatus.heater).toBe(true);
+      eventEmitter.emit('heaterStateChanged', { state: 1 });
+      expect(controllerStatus.heater).toBe(1);
       expect(broadcast).toHaveBeenCalledWith(
-        expect.objectContaining({ heater: true }),
+        expect.objectContaining({ heater: 1 }),
       );
 
       // Simulate ventStateChanged event (state 0)
