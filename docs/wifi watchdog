@@ -36,7 +36,23 @@ then
     ifconfig wlan0 up
 fi
 
-    Note: Make sure the SERVER IP matches your actual router's IP address. If you aren't sure, type ip route in the terminal; it’s usually the "default via" address.
+or
+
+#!/bin/bash
+
+# The IP of your router (usually 192.168.1.1 or 192.168.0.1)
+SERVER=192.168.0.1
+
+# Ping the router once. If it fails ($? != 0), restart the wifi
+ping -c2 ${SERVER} > /dev/null
+
+if [ $? != 0 ]
+then
+    echo "$(date): Wi-Fi down! Restarting.pi.." >> /var/log/wifi_reboot.log
+	sudo /sbin/shutdown -r now
+fi
+
+
 
 Step 2: Make it Executable
 
@@ -54,3 +70,12 @@ We’ll use Crontab to make this script run automatically every 5 minutes.
 How it works
 
 Every 5 minutes, your Pi will "whisper" to your router. If the router doesn't whisper back, the Pi assumes the USB dongle has hung and resets the wlan0 interface. This is often the most reliable "brute force" fix for older Pi hardware.
+
+2. How to Read the Logs
+
+After a few hours (or the next time you notice a hiccup), you can check the history of restarts by running:
+
+cat /var/log/wifi_reboot.log
+
+If the file is empty or doesn't exist yet, it means your connection has been stable! If you see a list of timestamps, you’ll know exactly when the Pi dropped off and successfully recovered.
+

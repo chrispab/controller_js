@@ -120,20 +120,18 @@ Description=Zone Controller Node.js Application
 After=network.target
 
 [Service]
-ExecStart=node /home/chris/controller_js/apps/controller/src/server/index.js
-WorkingDirectory=/home/chris/controller_js
+WorkingDirectory=/home/chris/controller_js/apps/controller
+ExecStart=node src/server/index.js
 Restart=always
+RestartSec=10
 User=chris
 Group=chris
-Environment=PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
 
 [Install]
 WantedBy=multi-user.target
 
 ````
 
-    *   **Note:** The Node.js version `v22.17.0` in `ExecStart` appears to be a placeholder or typo. Adjust this path to match the version you installed with `nvm`. You can find the correct path by running `which node`.
-    *   **Note:** The `WorkingDirectory` should point to the controller's workspace directory (`apps/controller`) so that the script can correctly resolve its dependencies.
 
 2.  **Reload systemd:**
 
@@ -214,10 +212,9 @@ After=network.target
 [Service]
 User=chris
 WorkingDirectory=/home/chris/controller_js/apps/frontend-nextjs
-ExecStart=npm run dev
+ExecStart=/usr/bin/npm run dev
 Restart=always
 Environment=NODE_ENV=development
-Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 [Install]
 WantedBy=multi-user.target
