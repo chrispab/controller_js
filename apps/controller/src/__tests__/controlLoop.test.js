@@ -39,7 +39,19 @@ jest.mock('node-wifi');
 jest.mock('nodemailer');
 
 // Mock services
-jest.mock('../services/config');
+jest.mock('../services/config', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    getWithMQTTPrefix: jest.fn(),
+    process: jest.fn(),
+  },
+}));
+jest.mock('../utils/utils.js', () => ({
+  __esModule: true,
+  getPackageInfo: jest.fn().mockReturnValue({ version: '1.0.0' }),
+  sendEmail: jest.fn(),
+}));
 jest.mock('../services/webSocketServer');
 jest.mock('../services/logger');
 jest.mock('../services/eventEmitter');
@@ -77,12 +89,12 @@ jest.mock('../components/light', () => {
   }));
   return mockLight;
 });
-jest.mock('../components/temperatureSensor', () => {
-  const mockTemperatureSensor = jest.fn().mockImplementation(() => ({
+jest.mock('../components/TemperatureHumiditySensor', () => {
+  const mockTemperatureHumiditySensor = jest.fn().mockImplementation(() => ({
     init: jest.fn(),
     process: jest.fn(),
   }));
-  return mockTemperatureSensor;
+  return mockTemperatureHumiditySensor;
 });
 jest.mock('../components/vent', () => {
   const mockVent = jest.fn().mockImplementation(() => ({
@@ -96,7 +108,7 @@ jest.mock('../components/vent', () => {
 import Fan from '../components/fan';
 import Heater from '../components/heater';
 import Light from '../components/light';
-import TemperatureSensor from '../components/temperatureSensor';
+import TemperatureHumiditySensor from '../components/TemperatureHumiditySensor';
 import Vent from '../components/vent';
 
 describe('controlLoop', () => {
@@ -232,7 +244,7 @@ describe('controlLoop', () => {
       expect(Fan).toHaveBeenCalledWith('fan', 1);
       expect(Heater).toHaveBeenCalledWith('heater', 2);
       expect(Light).toHaveBeenCalledWith('light', 3);
-      expect(TemperatureSensor).toHaveBeenCalledWith('temperature_sensor', 4);
+      expect(TemperatureHumiditySensor).toHaveBeenCalledWith('temperatureHumiditySensor');
       expect(Vent).toHaveBeenCalledWith('vent', 5, 6);
 
       // Expect initial irrigationPump status to be set

@@ -12,19 +12,29 @@
   "scripts": {
     "start:controller": "npm start --workspace=@greenhouse-project/controller",
     "dev:frontend": "npm run dev --workspace=apps/frontend-nextjs",
-    "test": "npm test --workspaces --if-present",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "eslint .",
     "lint:json": "eslint . --ext .json",
     "prettier": "prettier --write ."
   },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
     "@eslint/js": "^8.57.0",
+    "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^5.5.3",
     "globals": "^13.24.0",
+    "jest": "^30.2.0",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   },
