@@ -4,11 +4,6 @@ function StatusResponsivePage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
   const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
-  const [theme, setTheme] = useState('dark'); // 'light' or 'dark'
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isWsConnected, setIsWsConnected] = useState(false);
   const [showDaySettings, setShowDaySettings] = useState(false);
@@ -224,7 +219,6 @@ function StatusResponsivePage({ initialStatus }) {
     }
   };
 
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
   const toggleDaySettings = () => setShowDaySettings(!showDaySettings);
   const toggleNightSettings = () => setShowNightSettings(!showNightSettings);
   const toggleFanSettings = () => setShowFanSettings(!showFanSettings);
@@ -244,25 +238,12 @@ function StatusResponsivePage({ initialStatus }) {
         <h1 className="text-center my-4">
           {data.zoneName} Greenhouse Control Dashboard
         </h1>
-        <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="d-flex justify-content-center align-items-center mb-4">
           <div className="d-flex align-items-center">
             <span className="me-2" style={{ fontSize: '1.5rem' }}>
               {data?.light ? '☀️' : '🌙'}
             </span>
             <span className="fw-bold">{data?.light ? 'Day' : 'Night'}</span>
-          </div>
-          <div className="form-check form-switch">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              role="switch"
-              id="themeSwitch"
-              checked={theme === 'dark'}
-              onChange={toggleTheme}
-            />
-            <label className="form-check-label ms-2" htmlFor="themeSwitch">
-              Toggle Dark Mode
-            </label>
           </div>
         </div>
         {!data ? (
