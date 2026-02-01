@@ -653,25 +653,6 @@ function StatusResponsivePage({ initialStatus }) {
               </div>
             </div>
 
-            {/* Device Status */}
-            <div className="col-12 custom-col-responsive">
-              <div
-                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-              >
-                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Device Status</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Light:
-                      <span>{renderIndicator(data.light)}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
             {/* System Information */}
             <div className="col-12 custom-col-responsive">
               <div
