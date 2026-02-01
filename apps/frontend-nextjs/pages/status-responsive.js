@@ -299,7 +299,10 @@ function StatusResponsivePage({ initialStatus }) {
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Heater:
-                      <span>{renderIndicator(data.heater)}</span>
+                      <span>
+                        {data.heater ? <span className="me-2">🔥</span> : null}
+                        {renderIndicator(data.heater)}
+                      </span>
                     </li>
                   </ul>
                   <div
@@ -394,7 +397,8 @@ function StatusResponsivePage({ initialStatus }) {
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
                     <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
-                      Vent: {renderIndicator(data.ventPower)}
+                      Vent: {data.ventPower ? <span className="me-2">🌬️</span> : null}
+                      {renderIndicator(data.ventPower)}
                     </div>
                     <div className="card-body">
                       <ul className="list-group list-group-flush">
@@ -551,7 +555,8 @@ function StatusResponsivePage({ initialStatus }) {
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
                     <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
-                      Fan: {renderIndicator(data.fan)}
+                      Fan: {data.fan ? <span className="me-2">💨</span> : null}
+                      {renderIndicator(data.fan)}
                     </div>
                     <div className="card-body">
                       <div
