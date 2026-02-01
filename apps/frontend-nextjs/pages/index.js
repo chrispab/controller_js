@@ -3,6 +3,7 @@ import Link from 'next/link';
 export default function Home() {
   const pages = [
     { name: 'Status Page', path: '/status' },
+    { name: 'Responsive Status Page', path: '/status-responsive' },
     // Add other pages here as they are created
   ];
 

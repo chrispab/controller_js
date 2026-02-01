@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function StatusBootstrapPage({ initialStatus }) {
+function StatusResponsivePage({ initialStatus }) {
   const [data, setData] = useState(initialStatus);
   const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
@@ -232,6 +232,14 @@ function StatusBootstrapPage({ initialStatus }) {
 
   return (
     <div style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }} className="min-vh-100 py-3">
+      <style jsx>{`
+        @media (min-width: 1025px) {
+          .custom-col-responsive {
+            flex: 0 0 auto;
+            width: 33.333333% !important;
+          }
+        }
+      `}</style>
       <div className="container">
         <h1 className="text-center my-4">
           {data.zoneName} Greenhouse Control Dashboard
@@ -260,63 +268,14 @@ function StatusBootstrapPage({ initialStatus }) {
           </div>
         ) : (
           <div className="row">
-            {/* Environmental Readings */}
-            <div className="col-md-6">
+            {/* Temperature Control Card */}
+            <div className="col-12 custom-col-responsive">
               <div
                 className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
-                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Environmental Readings</div>
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Temperature Control</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Temperature:
-                      <span>
-                        {typeof data.temperature === 'number'
-                          ? `${data.temperature.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
-                    </li>
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Humidity:
-                      <span>
-                        {typeof data.humidity === 'number'
-                          ? `${data.humidity.toFixed(1)} %`
-                          : 'N/A'}
-                      </span>
-                    </li>
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Outside Temperature:
-                      <span>
-                        {typeof data.outsideTemperature === 'number'
-                          ? `${data.outsideTemperature.toFixed(1)} °C`
-                          : 'Waiting for sensor data...'}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Device Status */}
-            <div className="col-md-6">
-              <div
-                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-              >
-                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Device Status</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Light:
-                      <span>{renderIndicator(data.light)}</span>
-                    </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
@@ -324,12 +283,88 @@ function StatusBootstrapPage({ initialStatus }) {
                       <span>{renderIndicator(data.heater)}</span>
                     </li>
                   </ul>
+                  <div
+                    className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
+                  >
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Setpoint: {data.setpoint} °C</div>
+                    <div className="card-body">
+                      <div
+                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
+                      >
+                        <div
+                          className="card-header"
+                          onClick={toggleSetpointSettings}
+                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
+                        >
+                          Setpoint Settings {showSetpointSettings ? '▲' : '▼'}
+                        </div>
+                        <div
+                          className={`collapse ${showSetpointSettings ? 'show' : ''}`}
+                        >
+                          <div className="card-body">
+                            <ul className="list-group list-group-flush">
+                              <li
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                              >
+                                <label
+                                  htmlFor="highSetpoint"
+                                  className="form-label"
+                                >
+                                  Upper Setpoint °C
+                                </label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="10"
+                                  max="30"
+                                  step="0.1"
+                                  value={data.highSetpoint || 0}
+                                  id="highSetpoint"
+                                  onChange={handleUpperSetpointChange}
+                                />
+                      <span>
+                        {typeof data.highSetpoint === 'number'
+                          ? `${data.highSetpoint.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
+                              </li>
+                              <li
+                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                              >
+                                <label
+                                  htmlFor="lowSetpoint"
+                                  className="form-label"
+                                >
+                                  Lower Setpoint °C
+                                </label>
+                                <input
+                                  type="range"
+                                  className="form-range"
+                                  min="10"
+                                  max="30"
+                                  step="0.1"
+                                  id="lowerSetpoint"
+                                  value={data.lowSetpoint || 0}
+                                  onChange={handleLowerSetpointChange}
+                                />
+                                                      <span>
+                        {typeof data.lowSetpoint === 'number'
+                          ? `${data.lowSetpoint.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Air Control Card */}
-            <div className="col-md-6 mx-auto">
+            <div className="col-12 custom-col-responsive">
               <div
                 className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
@@ -567,95 +602,8 @@ function StatusBootstrapPage({ initialStatus }) {
               </div>
             </div>
 
-            {/* Temperature Control Card */}
-            <div className="col-md-6 mx-auto">
-              <div
-                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-              >
-                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Temperature Control</div>
-                <div className="card-body">
-                  <div
-                    className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-                  >
-                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Setpoint: {data.setpoint} °C</div>
-                    <div className="card-body">
-                      <div
-                        className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-                      >
-                        <div
-                          className="card-header"
-                          onClick={toggleSetpointSettings}
-                          style={{ cursor: 'pointer', backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}
-                        >
-                          Setpoint Settings {showSetpointSettings ? '▲' : '▼'}
-                        </div>
-                        <div
-                          className={`collapse ${showSetpointSettings ? 'show' : ''}`}
-                        >
-                          <div className="card-body">
-                            <ul className="list-group list-group-flush">
-                              <li
-                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                              >
-                                <label
-                                  htmlFor="highSetpoint"
-                                  className="form-label"
-                                >
-                                  Upper Setpoint °C
-                                </label>
-                                <input
-                                  type="range"
-                                  className="form-range"
-                                  min="10"
-                                  max="30"
-                                  step="0.1"
-                                  value={data.highSetpoint || 0}
-                                  id="highSetpoint"
-                                  onChange={handleUpperSetpointChange}
-                                />
-                      <span>
-                        {typeof data.highSetpoint === 'number'
-                          ? `${data.highSetpoint.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
-                              </li>
-                              <li
-                                className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                              >
-                                <label
-                                  htmlFor="lowSetpoint"
-                                  className="form-label"
-                                >
-                                  Lower Setpoint °C
-                                </label>
-                                <input
-                                  type="range"
-                                  className="form-range"
-                                  min="10"
-                                  max="30"
-                                  step="0.1"
-                                  id="lowerSetpoint"
-                                  value={data.lowSetpoint || 0}
-                                  onChange={handleLowerSetpointChange}
-                                />
-                                                      <span>
-                        {typeof data.lowSetpoint === 'number'
-                          ? `${data.lowSetpoint.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Water Control */}
-            <div className="col-md-6">
+            <div className="col-12 custom-col-responsive">
               <div
                 className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
@@ -681,8 +629,70 @@ function StatusBootstrapPage({ initialStatus }) {
               </div>
             </div>
 
+            {/* Environmental Readings */}
+            <div className="col-12 custom-col-responsive">
+              <div
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
+              >
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Environmental Readings</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Temperature:
+                      <span>
+                        {typeof data.temperature === 'number'
+                          ? `${data.temperature.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
+                    </li>
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Humidity:
+                      <span>
+                        {typeof data.humidity === 'number'
+                          ? `${data.humidity.toFixed(1)} %`
+                          : 'N/A'}
+                      </span>
+                    </li>
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Outside Temperature:
+                      <span>
+                        {typeof data.outsideTemperature === 'number'
+                          ? `${data.outsideTemperature.toFixed(1)} °C`
+                          : 'Waiting for sensor data...'}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Device Status */}
+            <div className="col-12 custom-col-responsive">
+              <div
+                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
+              >
+                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Device Status</div>
+                <div className="card-body">
+                  <ul className="list-group list-group-flush">
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Light:
+                      <span>{renderIndicator(data.light)}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             {/* System Information */}
-            <div className="col-md-6 mx-auto">
+            <div className="col-12 custom-col-responsive">
               <div
                 className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
               >
@@ -902,4 +912,4 @@ export async function getServerSideProps() {
   };
 }
 
-export default StatusBootstrapPage;
+export default StatusResponsivePage;
