@@ -244,18 +244,26 @@ function StatusResponsivePage({ initialStatus }) {
         <h1 className="text-center my-4">
           {data.zoneName} Greenhouse Control Dashboard
         </h1>
-        <div className="form-check form-switch d-flex justify-content-center align-items-center mb-4">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            id="themeSwitch"
-            checked={theme === 'dark'}
-            onChange={toggleTheme}
-          />
-          <label className="form-check-label ms-2" htmlFor="darkModeSwitch">
-            Toggle Dark Mode
-          </label>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex align-items-center">
+            <span className="me-2" style={{ fontSize: '1.5rem' }}>
+              {data?.light ? '☀️' : '🌙'}
+            </span>
+            <span className="fw-bold">{data?.light ? 'Day' : 'Night'}</span>
+          </div>
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="themeSwitch"
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+            />
+            <label className="form-check-label ms-2" htmlFor="themeSwitch">
+              Toggle Dark Mode
+            </label>
+          </div>
         </div>
         {!data ? (
           <div
@@ -276,6 +284,36 @@ function StatusResponsivePage({ initialStatus }) {
                 <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Temperature Control</div>
                 <div className="card-body">
                   <ul className="list-group list-group-flush">
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Temperature:
+                      <span>
+                        {typeof data.temperature === 'number'
+                          ? `${data.temperature.toFixed(1)} °C`
+                          : 'N/A'}
+                      </span>
+                    </li>
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Humidity:
+                      <span>
+                        {typeof data.humidity === 'number'
+                          ? `${data.humidity.toFixed(1)} %`
+                          : 'N/A'}
+                      </span>
+                    </li>
+                    <li
+                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                    >
+                      Outside Temperature:
+                      <span>
+                        {typeof data.outsideTemperature === 'number'
+                          ? `${data.outsideTemperature.toFixed(1)} °C`
+                          : 'Waiting for sensor data...'}
+                      </span>
+                    </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
@@ -623,49 +661,6 @@ function StatusResponsivePage({ initialStatus }) {
                     >
                       Irrigation Pump:
                       <span>{renderIndicator(data.irrigationPump)}</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            {/* Environmental Readings */}
-            <div className="col-12 custom-col-responsive">
-              <div
-                className="card mb-4" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
-              >
-                <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Environmental Readings</div>
-                <div className="card-body">
-                  <ul className="list-group list-group-flush">
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Temperature:
-                      <span>
-                        {typeof data.temperature === 'number'
-                          ? `${data.temperature.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
-                    </li>
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Humidity:
-                      <span>
-                        {typeof data.humidity === 'number'
-                          ? `${data.humidity.toFixed(1)} %`
-                          : 'N/A'}
-                      </span>
-                    </li>
-                    <li
-                      className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
-                    >
-                      Outside Temperature:
-                      <span>
-                        {typeof data.outsideTemperature === 'number'
-                          ? `${data.outsideTemperature.toFixed(1)} °C`
-                          : 'Waiting for sensor data...'}
-                      </span>
                     </li>
                   </ul>
                 </div>
