@@ -69,7 +69,9 @@ export default class Light {
 
         wait(50).then(() => {
           this.IOPin.setIODirection('in');
-          while (this.IOPin.readIO() == 0 && this.RCLoopCount < 999999) {
+          // Reduced max loop count from 999999 to 5000 to prevent CPU blocking.
+          // Threshold for 'Light' is 1000, so 5000 is sufficient to determine 'Dark'.
+          while (this.IOPin.readIO() == 0 && this.RCLoopCount < 5000) {
             this.RCLoopCount++;
           }
           // Discharge capacitor again for next reading

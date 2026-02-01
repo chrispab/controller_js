@@ -59,6 +59,11 @@ sudo apt install npm
 
 https://nodejs.org/en/download
 
+
+# Grant hardware permissions to the user (replace 'chris' with your username if different)
+sudo usermod -a -G gpio,i2c chris
+
+
 To start the application, run the following command:
 
 ```bash
