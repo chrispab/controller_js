@@ -2,7 +2,7 @@
   "version": "0.1.2",
   "zoneId": 3,
   "zone": {
-    "lowSetpoint": 15,
+    "lowSetpoint": 7,
     "highSetpoint": 24,
     "name": "Zone",
     "customConfigFilename": "customConfig.json",
@@ -87,11 +87,11 @@
   "vent": {
     "onDurationMs": {
       "day": 210000,
-      "night": 30000
+      "night": 25000
     },
     "offDurationMs": {
       "day": 50000,
-      "night": 120000
+      "night": 250000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
@@ -100,13 +100,13 @@
   },
   "heater": {
     "onMs": 10000,
-    "offMs": 60000,
+    "offMs": 10000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 300,
-    "heatOnMs": 10000,
-    "heatOffMs": 10000
+    "heatOnMs": 60000,
+    "heatOffMs": 60000
   },
   "fan": {
     "speedPercent": 50,

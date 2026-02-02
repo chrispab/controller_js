@@ -362,7 +362,7 @@ function StatusResponsivePage({ initialStatus }) {
                                 <input
                                   type="range"
                                   className="form-range"
-                                  min="10"
+                                  min="5"
                                   max="30"
                                   step="0.1"
                                   id="lowerSetpoint"
