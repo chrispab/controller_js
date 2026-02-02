@@ -3,7 +3,7 @@
   "zoneId": 1,
   "zone": {
     "lowSetpoint": 14.9,
-    "highSetpoint": 24,
+    "highSetpoint": 22,
     "name": "Zone",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
@@ -86,12 +86,12 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 145000,
-      "night": 155000
+      "day": 30000,
+      "night": 25000
     },
     "offDurationMs": {
-      "day": 30000,
-      "night": 70000
+      "day": 125000,
+      "night": 140000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
