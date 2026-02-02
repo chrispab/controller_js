@@ -72,6 +72,34 @@ function startControlLoop() {
   // --- Periodic Services ---
   setInterval(() => cfg.process(), 1000);
 
+  // Periodically sync config and update the active setpoint
+  setInterval(() => {
+    const state = stateManager.getState();
+    const updates = {};
+
+    // 1. Sync high/low setpoints from config to state if they have changed
+    const newHigh = cfg.get('zone.highSetpoint');
+    if (newHigh !== state.highSetpoint) {
+      updates.highSetpoint = newHigh;
+    }
+    const newLow = cfg.get('zone.lowSetpoint');
+    if (newLow !== state.lowSetpoint) {
+      updates.lowSetpoint = newLow;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      stateManager.update(updates);
+    }
+
+    // 2. Calculate and update the active setpoint based on the current light state
+    const currentState = stateManager.getState(); // get latest state
+    const newSetpoint = currentState.light ? currentState.highSetpoint : currentState.lowSetpoint;
+
+    if (newSetpoint !== null && newSetpoint !== undefined && newSetpoint !== currentState.setpoint) {
+      stateManager.update({ setpoint: newSetpoint, activeSetpoint: newSetpoint });
+    }
+  }, 1000);
+
   logger.info('Event-driven control loop started.');
 }
 
