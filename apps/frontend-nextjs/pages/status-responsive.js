@@ -308,7 +308,7 @@ function StatusResponsivePage({ initialStatus }) {
                   <div
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
-                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Current Setpoint: {data.setpoint} °C</div>
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Current Setpoint: {data.setpoint.toFixed(1)} °C</div>
                     <div className="card-body">
                       <div
                         className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
