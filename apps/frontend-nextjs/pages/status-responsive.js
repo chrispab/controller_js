@@ -61,6 +61,20 @@ function StatusResponsivePage({ initialStatus }) {
     };
   }, []);
 
+  const formatUptime = (seconds) => {
+    if (seconds === null || seconds === undefined) return 'N/A';
+    const days = Math.floor(seconds / (3600 * 24));
+    const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    const parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    parts.push(`${minutes}m`);
+
+    return parts.join(' ') || '< 1m';
+  };
+
   const renderIndicator = (value) => {
     if (value === null || value === undefined) {
       return <span className="text-muted">Loading...</span>;
@@ -669,6 +683,12 @@ function StatusResponsivePage({ initialStatus }) {
                           WebSocket:
                           <span>{renderIndicator(isWsConnected)}</span>
                         </li>
+                        <li
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                        >
+                          Uptime:
+                          <span>{formatUptime(data.uptime)}</span>
+                        </li>
                       </>
                     )}
                     <li
@@ -853,6 +873,12 @@ export async function getServerSideProps() {
 
     console.log('Final initialStatus object:', initialStatus);
 
+
+  try {
+    initialStatus.uptime = require('os').uptime();
+  } catch (e) {
+    console.error('Failed to fetch uptime:', e);
+  }
 
   try {
     initialStatus.gitBranch = execSync('git rev-parse --abbrev-ref HEAD')
