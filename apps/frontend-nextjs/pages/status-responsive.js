@@ -249,8 +249,8 @@ function StatusResponsivePage({ initialStatus }) {
         }
       `}</style>
       <div className="container">
-        <h1 className="text-center my-4">
-          {data.zoneName} Greenhouse Control Dashboard
+        <h1 className="text-center my-2" style={{ fontSize: '1.6rem' }}>
+          {data.zoneName} Greenhouse Dashboard
         </h1>
         <div className="d-flex justify-content-center align-items-center mb-4">
           <div className="d-flex align-items-center">
