@@ -60,7 +60,7 @@ sudo apt install npm
 https://nodejs.org/en/download
 
 
-# Grant hardware permissions to the user (replace 'chris' with your username if different)
+**Grant hardware permissions to the user (replace 'chris' with your username if different)**
 sudo usermod -a -G gpio,i2c chris
 
 
@@ -116,26 +116,23 @@ To ensure the application starts automatically on boot and runs reliably in the 
 
    Create a new file named `zone_controller.service` in `/etc/systemd/system/` with the following content:
 
-   ```
+   ````
+   [Unit]
+   Description=Zone Controller Node.js Application
+   After=network.target
 
-   ```
+   [Service]
+   WorkingDirectory=/home/chris/controller_js/apps/controller
+   ExecStart=node src/server/index.js
+   Restart=always
+   RestartSec=10
+   User=chris
+   Group=chris
 
-[Unit]
-Description=Zone Controller Node.js Application
-After=network.target
+   [Install]
+   WantedBy=multi-user.target
 
-[Service]
-WorkingDirectory=/home/chris/controller_js/apps/controller
-ExecStart=node src/server/index.js
-Restart=always
-RestartSec=10
-User=chris
-Group=chris
-
-[Install]
-WantedBy=multi-user.target
-
-````
+   ````
 
 
 2.  **Reload systemd:**
@@ -212,9 +209,7 @@ To ensure your Next.js server starts automatically on boot and runs reliably in 
 
    Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
 
-   ```
-
-   ```
+```
 
 [Unit]
 Description=Next.js Frontend Application
