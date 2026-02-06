@@ -46,6 +46,7 @@ const initialState = {
   activeSetpoint: null,
   fanOnDurationSecs: cfg.get('fan.onDurationMs')/1000,
   fanOffDurationSecs: cfg.get('fan.offDurationMs')/1000,
+  wifiSignalPercent: null,
 };
 
 export const stateManager = new ImmutableStateManager(initialState);

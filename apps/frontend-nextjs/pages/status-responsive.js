@@ -112,6 +112,17 @@ function StatusResponsivePage({ initialStatus }) {
     const badgeColor = value >= 30 ? 'bg-success' : 'bg-danger';
     return <span className={`badge ${badgeColor}`}>{value.toFixed(1)} %</span>;
   };
+
+  const formatWifiSignal = (value) => {
+    if (value === null || value === undefined || value === '') {
+      return 'N/A';
+    }
+    const numeric = Number(value);
+    if (Number.isNaN(numeric)) {
+      return `${value}%`;
+    }
+    return `${numeric.toFixed(0)}%`;
+  };
   const handleVentOnDurationChange = async (event, period) => {
     const value = event.target.value;
     setData((prevData) => ({
@@ -688,6 +699,20 @@ function StatusResponsivePage({ initialStatus }) {
                         >
                           Uptime:
                           <span>{formatUptime(data.uptime)}</span>
+                        </li>
+                        <li
+                          className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
+                        >
+                          WiFi Signal:
+                          <span>
+                            {formatWifiSignal(
+                              data.wifiSignalPercent ??
+                                data.wifiSignalStrength ??
+                                data.wifiSignalStrengthDbm ??
+                                data.wifiRssi ??
+                                data.wifiSignal,
+                            )}
+                          </span>
                         </li>
                       </>
                     )}

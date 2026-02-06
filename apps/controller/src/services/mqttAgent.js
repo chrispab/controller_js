@@ -206,6 +206,7 @@ mqttAgent.client.on('connect', function () {
     cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic'),
     cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic'),
+    cfg.getWithMQTTPrefix('mqtt.rssiTopic'),
     cfg.get('mqtt.outsideSensorTopic'), //has no zone prefix
     cfg.get('mqtt.soilMoisturePercentTopic'), //has no zone prefix
     'soil1/sensor_method5_batch_moving_average_float',
@@ -252,6 +253,7 @@ const topicHandlers = {
   [cfg.getWithMQTTPrefix('mqtt.ventOffDurationNightSecsSetTopic')]: handlers.handleVentOffDurationNightSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.fanOnDurationSecsSetTopic')]: handlers.handleFanOnDurationSecsSet,
   [cfg.getWithMQTTPrefix('mqtt.fanOffDurationSecsSetTopic')]: handlers.handleFanOffDurationSecsSet,
+  [cfg.getWithMQTTPrefix('mqtt.rssiTopic')]: handlers.handleWifiSignalPercent,
   [cfg.get('mqtt.outsideSensorTopic')]: handlers.handleOutsideSensor,
   [cfg.get('mqtt.sensorSoilMoistureRawTopic')]: handlers.handleSensorSoilMoistureRaw,
   [cfg.get('mqtt.soilMoisturePercentTopic')]: handlers.handleSoilMoisturePercent,

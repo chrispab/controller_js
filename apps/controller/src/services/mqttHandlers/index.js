@@ -25,3 +25,5 @@ export {
   handleSoilMoisturePercent,
   handleIrrigationPumpState,
 } from './waterMQTTHandler.js';
+
+export { default as handleWifiSignalPercent } from './wifiSignalMQTTHandler.js';
