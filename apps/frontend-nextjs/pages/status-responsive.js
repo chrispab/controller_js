@@ -184,7 +184,7 @@ function StatusResponsivePage({ initialStatus }) {
         className={`value-flash-target ${className || ''}`.trim()}
         style={
           flashToken > 0
-            ? { animation: 'valueFlashFade 2s ease-out' }
+            ? { animation: 'valueFlashFade 4s ease-out' }
             : undefined
         }
       >

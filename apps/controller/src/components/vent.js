@@ -114,7 +114,12 @@ export default class Vent {
         logger.debug('High-temperature override ACTIVATED');
         this.ventOverride = true;
       }
+      // if its dark just run at 50%, if its light run at 100%
+      if (this.lightState) {
+        this.updateState(1); // Set to 50% speed
+      } else {
       this.updateState(2); // Set to 100% speed
+      }
       return; // Override takes precedence
     }
 
