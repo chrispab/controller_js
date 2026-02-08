@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 
 function StatusResponsivePage({ initialStatus }) {
+  const router = useRouter();
   const [data, setData] = useState(initialStatus);
   const [lastPageUpdate, setLastPageUpdate] = useState(null); // Initialize as null
   const [mounted, setMounted] = useState(false); // State to track if component is mounted
@@ -10,6 +12,52 @@ function StatusResponsivePage({ initialStatus }) {
   const [showNightSettings, setShowNightSettings] = useState(false);
   const [showFanSettings, setShowFanSettings] = useState(false);
   const [showSetpointSettings, setshowSetpointSettings] = useState(false);
+  const [flashTokens, setFlashTokens] = useState({});
+  const [showDebugOverlay, setShowDebugOverlay] = useState(false);
+
+  useEffect(() => {
+    const debugFlag = router?.query?.debug;
+    setShowDebugOverlay(debugFlag === '1');
+  }, [router?.query?.debug]);
+  const previousDataRef = useRef(initialStatus);
+  const previousWsRef = useRef(isWsConnected);
+
+  useEffect(() => {
+    if (!data) return;
+
+    const previousData = previousDataRef.current;
+    if (!previousData) {
+      previousDataRef.current = data;
+      return;
+    }
+
+    const changedKeys = Object.keys(data).filter(
+      (key) => previousData[key] !== data[key],
+    );
+
+    if (changedKeys.length) {
+      setFlashTokens((prev) => {
+        const next = { ...prev };
+        changedKeys.forEach((key) => {
+          next[key] = (next[key] || 0) + 1;
+        });
+        return next;
+      });
+    }
+
+    previousDataRef.current = data;
+  }, [data]);
+
+  useEffect(() => {
+    if (previousWsRef.current === isWsConnected) return;
+
+    setFlashTokens((prev) => ({
+      ...prev,
+      isWsConnected: (prev.isWsConnected || 0) + 1,
+    }));
+
+    previousWsRef.current = isWsConnected;
+  }, [isWsConnected]);
 
   useEffect(() => {
     setMounted(true); // Set mounted to true after initial render on client
@@ -122,6 +170,27 @@ function StatusResponsivePage({ initialStatus }) {
       return `${value}%`;
     }
     return `${numeric.toFixed(0)}%`;
+  };
+
+  const renderValue = (keys, content, className) => {
+    const keyList = Array.isArray(keys) ? keys : [keys];
+    const flashToken = Math.max(
+      0,
+      ...keyList.map((key) => flashTokens[key] || 0),
+    );
+    return (
+      <span
+        key={`${keyList.join('|')}-${flashToken}`}
+        className={`value-flash-target ${className || ''}`.trim()}
+        style={
+          flashToken > 0
+            ? { animation: 'valueFlashFade 2s ease-out' }
+            : undefined
+        }
+      >
+        {content}
+      </span>
+    );
   };
   const handleVentOnDurationChange = async (event, period) => {
     const value = event.target.value;
@@ -258,17 +327,95 @@ function StatusResponsivePage({ initialStatus }) {
             width: 33.333333% !important;
           }
         }
+        .value-flash-target {
+          display: inline-block;
+          border-radius: 0.25rem;
+          padding: 0 0.25rem;
+          background-color: var(--card-background-color);
+        }
+        .debug-overlay {
+          position: fixed;
+          right: 12px;
+          bottom: 12px;
+          z-index: 9999;
+          background: rgba(0, 0, 0, 0.78);
+          color: #fff;
+          font-size: 12px;
+          padding: 8px 10px;
+          border-radius: 8px;
+          max-width: 240px;
+          line-height: 1.3;
+        }
+        .debug-title {
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+        .debug-btn {
+          margin-top: 6px;
+          margin-right: 6px;
+          background: #ffd214;
+          border: none;
+          color: #111;
+          font-size: 11px;
+          padding: 4px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
       `}</style>
+      <style jsx global>{`
+        @keyframes valueFlashFade {
+          0% {
+            background-color: rgba(255, 179, 0, 0.9);
+            box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.95);
+            color: #000;
+            font-weight: 700;
+            transform: scale(1.03);
+          }
+          100% {
+            background-color: var(--card-background-color);
+            box-shadow: 0 0 0 0 rgba(255, 179, 0, 0);
+            color: inherit;
+            font-weight: inherit;
+            transform: scale(1);
+          }
+        }
+      `}</style>
+      {showDebugOverlay && (
+        <div className="debug-overlay">
+          <div className="debug-title">Debug</div>
+          <div>Temp: {String(data?.temperature)}</div>
+          <div>Humidity: {String(data?.humidity)}</div>
+          <div>Last change: {data?.lastChange || 'n/a'}</div>
+          <button
+            type="button"
+            className="debug-btn"
+            onClick={() =>
+              setFlashTokens((prev) => ({
+                ...prev,
+                temperature: (prev.temperature || 0) + 1,
+                humidity: (prev.humidity || 0) + 1,
+              }))
+            }
+          >
+            Test
+          </button>
+        </div>
+      )}
       <div className="container">
         <h1 className="text-center my-2" style={{ fontSize: '1.6rem' }}>
-          {data.zoneName} Greenhouse Dashboard
+          {renderValue('zoneName', `${data.zoneName} Greenhouse Dashboard`)}
         </h1>
         <div className="d-flex justify-content-center align-items-center mb-4">
           <div className="d-flex align-items-center">
-            <span className="me-2" style={{ fontSize: '1.5rem' }}>
-              {data?.light ? '☀️' : '🌙'}
-            </span>
-            <span className="fw-bold">{data?.light ? 'Day' : 'Night'}</span>
+            {renderValue(
+              'light',
+              <>
+                <span className="me-2" style={{ fontSize: '1.5rem' }}>
+                  {data?.light ? '☀️' : '🌙'}
+                </span>
+                <span className="fw-bold">{data?.light ? 'Day' : 'Night'}</span>
+              </>,
+            )}
           </div>
         </div>
         {!data ? (
@@ -294,46 +441,58 @@ function StatusResponsivePage({ initialStatus }) {
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Temperature:
-                      <span>
-                        {typeof data.temperature === 'number'
+                      {renderValue(
+                        'temperature',
+                        typeof data.temperature === 'number'
                           ? `${data.temperature.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
+                          : 'N/A',
+                      )}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Humidity:
-                      <span>
-                        {typeof data.humidity === 'number'
+                      {renderValue(
+                        'humidity',
+                        typeof data.humidity === 'number'
                           ? `${data.humidity.toFixed(1)} %`
-                          : 'N/A'}
-                      </span>
+                          : 'N/A',
+                      )}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Outside Temperature:
-                      <span>
-                        {typeof data.outsideTemperature === 'number'
+                      {renderValue(
+                        'outsideTemperature',
+                        typeof data.outsideTemperature === 'number'
                           ? `${data.outsideTemperature.toFixed(1)} °C`
-                          : 'Waiting for sensor data...'}
-                      </span>
+                          : 'Waiting for sensor data...',
+                      )}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Heater:
-                      <span>
-                        {data.heater ? <span className="me-2">🔥</span> : null}
-                        {renderIndicator(data.heater)}
-                      </span>
+                      {renderValue(
+                        'heater',
+                        <>
+                          {data.heater ? <span className="me-2">🔥</span> : null}
+                          {renderIndicator(data.heater)}
+                        </>,
+                      )}
                     </li>
                   </ul>
                   <div
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
-                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>Current Setpoint: {data.setpoint.toFixed(1)} °C</div>
+                    <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
+                      Current Setpoint:{' '}
+                      {renderValue(
+                        'setpoint',
+                        `${data.setpoint.toFixed(1)} °C`,
+                      )}
+                    </div>
                     <div className="card-body">
                       <div
                         className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
@@ -369,11 +528,12 @@ function StatusResponsivePage({ initialStatus }) {
                                   id="highSetpoint"
                                   onChange={handleUpperSetpointChange}
                                 />
-                      <span>
-                        {typeof data.highSetpoint === 'number'
-                          ? `${data.highSetpoint.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
+                                {renderValue(
+                                  'highSetpoint',
+                                  typeof data.highSetpoint === 'number'
+                                    ? `${data.highSetpoint.toFixed(1)} °C`
+                                    : 'N/A',
+                                )}
                               </li>
                               <li
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
@@ -394,11 +554,12 @@ function StatusResponsivePage({ initialStatus }) {
                                   value={data.lowSetpoint || 0}
                                   onChange={handleLowerSetpointChange}
                                 />
-                                                      <span>
-                        {typeof data.lowSetpoint === 'number'
-                          ? `${data.lowSetpoint.toFixed(1)} °C`
-                          : 'N/A'}
-                      </span>
+                                {renderValue(
+                                  'lowSetpoint',
+                                  typeof data.lowSetpoint === 'number'
+                                    ? `${data.lowSetpoint.toFixed(1)} °C`
+                                    : 'N/A',
+                                )}
                               </li>
                             </ul>
                           </div>
@@ -422,8 +583,16 @@ function StatusResponsivePage({ initialStatus }) {
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
                     <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
-                      Vent: {data.ventPower ? <span className="me-2">🌬️</span> : null}
-                      {renderIndicator(data.ventPower)}
+                      Vent:{' '}
+                      {renderValue(
+                        'ventPower',
+                        <>
+                          {data.ventPower ? (
+                            <span className="me-2">🌬️</span>
+                          ) : null}
+                          {renderIndicator(data.ventPower)}
+                        </>,
+                      )}
                     </div>
                     <div className="card-body">
                       <ul className="list-group list-group-flush">
@@ -431,15 +600,19 @@ function StatusResponsivePage({ initialStatus }) {
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Vent Speed:
-                          <span>{data.ventSpeed ? 'High' : 'Low'}</span>
+                          {renderValue(
+                            'ventSpeed',
+                            data.ventSpeed ? 'High' : 'Low',
+                          )}
                         </li>
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Vent Total:
-                          <span>
-                            {renderVentTotal(data.ventPower, data.ventSpeed)}
-                          </span>
+                          {renderValue(
+                            ['ventPower', 'ventSpeed'],
+                            renderVentTotal(data.ventPower, data.ventSpeed),
+                          )}
                         </li>
                       </ul>
                       <div
@@ -478,7 +651,10 @@ function StatusResponsivePage({ initialStatus }) {
                                     handleVentOnDurationChange(e, 'day')
                                   }
                                 />
-                                <span>{data.ventOnDurationDaySecs || 0}</span>
+                                {renderValue(
+                                  'ventOnDurationDaySecs',
+                                  data.ventOnDurationDaySecs || 0,
+                                )}
                               </li>
                               <li
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
@@ -501,7 +677,10 @@ function StatusResponsivePage({ initialStatus }) {
                                     handleVentOffDurationChange(e, 'day')
                                   }
                                 />
-                                <span>{data.ventOffDurationDaySecs || 0}</span>
+                                {renderValue(
+                                  'ventOffDurationDaySecs',
+                                  data.ventOffDurationDaySecs || 0,
+                                )}
                               </li>
                             </ul>
                           </div>
@@ -543,7 +722,10 @@ function StatusResponsivePage({ initialStatus }) {
                                     handleVentOnDurationChange(e, 'night')
                                   }
                                 />
-                                <span>{data.ventOnDurationNightSecs || 0}</span>
+                                {renderValue(
+                                  'ventOnDurationNightSecs',
+                                  data.ventOnDurationNightSecs || 0,
+                                )}
                               </li>
                               <li
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
@@ -566,9 +748,10 @@ function StatusResponsivePage({ initialStatus }) {
                                     handleVentOffDurationChange(e, 'night')
                                   }
                                 />
-                                <span>
-                                  {data.ventOffDurationNightSecs || 0}
-                                </span>
+                                {renderValue(
+                                  'ventOffDurationNightSecs',
+                                  data.ventOffDurationNightSecs || 0,
+                                )}
                               </li>
                             </ul>
                           </div>
@@ -580,8 +763,14 @@ function StatusResponsivePage({ initialStatus }) {
                     className="card mt-3" style={{ backgroundColor: 'var(--card-background-color)', borderColor: 'var(--card-border-color)' }}
                   >
                     <div className="card-header" style={{ backgroundColor: 'var(--card-header-background-color)', color: 'var(--text-color)' }}>
-                      Fan: {data.fan ? <span className="me-2">💨</span> : null}
-                      {renderIndicator(data.fan)}
+                      Fan:{' '}
+                      {renderValue(
+                        'fan',
+                        <>
+                          {data.fan ? <span className="me-2">💨</span> : null}
+                          {renderIndicator(data.fan)}
+                        </>,
+                      )}
                     </div>
                     <div className="card-body">
                       <div
@@ -618,7 +807,10 @@ function StatusResponsivePage({ initialStatus }) {
                                   value={data.fanOnDurationSecs || 0}
                                   onChange={handleFanOnDurationChange}
                                 />
-                                <span>{data.fanOnDurationSecs || 0}</span>
+                                {renderValue(
+                                  'fanOnDurationSecs',
+                                  data.fanOnDurationSecs || 0,
+                                )}
                               </li>
                               <li
                                 className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
@@ -639,7 +831,10 @@ function StatusResponsivePage({ initialStatus }) {
                                   value={data.fanOffDurationSecs || 0}
                                   onChange={handleFanOffDurationChange}
                                 />
-                                <span>{data.fanOffDurationSecs || 0}</span>
+                                {renderValue(
+                                  'fanOffDurationSecs',
+                                  data.fanOffDurationSecs || 0,
+                                )}
                               </li>
                             </ul>
                           </div>
@@ -663,15 +858,19 @@ function StatusResponsivePage({ initialStatus }) {
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Soil Moisture:
-                      <span>
-                        {renderSoilMoisture(data.soilMoisturePercent)}
-                      </span>
+                      {renderValue(
+                        'soilMoisturePercent',
+                        renderSoilMoisture(data.soilMoisturePercent),
+                      )}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Irrigation Pump:
-                      <span>{renderIndicator(data.irrigationPump)}</span>
+                      {renderValue(
+                        'irrigationPump',
+                        renderIndicator(data.irrigationPump),
+                      )}
                     </li>
                   </ul>
                 </div>
@@ -692,27 +891,37 @@ function StatusResponsivePage({ initialStatus }) {
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           WebSocket:
-                          <span>{renderIndicator(isWsConnected)}</span>
+                          {renderValue(
+                            'isWsConnected',
+                            renderIndicator(isWsConnected),
+                          )}
                         </li>
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Uptime:
-                          <span>{formatUptime(data.uptime)}</span>
+                          {renderValue('uptime', formatUptime(data.uptime))}
                         </li>
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           WiFi Signal:
-                          <span>
-                            {formatWifiSignal(
+                          {renderValue(
+                            [
+                              'wifiSignalPercent',
+                              'wifiSignalStrength',
+                              'wifiSignalStrengthDbm',
+                              'wifiRssi',
+                              'wifiSignal',
+                            ],
+                            formatWifiSignal(
                               data.wifiSignalPercent ??
                                 data.wifiSignalStrength ??
                                 data.wifiSignalStrengthDbm ??
                                 data.wifiRssi ??
                                 data.wifiSignal,
-                            )}
-                          </span>
+                            ),
+                          )}
                         </li>
                       </>
                     )}
@@ -720,31 +929,39 @@ function StatusResponsivePage({ initialStatus }) {
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Version:
-                      <span>{data.version}</span>
+                      {renderValue('version', data.version)}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Description:
-                      <span className="text-end">{data.description}</span>
+                      {renderValue(
+                        'description',
+                        data.description,
+                        'text-end',
+                      )}
                     </li>
                     <li
                       className="list-group-item" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Release Notes:
-                      <span className="text-end">{data.releaseNotes}</span>
+                      {renderValue(
+                        'releaseNotes',
+                        data.releaseNotes,
+                        'text-end',
+                      )}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Git Branch:
-                      <span>{data.gitBranch}</span>
+                      {renderValue('gitBranch', data.gitBranch)}
                     </li>
                     <li
                       className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                     >
                       Last Commit:
-                      <span className="text-end">{data.gitCommit}</span>
+                      {renderValue('gitCommit', data.gitCommit, 'text-end')}
                     </li>
                     {mounted && (
                       <>
@@ -752,17 +969,18 @@ function StatusResponsivePage({ initialStatus }) {
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Last Changed:
-                          <span>
-                            {data && data.timeStamp
+                          {renderValue(
+                            'timeStamp',
+                            data && data.timeStamp
                               ? new Date(data.timeStamp).toLocaleTimeString()
-                              : ''}
-                          </span>
+                              : '',
+                          )}
                         </li>
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
                           Last Change:
-                          <span>{data ? data.lastChange : ''}</span>
+                          {renderValue('lastChange', data ? data.lastChange : '')}
                         </li>
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}

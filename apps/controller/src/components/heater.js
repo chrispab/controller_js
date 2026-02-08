@@ -71,16 +71,19 @@ export default class Heater {
     }
 
     // --- Main Heating Logic (only runs when light is OFF) ---
+    let diffFromSetPoint = this.currentTemp - setPoint;
     switch (this.heatingCycleState) {
       case 'INACTIVE':
         if (this.currentTemp < setPoint + this.heater_sp_offset) {
           // Temperature is below setpoint, start a heating cycle
           const externalDiffT =
             (setPoint - this.outsideTemp) * this.ExternalTDiffMs;
-          this.heatOnMs = cfg.get('heater.heatOnMs') + externalDiffT;
+          this.heatOnMs = (diffFromSetPoint * 10) + (cfg.get('heater.heatOnMs') + externalDiffT);
           logger.debug(
             `New heating cycle. Calculated ON time: ${this.heatOnMs}ms`,
           );
+          this.heatOffMs = cfg.get('heater.heatOffMs')-externalDiffT;
+          if (this.heatOffMs < 0) this.heatOffMs = 0; // Ensure off time doesn't go negative
           this.heatingCycleState = 'ON';
           this.updateState(true);
         }
