@@ -64,19 +64,22 @@ export default class Heater {
       : cfg.get('zone.lowSetpoint');
     const currentMs = Date.now();
 
-    // if (this.lightState === true) {
+    if (this.lightState === true) {
+      this.updateState(false); // Heater is always off when light is on
+      this.heatingCycleState = 'INACTIVE';
+      return;
+    }
+    // if (this.lightState === true && this.currentTemp < cfg.get('zone.lowSetpoint')) {
     //   this.updateState(false); // Heater is always off when light is on
     //   this.heatingCycleState = 'INACTIVE';
-    //   return;
+    //   // return;
+    //   setPoint = cfg.get('zone.lowSetpoint');
     // }
-    if (this.lightState === true && this.currentTemp < cfg.get('zone.lowSetpoint')) {
-      // this.updateState(false); // Heater is always off when light is on
-      // this.heatingCycleState = 'INACTIVE';
-      // return;
-      setPoint = cfg.get('zone.lowSetpoint');
-    }
     // --- Main Heating Logic (only runs when light is OFF) ---
     let diffFromSetPoint = this.currentTemp - setPoint;
+    // if negative make it zero
+    if (diffFromSetPoint < 0) diffFromSetPoint = 0;
+
     switch (this.heatingCycleState) {
       case 'INACTIVE':
         if (this.currentTemp < setPoint + this.heater_sp_offset) {

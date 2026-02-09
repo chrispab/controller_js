@@ -116,9 +116,9 @@ export default class Vent {
       }
       // if its dark just run at 50%, if its light run at 100%
       if (this.lightState) {
-        this.updateState(1); // Set to 50% speed
+        this.updateState(2); // Set to 100% speed
       } else {
-      this.updateState(2); // Set to 100% speed
+      this.updateState(1); // Set to 50% speed
       }
       return; // Override takes precedence
     }
