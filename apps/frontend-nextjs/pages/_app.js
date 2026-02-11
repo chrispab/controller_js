@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }) {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto align-items-center">
+            <ul className="navbar-nav w-100 justify-content-evenly align-items-center">
               <li className="nav-item">
                 <Link href="/" className="nav-link">
                   Home
@@ -47,7 +47,7 @@ function MyApp({ Component, pageProps }) {
                   Responsive Status
                 </Link>
               </li>
-              <li className="nav-item ms-3">
+              <li className="nav-item">
                 <div className="form-check form-switch mb-0">
                   <input
                     className="form-check-input"
