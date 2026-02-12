@@ -327,6 +327,14 @@ function StatusResponsivePage({ initialStatus }) {
             width: 33.333333% !important;
           }
         }
+        @media (min-width: 1820px) {
+          .custom-col-responsive {
+            width: 25% !important;
+          }
+          .status-page-container {
+            max-width: 100% !important;
+          }
+        }
         .value-flash-target {
           display: inline-block;
           border-radius: 0.25rem;
@@ -401,7 +409,7 @@ function StatusResponsivePage({ initialStatus }) {
           </button>
         </div>
       )}
-      <div className="container">
+      <div className="container status-page-container">
         <h1 className="text-center my-2" style={{ fontSize: '1.6rem' }}>
           {renderValue('zoneName', `${data.zoneName} Greenhouse Dashboard`)}
         </h1>
