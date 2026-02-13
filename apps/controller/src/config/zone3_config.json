@@ -87,11 +87,11 @@
   "vent": {
     "onDurationMs": {
       "day": 25000,
-      "night": 25000
+      "night": 20000
     },
     "offDurationMs": {
-      "day": 120000,
-      "night": 140000
+      "day": 150000,
+      "night": 420000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
@@ -106,7 +106,8 @@
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 10000,
     "heatOnMs": 60000,
-    "heatOffMs": 60000
+    "heatOffMs": 60000,
+    "allowHeatingWithLightOn": true
   },
   "fan": {
     "speedPercent": 50,

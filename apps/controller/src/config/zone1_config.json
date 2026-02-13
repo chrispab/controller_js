@@ -44,7 +44,8 @@
       "pin": 517,
       "alt_pin": 517,
       "gpiopin": "GPIO5",
-      "physicalPin": 29
+      "physicalPin": 29,
+      "allowHeatingWithLightOn": true
     },
     "powerPin": {
       "pin": 514,
