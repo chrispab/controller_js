@@ -107,7 +107,8 @@
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 300,
     "heatOnMs": 10000,
-    "heatOffMs": 10000
+    "heatOffMs": 10000,
+    "allowHeatingWithLightOn": true
   },
   "fan": {
     "speedPercent": 50,
