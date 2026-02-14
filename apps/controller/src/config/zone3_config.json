@@ -2,7 +2,7 @@
   "version": "0.1.2",
   "zoneId": 3,
   "zone": {
-    "lowSetpoint": 14.5,
+    "lowSetpoint": 15,
     "highSetpoint": 24,
     "name": "Zone",
     "customConfigFilename": "customConfig.json",
@@ -87,11 +87,11 @@
   "vent": {
     "onDurationMs": {
       "day": 25000,
-      "night": 20000
+      "night": 30000
     },
     "offDurationMs": {
       "day": 150000,
-      "night": 420000
+      "night": 300000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,

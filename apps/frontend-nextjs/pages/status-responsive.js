@@ -616,7 +616,7 @@ function StatusResponsivePage({ initialStatus }) {
                         <li
                           className="list-group-item d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--card-background-color)', color: 'var(--text-color)' }}
                         >
-                          Vent Total:
+                          Vent Power %:
                           {renderValue(
                             ['ventPower', 'ventSpeed'],
                             renderVentTotal(data.ventPower, data.ventSpeed),
