@@ -41,7 +41,7 @@ export default class Heater {
     //initil state
     utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), this.getState() ? 1 : 0);
     // Start autonomous cycle checking
-    setInterval(() => this.controlLogic(), 1000); // Re-evaluate every second
+    setInterval(() => this.controlLogic(), 5000); // Re-evaluate every 5 second
   }
 
   updateState(newState) {
@@ -75,6 +75,18 @@ export default class Heater {
     //   this.heatingCycleState = 'INACTIVE';
     //   // return;
       setPoint = cfg.get('zone.lowSetpoint');
+// if temperature is below low setpoint, allow heating even if light is on, but use low setpoint as target
+    if (this.currentTemp < cfg.get('zone.lowSetpoint')) {
+      logger.debug(' Allowing heating to reach low setpoint.');
+      this.updateState(true);
+      return;
+    } else{
+      this.updateState(false); // Heater is always off when light is on
+      this.heatingCycleState = 'INACTIVE';
+      return;
+    }
+
+
     // }
     // --- Main Heating Logic (only runs when light is OFF) ---
     let diffFromSetPoint = this.currentTemp - setPoint;
