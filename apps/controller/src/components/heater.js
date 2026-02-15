@@ -27,21 +27,22 @@ export default class Heater {
     // -- Event Listeners --
     eventEmitter.on('temperatureChanged', ({ temperature }) => {
       this.currentTemp = temperature;
-      this.controlLogic();
+      // this.controlLogic();
     });
     eventEmitter.on('lightStateChanged', ({ lightState }) => {
       this.lightState = lightState;
-      this.controlLogic();
+      // this.controlLogic();
     });
     eventEmitter.on('outsideTemperatureChanged', ({ outsideTemperature }) => {
       this.outsideTemp = outsideTemperature;
-      this.controlLogic();
+      // this.controlLogic();
     });
 
     //initil state
     utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), this.getState() ? 1 : 0);
     // Start autonomous cycle checking
-    setInterval(() => this.controlLogic(), 5000); // Re-evaluate every 5 second
+    setInterval(() => this.controlLogic(), cfg.get('heater.controlMethodIntervalMs')); // Re-evaluate every n milliseconds
+    
   }
 
   updateState(newState) {

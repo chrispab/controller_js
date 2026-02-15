@@ -107,7 +107,8 @@
     "ExternalTDiffMs": 10000,
     "heatOnMs": 60000,
     "heatOffMs": 60000,
-    "allowHeatingWithLightOn": true
+    "allowHeatingWithLightOn": true,
+    "controlMethodIntervalMs": 15000
   },
   "fan": {
     "speedPercent": 50,
