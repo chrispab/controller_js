@@ -67,7 +67,8 @@
     "heater_sp_offset": 0,
     "ExternalTDiffMs": 1000,
     "heatOnMs": 0,
-    "heatOffMs": 0
+    "heatOffMs": 0,
+    "controlMethodIntervalMs": 15000
   },
   "fan": {
     "speedPercent": 50,

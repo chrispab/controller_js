@@ -15,27 +15,27 @@ Save (Ctrl+O) and Exit (Ctrl+X), then reboot.
 To keep your Pi 2 from falling asleep on the job, we’ll set up a simple "watchdog" script. This script checks for a connection and, if it finds the Pi is offline, it kicks the network interface to wake it back up.
 Step 1: Create the Script
 
-Open your terminal and create a new script file: sudo nano /usr/local/bin/wifi_rebooter.sh
+Open your terminal and create a new script file: sudo nano /usr/local/bin/wifi_reconnect.sh
 
 Now, copy and paste the following code into that file:
-Bash
+```Bash
 
 #!/bin/bash
 
 # The IP of your router (usually 192.168.1.1 or 192.168.0.1)
-SERVER=192.168.1.1
+SERVER=192.168.0.1
 
 # Ping the router once. If it fails ($? != 0), restart the wifi
 ping -c2 ${SERVER} > /dev/null
 
 if [ $? != 0 ]
 then
-    echo "Wi-Fi connection down! Attempting reconnection..."
+    echo "$(date): Wi-Fi connection down! Attempting reconnection..." >> /var/log/wifi_reconnect.log
     ifconfig wlan0 down
     sleep 5
     ifconfig wlan0 up
 fi
-
+```
 or
 
 #!/bin/bash
@@ -76,6 +76,7 @@ Every 5 minutes, your Pi will "whisper" to your router. If the router doesn't wh
 After a few hours (or the next time you notice a hiccup), you can check the history of restarts by running:
 
 cat /var/log/wifi_reboot.log
+cat /var/log/wifi_reconnect.log
 
 If the file is empty or doesn't exist yet, it means your connection has been stable! If you see a list of timestamps, you’ll know exactly when the Pi dropped off and successfully recovered.
 

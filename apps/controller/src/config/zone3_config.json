@@ -86,11 +86,11 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 25000,
+      "day": 60000,
       "night": 30000
     },
     "offDurationMs": {
-      "day": 150000,
+      "day": 180000,
       "night": 300000
     },
     "speedPercent": 50,
@@ -107,8 +107,8 @@
     "ExternalTDiffMs": 10000,
     "heatOnMs": 60000,
     "heatOffMs": 60000,
-    "allowHeatingWithLightOn": true,
-    "controlMethodIntervalMs": 15000
+    "controlMethodIntervalMs": 15000,
+    "allowHeatingWithLightOn": true
   },
   "fan": {
     "speedPercent": 50,
