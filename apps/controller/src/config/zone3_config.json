@@ -2,7 +2,7 @@
   "version": "0.1.2",
   "zoneId": 3,
   "zone": {
-    "lowSetpoint": 15,
+    "lowSetpoint": 14.5,
     "highSetpoint": 24,
     "name": "Zone",
     "customConfigFilename": "customConfig.json",
@@ -86,11 +86,11 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 60000,
+      "day": 90000,
       "night": 30000
     },
     "offDurationMs": {
-      "day": 180000,
+      "day": 120000,
       "night": 300000
     },
     "speedPercent": 50,
@@ -107,7 +107,7 @@
     "ExternalTDiffMs": 10000,
     "heatOnMs": 60000,
     "heatOffMs": 60000,
-    "controlMethodIntervalMs": 15000,
+    "controlMethodIntervalMs": 20000,
     "allowHeatingWithLightOn": true
   },
   "fan": {
