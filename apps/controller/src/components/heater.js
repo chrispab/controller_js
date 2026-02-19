@@ -20,7 +20,7 @@ export default class Heater {
     this.allowHeatingWithLightOn = cfg.get('heater.allowHeatingWithLightOn');
 
     // -- Current environmental state --
-    this.currentTemp = 20;
+    this.currentTemp = 20; // Start with a default value until we get real readings
     this.lightState = false;
     this.outsideTemp = 10;
 
@@ -41,8 +41,16 @@ export default class Heater {
     //initil state
     utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), this.getState() ? 1 : 0);
     // Start autonomous cycle checking
+    this.controlLogic(); // Run immediately to set initial state based on current conditions
+   setTimeout(() => {
+    eventEmitter.emit('heaterStateChanged', {
+      name: this.name,
+      state: this.getState() ? 1 : 0,
+    });
+  }, 10000);
+  
+    // utils.logAndPublishState('Heater', cfg.getWithMQTTPrefix('mqtt.heaterStateTopic'), this.getState() ? 1 : 0);
     setInterval(() => this.controlLogic(), cfg.get('heater.controlMethodIntervalMs')); // do control every n milliseconds
-    
   }
 
   updateState(newState) {
@@ -61,10 +69,14 @@ export default class Heater {
   }
 
   controlLogic() {
-    let setPoint = this.lightState
-      ? cfg.get('zone.highSetpoint')
-      : cfg.get('zone.lowSetpoint');
-    const currentMs = Date.now();
+    if (this.currentTemp === null) {
+      logger.warn('Current temperature is unknown. Skipping heater control logic.');
+      return;
+    }
+    // let setPoint = this.lightState
+    //   ? cfg.get('zone.highSetpoint')
+    //   : cfg.get('zone.lowSetpoint');
+    // const currentMs = Date.now();
 
     // if (this.lightState === true) {
     //   this.updateState(false); // Heater is always off when light is on
@@ -75,18 +87,17 @@ export default class Heater {
     //   this.updateState(false); // Heater is always off when light is on
     //   this.heatingCycleState = 'INACTIVE';
     //   // return;
-      setPoint = cfg.get('zone.lowSetpoint');
-// if temperature is below low setpoint, allow heating even if light is on, but use low setpoint as target
+    // setPoint = cfg.get('zone.lowSetpoint');
+    // if temperature is below low setpoint, allow heating even if light is on, but use low setpoint as target
     if (this.currentTemp < cfg.get('zone.lowSetpoint')) {
       logger.debug(' Allowing heating to reach low setpoint.');
       this.updateState(true);
       return;
-    } else{
-      this.updateState(false); // Heater is always off when light is on
+    } else {
+      this.updateState(false);
       this.heatingCycleState = 'INACTIVE';
       return;
     }
-
 
     // }
     // --- Main Heating Logic (only runs when light is OFF) ---
@@ -98,13 +109,10 @@ export default class Heater {
       case 'INACTIVE':
         if (this.currentTemp < setPoint + this.heater_sp_offset) {
           // Temperature is below setpoint, start a heating cycle
-          const externalDiffT =
-            (setPoint - this.outsideTemp) * this.ExternalTDiffMs;
-          this.heatOnMs = (diffFromSetPoint * 10) + (cfg.get('heater.heatOnMs') + externalDiffT);
-          logger.debug(
-            `New heating cycle. Calculated ON time: ${this.heatOnMs}ms`,
-          );
-          this.heatOffMs = cfg.get('heater.heatOffMs')-externalDiffT;
+          const externalDiffT = (setPoint - this.outsideTemp) * this.ExternalTDiffMs;
+          this.heatOnMs = diffFromSetPoint * 10 + (cfg.get('heater.heatOnMs') + externalDiffT);
+          logger.debug(`New heating cycle. Calculated ON time: ${this.heatOnMs}ms`);
+          this.heatOffMs = cfg.get('heater.heatOffMs') - externalDiffT;
           if (this.heatOffMs < 0) this.heatOffMs = 0; // Ensure off time doesn't go negative
           this.heatingCycleState = 'ON';
           this.updateState(true);
@@ -130,9 +138,7 @@ export default class Heater {
     // Safety check: if temperature rises above setpoint, force everything off.
     if (this.currentTemp >= setPoint + this.heater_sp_offset) {
       if (this.heatingCycleState !== 'INACTIVE') {
-        logger.debug(
-          'Temperature is above setpoint. Forcing heater OFF and cycle to INACTIVE.',
-        );
+        logger.debug('Temperature is above setpoint. Forcing heater OFF and cycle to INACTIVE.');
         this.heatingCycleState = 'INACTIVE';
       }
       this.updateState(false);
