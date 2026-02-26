@@ -18,10 +18,11 @@ This project is a monorepo using npm workspaces.
 controller_js/
 ├── apps/
 │   ├── controller/         # The main Node.js controller application
-│   └── frontend-nextjs/    # The Next.js frontend application
+│   ├── frontend-nextjs/    # The Next.js frontend application
+│   └── react-njs-tutorial/ # Tutorial/demo app
 ├── libs/
-│   ├── shared-types/       # Shared TypeScript types
-│   └── shared-utils/       # Shared utility functions
+│   ├── shared-types/       # Workspace package placeholder for shared types
+│   └── shared-utils/       # Workspace package placeholder for shared utils
 ├── package.json            # Root package.json with workspace configuration
 └── README.md               # This file
 ```
