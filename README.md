@@ -27,7 +27,32 @@ controller_js/
 ```
 
 ## Installation
+on a fresh sd card
 
+install raspbian lite latest
+
+install webmin
+https://webmin.com/download/
+
+install nfs-server
+
+install nodejs
+https://raspberrytips.com/node-js-raspberry-pi/
+
+```bash
+sudo apt update
+sudo apt install nodejs
+
+sudo apt install npm
+```
+
+https://nodejs.org/en/download
+
+
+**Grant hardware permissions to the user (replace 'chris' with your username if different)**
+```bash
+sudo usermod -a -G gpio,i2c chris
+```
 1.  **Clone the repository:**
 
     ```bash
@@ -40,28 +65,7 @@ controller_js/
     ```bash
     npm install
     ```
-on a fresh sd card
 
-install raspbian lite latest
-
-install webmin
-https://webmin.com/download/
-
-install nfs-server
-
-install nodejs
-https://raspberrytips.com/node-js-raspberry-pi/
-sudo apt update
-sudo apt install nodejs
-
-sudo apt install npm
-
-
-https://nodejs.org/en/download
-
-
-**Grant hardware permissions to the user (replace 'chris' with your username if different)**
-sudo usermod -a -G gpio,i2c chris
 
 
 To start the application, run the following command:
