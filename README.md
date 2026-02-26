@@ -27,17 +27,14 @@ controller_js/
 ```
 
 ## Installation
-on a fresh sd card
+On a fresh SD card:
 
-install raspbian lite latest
+1. Install the latest Raspberry Pi OS Lite.
+2. Install Webmin: https://webmin.com/download/
+3. Install NFS server.
+4. Install Node.js.
 
-install webmin
-https://webmin.com/download/
-
-install nfs-server
-
-install nodejs
-https://raspberrytips.com/node-js-raspberry-pi/
+Reference: https://raspberrytips.com/node-js-raspberry-pi/
 
 ```bash
 sudo apt update
@@ -46,25 +43,55 @@ sudo apt install nodejs
 sudo apt install npm
 ```
 
-https://nodejs.org/en/download
+Alternative installer reference: https://nodejs.org/en/download
 
+Use one Node.js installation method consistently (APT or NodeSource/nodejs.org). Avoid mixing methods.
 
-**Grant hardware permissions to the user (replace 'chris' with your username if different)**
+5. Grant hardware permissions to the user (replace `chris` with your username if different):
 ```bash
 sudo usermod -a -G gpio,i2c chris
 ```
-1.  **Clone the repository:**
+6. Clone the repository:
 
-    ```bash
-    git clone <repository-url>
-    ```
+```bash
+git clone <repository-url>
+```
 
-2.  **Install dependencies:**
+7. Install dependencies from the repo root:
+```bash
+npm install
+```
 
-    From the root directory, install all dependencies for all workspaces:
-    ```bash
-    npm install
-    ```
+## Required Local Config
+
+Before first run, make sure these files exist:
+
+1. Zone selector file: `apps/controller/src/config/zoneInfo.js`
+2. Zone config file referenced by `zoneInfo.configFileName` (for example `zone3_config.json`)
+3. Secrets file: `apps/controller/src/secret.js`
+
+Bootstrap from examples:
+
+```bash
+cp apps/controller/src/config/zoneInfo_example.js apps/controller/src/config/zoneInfo.js
+cp apps/controller/src/secret_example.js apps/controller/src/secret.js
+```
+
+Notes:
+- `zoneInfo.js` chooses which config JSON to load via `configFileName`.
+- If that custom config file is missing, the app falls back to `apps/controller/src/config/default.json`.
+- `secret.js` is used for email credentials; do not commit real credentials.
+- This repo already ignores `apps/controller/src/secret.js` and `apps/controller/src/config/zoneInfo.js` via `.gitignore`.
+
+Optional `.gitignore` additions for machine-local config files:
+
+```gitignore
+# Optional: ignore local zone config variants if you do not want them versioned
+apps/controller/src/config/*_config.local.json
+apps/controller/src/config/custom_config.json
+```
+
+After running `sudo usermod -a -G gpio,i2c <username>`, log out/in (or reboot) so group changes take effect.
 
 
 
@@ -120,14 +147,14 @@ To ensure the application starts automatically on boot and runs reliably in the 
 
    Create a new file named `zone_controller.service` in `/etc/systemd/system/` with the following content:
 
-   ````
+   ```ini
    [Unit]
    Description=Zone Controller Node.js Application
    After=network.target
 
    [Service]
    WorkingDirectory=/home/chris/controller_js/apps/controller
-   ExecStart=node src/server/index.js
+   ExecStart=/usr/bin/node src/server/index.js
    Restart=always
    RestartSec=10
    User=chris
@@ -136,7 +163,9 @@ To ensure the application starts automatically on boot and runs reliably in the 
    [Install]
    WantedBy=multi-user.target
 
-   ````
+   ```
+
+   Note: Confirm your Node binary path with `which node` and update `ExecStart` if needed.
 
 
 2.  **Reload systemd:**
@@ -165,7 +194,7 @@ To ensure the application starts automatically on boot and runs reliably in the 
 
 5.  **Stop the service:**
 
-    Start the service immediately:
+    Stop the service immediately:
 
     ```bash
     sudo systemctl stop zone_controller.service
@@ -179,7 +208,7 @@ To ensure the application starts automatically on boot and runs reliably in the 
     sudo systemctl status zone_controller.service
     ```
 
-restart
+7.  **Restart the service:**
     ```bash
     sudo systemctl restart zone_controller.service
     ```
@@ -197,13 +226,20 @@ restart
 sudo systemctl stop zone_controller.service
 cd controller_js/apps/controller
 npm start
-````
+```
 
-### Runs with 'debug' level, showing info, warn, error, AND debug messages
+### Run with debug log level
 
+```bash
+cd controller_js/apps/controller
 LOG_LEVEL=debug npm start
+```
 
-pi@zone1:~/controller_js $ npm run dev --workspace=apps/frontend-nextjs
+### Run frontend dev server manually
+
+```bash
+npm run dev:frontend
+```
 
 ## Autostarting the Next.js dev Frontend Server on Raspberry Pi (systemd)
 
@@ -213,7 +249,7 @@ To ensure your Next.js server starts automatically on boot and runs reliably in 
 
    Create a new file, for example, `/etc/systemd/system/nextjs-frontend.service`, with the following content:
 
-```
+```ini
 
 [Unit]
 Description=Next.js Frontend Application
@@ -229,7 +265,7 @@ Environment=NODE_ENV=development
 [Install]
 WantedBy=multi-user.target
 
-````
+```
 
     *   **Note:** Adjust `WorkingDirectory` to the absolute path of your Next.js application's root directory.
     *   **Note:** If you are building your Next.js application for production, you might want to change `ExecStart` to `ExecStart=/usr/bin/npm run start` after running `npm run build`.
@@ -272,11 +308,10 @@ WantedBy=multi-user.target
     journalctl -u nextjs-frontend.service -f
     ```
 
-cd apps/frontend-nextjs && npm run dev
-````
+## Useful root commands
 
+```bash
+npm run dev:frontend
 npm run lint
 npm run prettier
-
-
-
+```
