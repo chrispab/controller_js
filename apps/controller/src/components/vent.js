@@ -125,7 +125,7 @@ export default class Vent {
       } else {
         // if outside temperature and lowsp diff is lt 5 run at 100% otherwise run at 50% to avoid bringing in too much cold air
         // if (cfg.get('zone.lowSetpoint') - this.outSideTemp < cfg.get('vent.outsideTempDiffThreshold')) {
-        if (cfg.get('zone.lowSetpoint') - this.outSideTemp < 5) {
+        if (cfg.get('zone.lowSetpoint') - this.outSideTemp < cfg.get('vent.outsideTempDiffThresholdForMaxSpeed')) {
           this.updateState(2); // Set to 100% speed
         } else {
           this.updateState(1); // Set to 50% speed
