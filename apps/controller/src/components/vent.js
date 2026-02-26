@@ -24,7 +24,7 @@ export default class Vent {
     // -- Current environmental state --
     this.currentTemp = 20;
     this.lightState = false;
-
+    this.outSideTemp = 10;
     // -- Duration Settings --
     this.onDurationMs = 0;
     this.offDurationMs = 0;
@@ -33,6 +33,11 @@ export default class Vent {
     eventEmitter.on('temperatureChanged', ({ temperature }) => {
       this.currentTemp = temperature;
     });
+    
+    eventEmitter.on('outsideTemperatureChanged', ({ outsideTemperature }) => {
+      this.outSideTemp = outsideTemperature;
+    });
+
     eventEmitter.on('lightStateChanged', ({ lightState }) => {
       this.lightState = lightState;
       // Reset cycle state when light state changes to ensure correct logic is applied immediately
@@ -114,11 +119,17 @@ export default class Vent {
         logger.debug('High-temperature override ACTIVATED');
         this.ventOverride = true;
       }
-      // if its dark just run at 50%, if its light run at 100%
+      // if its light run at 100% otherwise if its dark and the lowsp diff is lt 5 run at 100% otherwise run at 50% to avoid bringing in too much cold air
       if (this.lightState) {
         this.updateState(2); // Set to 100% speed
       } else {
-      this.updateState(1); // Set to 50% speed
+        // if outside temperature and lowsp diff is lt 5 run at 100% otherwise run at 50% to avoid bringing in too much cold air
+        // if (cfg.get('zone.lowSetpoint') - this.outSideTemp < cfg.get('vent.outsideTempDiffThreshold')) {
+        if (cfg.get('zone.lowSetpoint') - this.outSideTemp < 5) {
+          this.updateState(2); // Set to 100% speed
+        } else {
+          this.updateState(1); // Set to 50% speed
+        }
       }
       return; // Override takes precedence
     }

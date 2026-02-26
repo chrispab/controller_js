@@ -2,8 +2,8 @@
   "version": "0.1.2",
   "zoneId": 3,
   "zone": {
-    "lowSetpoint": 14,
-    "highSetpoint": 24,
+    "lowSetpoint": 14.5,
+    "highSetpoint": 23,
     "name": "Zone",
     "customConfigFilename": "customConfig.json",
     "telemetry": {
@@ -91,7 +91,7 @@
     },
     "offDurationMs": {
       "day": 120000,
-      "night": 300000
+      "night": 240000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
