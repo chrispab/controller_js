@@ -57,7 +57,7 @@
     "speedPercent": 50,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "lightOnSetpointOffset": 0
+    "setpointDeadBandSize": 0
   },
   "heater": {
     "onMs": 10000,

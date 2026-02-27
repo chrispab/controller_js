@@ -114,7 +114,7 @@ export default class Vent {
     const elapsedMs = Date.now() - this.lastStateChangeMs;
 
     // --- High-Temperature Override Check ---
-    if (this.currentTemp > setPoint + cfg.get('vent.lightOnSetpointOffset')) {
+    if (this.currentTemp > setPoint + cfg.get('vent.setpointDeadBandSize')) {
       if (!this.ventOverride) {
         logger.debug('High-temperature override ACTIVATED');
         this.ventOverride = true;

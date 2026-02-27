@@ -95,7 +95,7 @@
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
-    "lightOnSetpointOffset": 0,
+    "setpointDeadBandSize": 0,
     "ventOverridePulseOnDelta": 5000
   },
   "heater": {
