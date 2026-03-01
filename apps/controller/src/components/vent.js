@@ -59,7 +59,7 @@ export default class Vent {
       `====>>Control Cycle Start - Current Temp: ${this.currentTemp}°C, Setpoint: ${setPoint}°C, Light State: ${this.lightState ? 'ON' : 'OFF'}, Vent Override: ${this.ventOverride}`,
     );
     // --- High-Temperature Override Check ---
-    // when day and temp is above highsp activate override and run at 100% if its light
+    // when day and temp is above highSetpoint activate override and run at 100%
     if (this.lightState && this.currentTemp > setPoint) {
       logger.log(logLevel, `====Current Temp: ${this.currentTemp}°C exceeds high setpoint (${setPoint}°C) during light conditions`);
       if (!this.ventOverride) {
@@ -69,7 +69,7 @@ export default class Vent {
       this.updateState(2); // Set to 100% speed
       return; // Override takes precedence
     }
-    // when dark and temp is above lowsp + deadband activate override and run at 50% to avoid bringing in too much cold air
+    // when dark and temp is above lowsp + deadband, activate override and run at 50% to avoid bringing in too much cold air
     if (!this.lightState && this.currentTemp > setPoint + cfg.get('vent.setpointDeadBandSize')) {
       logger.log(logLevel, `====Current Temp: ${this.currentTemp}°C exceeds low setpoint + deadband (${setPoint + cfg.get('vent.setpointDeadBandSize')}°C) during dark conditions`);
       if (!this.ventOverride) {
@@ -79,32 +79,6 @@ export default class Vent {
       this.updateState(1); // Set to 50% speed
       return; // Override takes precedence
     }
-
-    // // if (this.currentTemp > setPoint + cfg.get('vent.setpointDeadBandSize')) {
-    // if (this.currentTemp > setPoint) {
-    //   logger.log(logLevel, `====Current Temp: ${this.currentTemp}°C exceeds setpoint + deadband (${setPoint + cfg.get('vent.setpointDeadBandSize')}°C)`);
-    //   if (!this.ventOverride) {
-    //     logger.log(logLevel, '====High-temperature override ACTIVATED');
-    //     this.ventOverride = true;
-    //   }
-    //   // if its light run at 100% otherwise if its dark and the lowsp diff is lt 5 run at 100% otherwise run at 50% to avoid bringing in too much cold air
-    //   if (this.lightState) {
-    //     this.updateState(2); // Set to 100% speed
-    //   } else {
-    //     logger.log(
-    //       logLevel,
-    //       `====Low setpoint: ${cfg.get('zone.lowSetpoint')}, Outside Temp: ${this.outSideTemp}, Diff: ${cfg.get('zone.lowSetpoint') - this.outSideTemp}, Threshold: ${cfg.get('vent.outsideTempDiffThresholdForMaxSpeed')}`,
-    //     );
-    //     // if outside temperature and lowsp diff is lt 5 run at 100% otherwise run at 50% to avoid bringing in too much cold air
-    //     // if (cfg.get('zone.lowSetpoint') - this.outSideTemp < cfg.get('vent.outsideTempDiffThreshold')) {
-    //     if (cfg.get('zone.lowSetpoint') - this.outSideTemp < cfg.get('vent.outsideTempDiffThresholdForMaxSpeed')) {
-    //       this.updateState(2); // Set to 100% speed
-    //     } else {
-    //       this.updateState(1); // Set to 50% speed
-    //     }
-    //   }
-    //   return; // Override takes precedence
-    // }
 
     // --- Deactivate Override ---
     if (this.ventOverride) {

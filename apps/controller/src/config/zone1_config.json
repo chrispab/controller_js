@@ -105,12 +105,13 @@
     "offMs": 60000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "heater_sp_offset": 0,
+    "heaterSetpointDeadBandSize": 0,
     "ExternalTDiffMs": 300,
     "heatOnMs": 10000,
     "heatOffMs": 10000,
     "allowHeatingWithLightOn": true,
-    "controlMethodIntervalMs": 15000
+    "controlMethodIntervalMs": 15000,
+    "outsideTempOffset": 3
   },
   "fan": {
     "speedPercent": 50,

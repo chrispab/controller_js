@@ -15,7 +15,7 @@ export default class Heater {
     this.lastStateChangeMs = 0;
     this.heatOnMs = 0;
     this.heatOffMs = cfg.get('heater.heatOffMs');
-    this.heater_sp_offset = cfg.get('heater.heater_sp_offset');
+    this.heaterSetpointDeadBandSize = cfg.get('heater.heaterSetpointDeadBandSize');
     this.ExternalTDiffMs = cfg.get('heater.ExternalTDiffMs');
     this.allowHeatingWithLightOn = cfg.get('heater.allowHeatingWithLightOn');
 
@@ -89,7 +89,8 @@ export default class Heater {
     //   // return;
     // setPoint = cfg.get('zone.lowSetpoint');
     // if temperature is below low setpoint, allow heating even if light is on, but use low setpoint as target
-    if (this.currentTemp < cfg.get('zone.lowSetpoint')) {
+    // only use heater if outside temp is below low setpoint, otherwise we are just heating the outside air
+    if (this.currentTemp < cfg.get('zone.lowSetpoint') && (this.outsideTemp + cfg.get('heater.outsideTempOffset')) < cfg.get('zone.lowSetpoint')) {
       logger.debug(' Allowing heating to reach low setpoint.');
       this.updateState(true);
       return;
@@ -107,7 +108,7 @@ export default class Heater {
 
     switch (this.heatingCycleState) {
       case 'INACTIVE':
-        if (this.currentTemp < setPoint + this.heater_sp_offset) {
+        if (this.currentTemp < setPoint + this.heaterSetpointDeadBandSize) {
           // Temperature is below setpoint, start a heating cycle
           const externalDiffT = (setPoint - this.outsideTemp) * this.ExternalTDiffMs;
           this.heatOnMs = diffFromSetPoint * 10 + (cfg.get('heater.heatOnMs') + externalDiffT);
@@ -136,7 +137,7 @@ export default class Heater {
     }
 
     // Safety check: if temperature rises above setpoint, force everything off.
-    if (this.currentTemp >= setPoint + this.heater_sp_offset) {
+    if (this.currentTemp >= setPoint + this.heaterSetpointDeadBandSize) {
       if (this.heatingCycleState !== 'INACTIVE') {
         logger.debug('Temperature is above setpoint. Forcing heater OFF and cycle to INACTIVE.');
         this.heatingCycleState = 'INACTIVE';

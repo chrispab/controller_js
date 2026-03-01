@@ -64,7 +64,7 @@
     "offMs": 60000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "heater_sp_offset": 0,
+    "heaterSetpointDeadBandSize": 0,
     "ExternalTDiffMs": 1000,
     "heatOnMs": 0,
     "heatOffMs": 0,

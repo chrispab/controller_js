@@ -86,30 +86,31 @@
   },
   "vent": {
     "onDurationMs": {
-      "day": 30000,
+      "day": 25000,
       "night": 30000
     },
     "offDurationMs": {
-      "day": 120000,
-      "night": 240000
+      "day": 150000,
+      "night": 320000
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
     "setpointDeadBandSize": 2,
     "ventOverridePulseOnDelta": 5000,
-    "outsideTempDiffThresholdForMaxSpeed": 4
+    "outsideTempDiffThresholdForMaxSpeed": 2
   },
   "heater": {
     "onMs": 10000,
     "offMs": 10000,
     "periodicPublishIntervalMs": 300000,
     "publishStateIntervalMs": 60000,
-    "heater_sp_offset": 0,
+    "heaterSetpointDeadBandSize": 0,
     "ExternalTDiffMs": 10000,
     "heatOnMs": 60000,
     "heatOffMs": 60000,
     "controlMethodIntervalMs": 30000,
-    "allowHeatingWithLightOn": true
+    "allowHeatingWithLightOn": true,
+    "outsideTempOffset": 4
   },
   "fan": {
     "speedPercent": 50,
