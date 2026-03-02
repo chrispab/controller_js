@@ -5,7 +5,7 @@ import cfg from '../services/config.js';
 import * as utils from '../utils/utils.js';
 import eventEmitter from '../services/eventEmitter.js';
 
-const logLevel = 'error'; // Change to 'debug' for more verbose logging
+const logLevel = 'warn'; // Change to 'debug' for more verbose logging
 
 export default class Vent {
   constructor(name, ventPowerPin, ventSpeedPin) {
@@ -22,7 +22,7 @@ export default class Vent {
     this.cycleState = 'inactive'; // inactive, ON, OFF
 
     // -- Current environmental state --
-    this.currentTemp = 20;
+    this.currentTemp = cfg.get('zone.lowSetpoint');// Initialize to low setpoint to avoid immediate overrides
     this.lightState = false;
     this.outSideTemp = 10;
     // -- Duration Settings --
@@ -54,26 +54,42 @@ export default class Vent {
     const setPoint = this.lightState ? cfg.get('zone.highSetpoint') : cfg.get('zone.lowSetpoint');
     const elapsedMs = Date.now() - this.lastStateChangeMs;
 
+    
     logger.log(
       logLevel,
-      `====>>Control Cycle Start - Current Temp: ${this.currentTemp}°C, Setpoint: ${setPoint}°C, Light State: ${this.lightState ? 'ON' : 'OFF'}, Vent Override: ${this.ventOverride}`,
+      `0====>>Control Cycle Start - Current Temp: ${this.currentTemp}°C, Setpoint: ${setPoint}°C, Light State: ${this.lightState ? 'ON' : 'OFF'}, Vent Override: ${this.ventOverride}`,
     );
-    // --- High-Temperature Override Check ---
-    // when day and temp is above highSetpoint activate override and run at 100%
-    if (this.lightState && this.currentTemp > setPoint) {
-      logger.log(logLevel, `====Current Temp: ${this.currentTemp}°C exceeds high setpoint (${setPoint}°C) during light conditions`);
+
+    // --- High-Temperature Override Checks ---
+
+    // if outside temp is above setpoint, day or night,activate override and run at 100% to cool with outside air
+    if (this.outSideTemp >= setPoint) {
+      logger.log(logLevel, `1====Outside Temp: ${this.outSideTemp}°C exceeds setPoint (${setPoint}°C)`);
       if (!this.ventOverride) {
-        logger.log(logLevel, '====High-temperature override ACTIVATED');
+        logger.log(logLevel, '1.1====High-temperature override ACTIVATED due to outside temperature >= setPoint');
         this.ventOverride = true;
       }
       this.updateState(2); // Set to 100% speed
       return; // Override takes precedence
     }
+
+    // when day and temp is above highSetpoint activate override and run at 100%
+    if (this.lightState && this.currentTemp > setPoint) {
+      logger.log(logLevel, `2====Current Temp: ${this.currentTemp}°C exceeds high setpoint (${setPoint}°C) during light conditions`);
+      if (!this.ventOverride) {
+        logger.log(logLevel, '2.1====High-temperature override ACTIVATED');
+        this.ventOverride = true;
+      }
+      this.updateState(2); // Set to 100% speed
+      return; // Override takes precedence
+    }
+
+
     // when dark and temp is above lowsp + deadband, activate override and run at 50% to avoid bringing in too much cold air
     if (!this.lightState && this.currentTemp > setPoint + cfg.get('vent.setpointDeadBandSize')) {
-      logger.log(logLevel, `====Current Temp: ${this.currentTemp}°C exceeds low setpoint + deadband (${setPoint + cfg.get('vent.setpointDeadBandSize')}°C) during dark conditions`);
+      logger.log(logLevel, `3====Current Temp: ${this.currentTemp}°C exceeds low setpoint + deadband (${setPoint + cfg.get('vent.setpointDeadBandSize')}°C) during dark conditions`);
       if (!this.ventOverride) {
-        logger.log(logLevel, '====High-temperature override ACTIVATED');
+        logger.log(logLevel, '3.1====High-temperature override ACTIVATED');
         this.ventOverride = true;
       }
       this.updateState(1); // Set to 50% speed
@@ -84,7 +100,7 @@ export default class Vent {
     if (this.ventOverride) {
       if (this.currentTemp <= setPoint) {
         if (elapsedMs >= cfg.get('vent.ventOverridePulseOnDelta')) {
-          logger.log(logLevel, '====High-temperature override DEACTIVATED');
+          logger.log(logLevel, '4====High-temperature override DEACTIVATED');
           this.ventOverride = false;
           this.cycleState = 'inactive'; // Reset cycle
           this.updateState(0); // Turn off
@@ -100,7 +116,7 @@ export default class Vent {
 
     logger.log(
       logLevel,
-      `====Cycle State: ${this.cycleState}, Elapsed Time: ${elapsedMs}ms, On Duration: ${this.getOnDurationMs()}ms, Off Duration: ${this.getOffDurationMs()}ms`,
+      `5====Cycle State: ${this.cycleState}, Elapsed Time: ${elapsedMs}ms, On Duration: ${this.getOnDurationMs()}ms, Off Duration: ${this.getOffDurationMs()}ms`,
     );
     switch (this.cycleState) {
       case 'inactive':
