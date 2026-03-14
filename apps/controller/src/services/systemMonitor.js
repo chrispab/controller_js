@@ -1,8 +1,10 @@
 import logger from './logger.js';
 import * as utils from '../utils/utils.js';
+import os from 'os';
 
 // const MQTT_PUBLISH_INTERVAL = 30000; // 5 minutes
 const HEALTH_CHECK_INTERVAL = 60000; // 1 minute
+const UPTIME_UPDATE_INTERVAL = 300000; // 5 minutes
 
 class SystemMonitor {
   constructor(mqttAgent, stateManager) {
@@ -10,6 +12,7 @@ class SystemMonitor {
     this.stateManager = stateManager;
     this.mqttPublishTimer = null;
     this.healthCheckTimer = null;
+    this.uptimeUpdateTimer = null;
   }
 
   start() {
@@ -22,6 +25,9 @@ class SystemMonitor {
     // Start periodic health checks
     this.healthCheckTimer = setInterval(() => this.performHealthChecks(), HEALTH_CHECK_INTERVAL);
 
+    // Start periodic uptime updates to the UI
+    this.uptimeUpdateTimer = setInterval(() => this.updateUptime(), UPTIME_UPDATE_INTERVAL);
+
     logger.info('class SystemMonitor started.');
   }
 
@@ -31,6 +37,9 @@ class SystemMonitor {
     }
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
+    }
+    if (this.uptimeUpdateTimer) {
+      clearInterval(this.uptimeUpdateTimer);
     }
     logger.info('System Monitor stopped.');
   }
@@ -45,6 +54,15 @@ class SystemMonitor {
     //fan properties via mqtt
     this.mqttAgent.periodicPublication();
     
+  }
+
+  updateUptime() {
+    try {
+      const uptime = os.uptime();
+      this.stateManager.update({ uptime });
+    } catch (error) {
+      logger.error(`Error updating uptime: ${error.message}`);
+    }
   }
 
   performHealthChecks() {

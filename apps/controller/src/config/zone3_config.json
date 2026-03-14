@@ -110,7 +110,7 @@
     "heatOffMs": 60000,
     "controlMethodIntervalMs": 30000,
     "allowHeatingWithLightOn": true,
-    "outsideTempOffset": 4
+    "outsideTempOffset": 1
   },
   "fan": {
     "speedPercent": 50,

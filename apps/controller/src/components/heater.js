@@ -89,7 +89,7 @@ export default class Heater {
     //   // return;
     // setPoint = cfg.get('zone.lowSetpoint');
     // if temperature is below low setpoint, allow heating even if light is on, but use low setpoint as target
-    // only use heater if outside temp is below low setpoint, otherwise we are just heating the outside air
+    // only use heater if outside temp, plus an offset, is below low setpoint, otherwise we are just heating the outside air
     if (this.currentTemp < cfg.get('zone.lowSetpoint') && (this.outsideTemp + cfg.get('heater.outsideTempOffset')) < cfg.get('zone.lowSetpoint')) {
       logger.debug(' Allowing heating to reach low setpoint.');
       this.updateState(true);
