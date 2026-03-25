@@ -95,7 +95,7 @@
     },
     "speedPercent": 50,
     "periodicPublishIntervalMs": 30000,
-    "setpointDeadBandSize": 2,
+    "setpointDeadBandSize": 0.75,
     "ventOverridePulseOnDelta": 5000,
     "outsideTempDiffThresholdForMaxSpeed": 2
   },

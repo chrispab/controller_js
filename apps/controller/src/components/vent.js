@@ -73,7 +73,7 @@ export default class Vent {
       return; // Override takes precedence
     }
 
-    // when day and temp is above highSetpoint activate override and run at 100%
+    // when day and temp is above setpoint activate override and run at 100%
     if (this.lightState && this.currentTemp > setPoint) {
       logger.log(logLevel, `2====Current Temp: ${this.currentTemp}°C exceeds high setpoint (${setPoint}°C) during light conditions`);
       if (!this.ventOverride) {
@@ -123,6 +123,7 @@ export default class Vent {
         // Start a new cycle
         this.cycleState = 'ON';
         this.updateState(1); // 50% speed
+        logger.log(logLevel, '5.1====New cycle started');
         break;
 
       case 'ON':
@@ -130,6 +131,7 @@ export default class Vent {
           this.cycleState = 'OFF';
           this.updateState(0);
         }
+        logger.log(logLevel, '5.2====Cycle ON');
         break;
 
       case 'OFF':
@@ -137,6 +139,7 @@ export default class Vent {
           this.cycleState = 'ON';
           this.updateState(1); // 50% speed
         }
+        logger.log(logLevel, '5.3====Cycle OFF');
         break;
     }
   }
