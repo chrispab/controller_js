@@ -92,7 +92,7 @@ export default class Vent {
         logger.log(logLevel, '3.1====High-temperature override ACTIVATED');
         this.ventOverride = true;
       }
-      this.updateState(1); // Set to 50% speed
+      this.updateState(2); // Set to 50% speed
       return; // Override takes precedence
     }
 
